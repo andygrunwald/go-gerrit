@@ -1,8 +1,10 @@
 # diffy
 
-<img src="img/diffy.png" alt="Diffy - Go(lang) client/library for Gerrit Code Review" title="Diffy - Go(lang) client/library for Gerrit Code Review" align="left" />
-
 Go(lang) client/library for [Gerrit Code Review](https://www.gerritcodereview.com/).
+
+<div style="text-align:center">
+	<img src="img/diffy.png" alt="Diffy - Go(lang) client/library for Gerrit Code Review" title="Diffy - Go(lang) client/library for Gerrit Code Review" />
+</div>
 
 ## Features
 
