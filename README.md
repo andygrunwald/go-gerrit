@@ -1,5 +1,8 @@
 # diffy
 
+[![GoDoc](https://godoc.org/github.com/andygrunwald/diffy?status.svg)](https://godoc.org/github.com/andygrunwald/diffy)
+[![Build Status](https://travis-ci.org/andygrunwald/diffy.svg?branch=master)](https://travis-ci.org/andygrunwald/diffy)
+
 Go(lang) client/library for [Gerrit Code Review](https://www.gerritcodereview.com/).
 
 ![Diffy - Go(lang) client/library for Gerrit Code Review](./img/diffy.png "Diffy - Go(lang) client/library for Gerrit Code Review")
@@ -18,6 +21,21 @@ It is go gettable
 
     $ cd $GOPATH/src/github.com/andygrunwald/diffy
     $ go test -v
+
+## API
+
+Please have a look at the [GoDoc documentation](https://godoc.org/github.com/andygrunwald/diffy) for a detailed API description.
+
+## Examples
+
+Further a few examples how the API can be used.
+A few more examples are available in the [GoDoc examples section](https://godoc.org/github.com/andygrunwald/diffy#pkg-examples).
+
+@TODO: Add examples
+
+## Implementations
+
+@TODO: Add implementations
 
 ## FAQ
 
