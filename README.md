@@ -1,4 +1,4 @@
-# diffy - Go library for accessing the Gerrit Code Review API
+# diffy
 
 [![GoDoc](https://godoc.org/github.com/andygrunwald/diffy?status.svg)](https://godoc.org/github.com/andygrunwald/diffy)
 [![Build Status](https://travis-ci.org/andygrunwald/diffy.svg?branch=master)](https://travis-ci.org/andygrunwald/diffy)
