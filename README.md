@@ -1,9 +1,9 @@
-# diffy
+# diffy - Go library for accessing the Gerrit Code Review API
 
 [![GoDoc](https://godoc.org/github.com/andygrunwald/diffy?status.svg)](https://godoc.org/github.com/andygrunwald/diffy)
 [![Build Status](https://travis-ci.org/andygrunwald/diffy.svg?branch=master)](https://travis-ci.org/andygrunwald/diffy)
 
-Go(lang) client/library for [Gerrit Code Review](https://www.gerritcodereview.com/).
+diffy is a [Go(lang)](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
 
 ![Diffy - Go(lang) client/library for Gerrit Code Review](./img/diffy.png "Diffy - Go(lang) client/library for Gerrit Code Review")
 
