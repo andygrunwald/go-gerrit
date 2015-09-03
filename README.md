@@ -26,16 +26,14 @@ It is go gettable
 
 Please have a look at the [GoDoc documentation](https://godoc.org/github.com/andygrunwald/diffy) for a detailed API description.
 
+The [Gerrit Code Review - REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html) was the base document.
+
 ## Examples
 
 Further a few examples how the API can be used.
 A few more examples are available in the [GoDoc examples section](https://godoc.org/github.com/andygrunwald/diffy#pkg-examples).
 
 @TODO: Add examples
-
-## Implementations
-
-@TODO: Add implementations
 
 ## FAQ
 
