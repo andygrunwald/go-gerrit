@@ -2,6 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/andygrunwald/diffy?status.svg)](https://godoc.org/github.com/andygrunwald/diffy)
 [![Build Status](https://travis-ci.org/andygrunwald/diffy.svg?branch=master)](https://travis-ci.org/andygrunwald/diffy)
+[![Coverage Status](https://coveralls.io/repos/andygrunwald/diffy/badge.svg?branch=master&service=github)](https://coveralls.io/github/andygrunwald/diffy?branch=master)
 
 diffy is a [Go(lang)](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
 
