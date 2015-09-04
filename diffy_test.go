@@ -8,12 +8,15 @@ import (
 )
 
 func TestNewClient_NoGerritInstance(t *testing.T) {
-	c, err := NewClient("", nil)
-	if c != nil {
-		t.Errorf("NewClient return is not nil. Expected no client. Go %+v", c)
-	}
-	if err == nil {
-		t.Error("No error occured by empty Gerrit Instance. Expected one.")
+	mockData := []string{"", "://not-existing"}
+	for _, data := range mockData {
+		c, err := NewClient(data, nil)
+		if c != nil {
+			t.Errorf("NewClient return is not nil. Expected no client. Go %+v", c)
+		}
+		if err == nil {
+			t.Error("No error occured by empty Gerrit Instance. Expected one.")
+		}
 	}
 }
 
