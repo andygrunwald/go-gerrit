@@ -16,9 +16,25 @@ type WebLinkInfo struct {
 	ImageURL string `json:"image_url"`
 }
 
+// GitPersonInfo entity contains information about the author/committer of a commit.
+type GitPersonInfo struct {
+	Name  string `json:"name"`
+	EMail string `json:"email"`
+	Date  string `json:"date"`
+	TZ    int    `json:"tz"`
+}
+
+// ActionInfo entity describes a REST API call the client can make to manipulate a resource.
+// These are frequently implemented by plugins and may be discovered at runtime.
+type ActionInfo struct {
+	Method  string `json:"method"`
+	Label   string `json:"label"`
+	Title   string `json:"title"`
+	Enabled bool   `json:"enabled"`
+}
+
 /*
 AbandonInput
-ActionInfo
 AddReviewerResult
 ApprovalInfo
 ChangeEditInput
@@ -40,7 +56,6 @@ EditInfo
 FetchInfo
 FileInfo
 FixInput
-GitPersonInfo
 GroupBaseInfo
 IncludedInInfo
 LabelInfo
