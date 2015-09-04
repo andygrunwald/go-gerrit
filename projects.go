@@ -1,5 +1,9 @@
 package diffy
 
+import (
+	"fmt"
+)
+
 // ProjectsService contains Project related REST endpoints
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html
@@ -214,6 +218,15 @@ type ConfigInput struct {
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
 
+// ProjectDescription entity describes a project description.
+// In some API functions no JSON will be returned, only strings.
+// E.g. GetProjectDescription
+type ProjectDescription string
+
+func (d *ProjectDescription) String() string {
+	return string(*d)
+}
+
 // ProjectOptions specifies the parameters to the ProjectsService.ListProjects.
 type ProjectOptions struct {
 	// Limit the results to the projects having the specified branch and include the sha1 of the branch in the results.
@@ -271,4 +284,65 @@ func (s *ProjectsService) ListProjects(opt *ProjectOptions) (map[string]ProjectI
 	}
 
 	return *projectInfo, resp, err
+}
+
+// GetProject retrieves a project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project
+func (s *ProjectsService) GetProject(name string) (*ProjectInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/", name)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	projectInfo := new(ProjectInfo)
+	resp, err := s.client.Do(req, projectInfo)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return projectInfo, resp, err
+}
+
+// CreateProject creates a new project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-project
+func (s *ProjectsService) CreateProject(name string, input *ProjectInput) (*ProjectInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/", name)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	projectInfo := new(ProjectInfo)
+	resp, err := s.client.Do(req, projectInfo)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return projectInfo, resp, err
+}
+
+// GetProjectDescription retrieves the description of a project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-description
+func (s *ProjectsService) GetProjectDescription(name string) (*string, *Response, error) {
+	u := fmt.Sprintf("/projects/%s/description/", name)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	desc := new(ProjectDescription)
+
+	resp, err := s.client.Do(req, desc)
+	if err != nil {
+		return nil, resp, err
+	}
+	descStr := desc.String()
+	return &descStr, resp, err
 }
