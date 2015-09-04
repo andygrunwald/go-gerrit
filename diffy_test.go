@@ -1,6 +1,7 @@
 package diffy
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -228,6 +229,29 @@ func TestDo(t *testing.T) {
 	want := &foo{"a"}
 	if !reflect.DeepEqual(body, want) {
 		t.Errorf("Response body = %v, want %v", body, want)
+	}
+}
+
+func TestDo_ioWriter(t *testing.T) {
+	setup()
+	defer teardown()
+	content := `)]}'` + "\n" + `{"A":"a"}`
+
+	testMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if m := "GET"; m != r.Method {
+			t.Errorf("Request method = %v, want %v", r.Method, m)
+		}
+		fmt.Fprint(w, content)
+	})
+
+	req, _ := testClient.NewRequest("GET", "/", nil)
+	var buf []byte
+	actual := bytes.NewBuffer(buf)
+	testClient.Do(req, actual)
+
+	expected := []byte(content)
+	if !reflect.DeepEqual(actual.Bytes(), expected) {
+		t.Errorf("Response body = %v, want %v", actual, string(expected))
 	}
 }
 
