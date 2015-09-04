@@ -213,3 +213,62 @@ type ConfigInput struct {
 	State                            string                       `json:"state"`
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values"`
 }
+
+// ProjectOptions specifies the parameters to the ProjectsService.ListProjects.
+type ProjectOptions struct {
+	// Limit the results to the projects having the specified branch and include the sha1 of the branch in the results.
+	Branch string `url:"b,omitempty"`
+
+	// Include project description in the results.
+	Description bool `url:"d,omitempty"`
+
+	// Limit the number of projects to be included in the results.
+	Limit int
+
+	// Limit the results to those projects that start with the specified prefix.
+	Prefix string `url:"p,omitempty"`
+
+	// Limit the results to those projects that match the specified regex.
+	// Boundary matchers '^' and '$' are implicit. For example: the regex 'test.*' will match any projects that start with 'test' and regex '.*test' will match any project that end with 'test'.
+	Regex string `url:"r,omitempty"`
+
+	// Skip the given number of projects from the beginning of the list.
+	Skip string `url:"S,omitempty"`
+
+	// Limit the results to those projects that match the specified substring.
+	Substring string `url:"m,omitempty"`
+
+	// Get projects inheritance in a tree-like format.
+	// This option does not work together with the branch option.
+	Tree string `url:"t,omitempty"`
+
+	// Get projects with specified type: ALL, CODE, PERMISSIONS.
+	Type string `url:"type,omitempty"`
+}
+
+// ListProjects lists the projects accessible by the caller.
+// This is the same as using the ls-projects command over SSH, and accepts the same options as query parameters.
+// The entries in the map are sorted by project name.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-projects
+func (s *ProjectsService) ListProjects(opt *ProjectOptions) (map[string]ProjectInfo, *Response, error) {
+	u := "projects/"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	projectInfo := new(map[string]ProjectInfo)
+	resp, err := s.client.Do(req, projectInfo)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return *projectInfo, resp, err
+}
