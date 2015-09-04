@@ -2,8 +2,10 @@ package diffy
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"reflect"
 	"testing"
@@ -11,8 +13,36 @@ import (
 )
 
 const (
-	TestGerritInstanceURL = "https://go-review.googlesource.com/"
+	// testGerritInstanceURL is a test instance url that won`t be called
+	testGerritInstanceURL = "https://go-review.googlesource.com/"
 )
+
+var (
+	// testMux is the HTTP request multiplexer used with the test server.
+	testMux *http.ServeMux
+
+	// testClient is the diffy client being tested.
+	testClient *Client
+
+	// testServer is a test HTTP server used to provide mock API responses.
+	testServer *httptest.Server
+)
+
+// setup sets up a test HTTP server along with a diffy.Client that is configured to talk to that test server.
+// Tests should register handlers on mux which provide mock responses for the API method being tested.
+func setup() {
+	// Test server
+	testMux = http.NewServeMux()
+	testServer = httptest.NewServer(testMux)
+
+	// diffy client configured to use test server
+	testClient, _ = NewClient(testServer.URL, nil)
+}
+
+// teardown closes the test HTTP server.
+func teardown() {
+	testServer.Close()
+}
 
 func TestNewClient_NoGerritInstance(t *testing.T) {
 	mockData := []string{"", "://not-existing"}
@@ -80,12 +110,12 @@ func TestNewClient_Services(t *testing.T) {
 }
 
 func TestNewRequest(t *testing.T) {
-	c, err := NewClient(TestGerritInstanceURL, nil)
+	c, err := NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
 
-	inURL, outURL := "/foo", TestGerritInstanceURL+"foo"
+	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
 	inBody, outBody := &PermissionRuleInfo{Action: "ALLOW", Force: true, Min: 0, Max: 0}, `{"action":"ALLOW","force":true,"min":0,"max":0}`+"\n"
 	req, _ := c.NewRequest("GET", inURL, inBody)
 
@@ -102,7 +132,7 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestNewRequest_InvalidJSON(t *testing.T) {
-	c, err := NewClient(TestGerritInstanceURL, nil)
+	c, err := NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -130,7 +160,7 @@ func testURLParseError(t *testing.T, err error) {
 }
 
 func TestNewRequest_BadURL(t *testing.T) {
-	c, err := NewClient(TestGerritInstanceURL, nil)
+	c, err := NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -143,7 +173,7 @@ func TestNewRequest_BadURL(t *testing.T) {
 // since there is no difference between an HTTP request body that is an empty string versus one that is not set at all.
 // However in certain cases, intermediate systems may treat these differently resulting in subtle errors.
 func TestNewRequest_EmptyBody(t *testing.T) {
-	c, err := NewClient(TestGerritInstanceURL, nil)
+	c, err := NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -153,5 +183,67 @@ func TestNewRequest_EmptyBody(t *testing.T) {
 	}
 	if req.Body != nil {
 		t.Fatalf("constructed request contains a non-nil Body")
+	}
+}
+
+func TestDo(t *testing.T) {
+	setup()
+	defer teardown()
+
+	type foo struct {
+		A string
+	}
+
+	testMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if m := "GET"; m != r.Method {
+			t.Errorf("Request method = %v, want %v", r.Method, m)
+		}
+		fmt.Fprint(w, `{"A":"a"}`)
+	})
+
+	req, _ := testClient.NewRequest("GET", "/", nil)
+	body := new(foo)
+	testClient.Do(req, body)
+
+	want := &foo{"a"}
+	if !reflect.DeepEqual(body, want) {
+		t.Errorf("Response body = %v, want %v", body, want)
+	}
+}
+
+func TestDo_HTTPError(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Bad Request", 400)
+	})
+
+	req, _ := testClient.NewRequest("GET", "/", nil)
+	_, err := testClient.Do(req, nil)
+
+	if err == nil {
+		t.Error("Expected HTTP 400 error.")
+	}
+}
+
+// Test handling of an error caused by the internal http client's Do() function.
+// A redirect loop is pretty unlikely to occur within the Gerrit API, but does allow us to exercise the right code path.
+func TestDo_RedirectLoop(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/", http.StatusFound)
+	})
+
+	req, _ := testClient.NewRequest("GET", "/", nil)
+	_, err := testClient.Do(req, nil)
+
+	if err == nil {
+		t.Error("Expected error to be returned.")
+	}
+	if err, ok := err.(*url.Error); !ok {
+		t.Errorf("Expected a URL error; got %#v.", err)
 	}
 }
