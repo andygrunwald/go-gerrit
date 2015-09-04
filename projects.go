@@ -11,6 +11,13 @@ type ProjectsService struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#project-info
 type ProjectInfo struct {
+	ID          string            `json:"id"`
+	Name        string            `json:"name"`
+	Parent      string            `json:"parent"`
+	Description string            `json:"description"`
+	State       string            `json:"state"`
+	Branches    map[string]string `json:"branches"`
+	WebLinks    []WebLinkInfo     `json:"web_links"`
 }
 
 /*
