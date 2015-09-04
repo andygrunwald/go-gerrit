@@ -13,30 +13,30 @@ type ProjectsService struct {
 type ProjectInfo struct {
 	ID          string            `json:"id"`
 	Name        string            `json:"name"`
-	Parent      string            `json:"parent"`
-	Description string            `json:"description"`
-	State       string            `json:"state"`
-	Branches    map[string]string `json:"branches"`
-	WebLinks    []WebLinkInfo     `json:"web_links"`
+	Parent      string            `json:"parent,omitempty"`
+	Description string            `json:"description,omitempty"`
+	State       string            `json:"state,omitempty"`
+	Branches    map[string]string `json:"branches,omitempty"`
+	WebLinks    []WebLinkInfo     `json:"web_links,omitempty"`
 }
 
 // ProjectInput entity contains information for the creation of a new project.
 type ProjectInput struct {
-	Name                             string                       `json:"name"`
-	Parent                           string                       `json:"parent"`
-	Description                      string                       `json:"description"`
+	Name                             string                       `json:"name,omitempty"`
+	Parent                           string                       `json:"parent,omitempty"`
+	Description                      string                       `json:"description,omitempty"`
 	PermissionsOnly                  bool                         `json:"permissions_only"`
 	CreateEmptyCommit                bool                         `json:"create_empty_commit"`
-	SubmitType                       string                       `json:"submit_type"`
-	Branches                         []string                     `json:"branches"`
-	Owners                           []string                     `json:"owners"`
+	SubmitType                       string                       `json:"submit_type,omitempty"`
+	Branches                         []string                     `json:"branches,omitempty"`
+	Owners                           []string                     `json:"owners,omitempty"`
 	UseContributorAgreements         string                       `json:"use_contributor_agreements"`
 	UseSignedOffBy                   string                       `json:"use_signed_off_by"`
 	CreateNewChangeForAllNotInTarget string                       `json:"create_new_change_for_all_not_in_target"`
 	UseContentMerge                  string                       `json:"use_content_merge"`
 	RequireChangeID                  string                       `json:"require_change_id"`
-	MaxObjectSizeLimit               string                       `json:"max_object_size_limit"`
-	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values"`
+	MaxObjectSizeLimit               string                       `json:"max_object_size_limit,omitempty"`
+	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
 
 // GCInput entity contains information to run the Git garbage collection.
@@ -63,8 +63,8 @@ type DashboardSectionInfo struct {
 
 // DashboardInput entity contains information to create/update a project dashboard.
 type DashboardInput struct {
-	ID            string `json:"id"`
-	CommitMessage string `json:"commit_message"`
+	ID            string `json:"id,omitempty"`
+	CommitMessage string `json:"commit_message,omitempty"`
 }
 
 // DashboardInfo entity contains information about a project dashboard.
@@ -74,25 +74,25 @@ type DashboardInfo struct {
 	DefiningProject string                 `json:"defining_project"`
 	Ref             string                 `json:"ref"`
 	Path            string                 `json:"path"`
-	Description     string                 `json:"description"`
-	Foreach         string                 `json:"foreach"`
+	Description     string                 `json:"description,omitempty"`
+	Foreach         string                 `json:"foreach,omitempty"`
 	URL             string                 `json:"url"`
 	Default         bool                   `json:"default"`
-	Title           string                 `json:"title"`
+	Title           string                 `json:"title,omitempty"`
 	Sections        []DashboardSectionInfo `json:"sections"`
 }
 
 // BanInput entity contains information for banning commits in a project.
 type BanInput struct {
 	Commits []string `json:"commits"`
-	Reason  string   `json:"reason"`
+	Reason  string   `json:"reason,omitempty"`
 }
 
 // BanResultInfo entity describes the result of banning commits.
 type BanResultInfo struct {
-	NewlyBanned   []string `json:"newly_banned"`
-	AlreadyBanned []string `json:"already_banned"`
-	Ignored       []string `json:"ignored"`
+	NewlyBanned   []string `json:"newly_banned,omitempty"`
+	AlreadyBanned []string `json:"already_banned,omitempty"`
+	Ignored       []string `json:"ignored,omitempty"`
 }
 
 // BranchInfo entity contains information about a branch.
@@ -100,20 +100,20 @@ type BranchInfo struct {
 	Ref       string        `json:"ref"`
 	Revision  string        `json:"revision"`
 	CanDelete bool          `json:"can_delete"`
-	WebLinks  []WebLinkInfo `json:"web_links"`
+	WebLinks  []WebLinkInfo `json:"web_links,omitempty"`
 }
 
 // BranchInput entity contains information for the creation of a new branch.
 type BranchInput struct {
-	Ref      string `json:"ref"`
-	Revision string `json:"revision"`
+	Ref      string `json:"ref,omitempty"`
+	Revision string `json:"revision,omitempty"`
 }
 
 // ThemeInfo entity describes a theme.
 type ThemeInfo struct {
-	CSS    string `type:"css"`
-	Header string `type:"header"`
-	Footer string `type:"footer"`
+	CSS    string `type:"css,omitempty"`
+	Header string `type:"header,omitempty"`
+	Footer string `type:"footer,omitempty"`
 }
 
 // TagInfo entity contains information about a tag.
@@ -135,8 +135,8 @@ type ReflogEntryInfo struct {
 
 // ProjectParentInput entity contains information for setting a project parent.
 type ProjectParentInput struct {
-	Parent        string `json:"ProjectParentInput"`
-	CommitMessage string `json:"commit_message"`
+	Parent        string `json:"parent"`
+	CommitMessage string `json:"commit_message,omitempty"`
 }
 
 // RepositoryStatisticsInfo entity contains information about statistics of a Git repository.
@@ -154,64 +154,64 @@ type RepositoryStatisticsInfo struct {
 type InheritedBooleanInfo struct {
 	Value           bool   `json:"value"`
 	ConfiguredValue string `json:"configured_value"`
-	InheritedValue  bool   `json:"inherited_value"`
+	InheritedValue  bool   `json:"inherited_value,omitempty"`
 }
 
 // MaxObjectSizeLimitInfo entity contains information about the max object size limit of a project.
 type MaxObjectSizeLimitInfo struct {
-	Value           string `json:"value"`
-	ConfiguredValue string `json:"configured_value"`
-	InheritedValue  string `json:"inherited_value"`
+	Value           string `json:"value,omitempty"`
+	ConfiguredValue string `json:"configured_value,omitempty"`
+	InheritedValue  string `json:"inherited_value,omitempty"`
 }
 
 // ConfigParameterInfo entity describes a project configuration parameter.
 type ConfigParameterInfo struct {
-	DisplayName string   `json:"display_name"`
-	Description string   `json:"description"`
-	Warning     string   `json:"warning"`
+	DisplayName string   `json:"display_name,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Warning     string   `json:"warning,omitempty"`
 	Type        string   `json:"type"`
-	Value       string   `json:"value"`
-	Values      []string `json:"values"`
+	Value       string   `json:"value,omitempty"`
+	Values      []string `json:"values,omitempty"`
 	// TODO: 5 fields are missing here, because the documentation seems to be fucked up
 	// See https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#config-parameter-info
 }
 
 // ProjectDescriptionInput entity contains information for setting a project description.
 type ProjectDescriptionInput struct {
-	Description   string `json:"description"`
-	CommitMessage string `json:"commit_message"`
+	Description   string `json:"description,omitempty"`
+	CommitMessage string `json:"commit_message,omitempty"`
 }
 
 // ConfigInfo entity contains information about the effective project configuration.
 type ConfigInfo struct {
-	Description                      string                         `json:"description"`
-	UseContributorAgreements         InheritedBooleanInfo           `json:"use_contributor_agreements"`
-	UseContentMerge                  InheritedBooleanInfo           `json:"use_content_merge"`
-	UseSignedOffBy                   InheritedBooleanInfo           `json:"use_signed_off_by"`
-	CreateNewChangeForAllNotInTarget InheritedBooleanInfo           `json:"create_new_change_for_all_not_in_target"`
-	RequireChangeID                  InheritedBooleanInfo           `json:"require_change_id"`
-	EnableSignedPush                 InheritedBooleanInfo           `json:"enable_signed_push"`
+	Description                      string                         `json:"description,omitempty"`
+	UseContributorAgreements         InheritedBooleanInfo           `json:"use_contributor_agreements,omitempty"`
+	UseContentMerge                  InheritedBooleanInfo           `json:"use_content_merge,omitempty"`
+	UseSignedOffBy                   InheritedBooleanInfo           `json:"use_signed_off_by,omitempty"`
+	CreateNewChangeForAllNotInTarget InheritedBooleanInfo           `json:"create_new_change_for_all_not_in_target,omitempty"`
+	RequireChangeID                  InheritedBooleanInfo           `json:"require_change_id,omitempty"`
+	EnableSignedPush                 InheritedBooleanInfo           `json:"enable_signed_push,omitempty"`
 	MaxObjectSizeLimit               MaxObjectSizeLimitInfo         `json:"max_object_size_limit"`
 	SubmitType                       string                         `json:"submit_type"`
-	State                            string                         `json:"state"`
+	State                            string                         `json:"state,omitempty"`
 	Commentlinks                     map[string]string              `json:"commentlinks"`
-	Theme                            ThemeInfo                      `json:"theme"`
-	PluginConfig                     map[string]ConfigParameterInfo `json:"plugin_config"`
-	Actions                          map[string]ActionInfo          `json:"actions"`
+	Theme                            ThemeInfo                      `json:"theme,omitempty"`
+	PluginConfig                     map[string]ConfigParameterInfo `json:"plugin_config,omitempty"`
+	Actions                          map[string]ActionInfo          `json:"actions,omitempty"`
 }
 
 // ConfigInput entity describes a new project configuration.
 type ConfigInput struct {
-	Description                      string                       `json:"description"`
-	UseContributorAgreements         string                       `json:"use_contributor_agreements"`
-	UseContentMerge                  string                       `json:"use_content_merge"`
-	UseSignedOffBy                   string                       `json:"use_signed_off_by"`
-	CreateNewChangeForAllNotInTarget string                       `json:"create_new_change_for_all_not_in_target"`
-	RequireChangeID                  string                       `json:"require_change_id"`
-	MaxObjectSizeLimit               MaxObjectSizeLimitInfo       `json:"max_object_size_limit"`
-	SubmitType                       string                       `json:"submit_type"`
-	State                            string                       `json:"state"`
-	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values"`
+	Description                      string                       `json:"description,omitempty"`
+	UseContributorAgreements         string                       `json:"use_contributor_agreements,omitempty"`
+	UseContentMerge                  string                       `json:"use_content_merge,omitempty"`
+	UseSignedOffBy                   string                       `json:"use_signed_off_by,omitempty"`
+	CreateNewChangeForAllNotInTarget string                       `json:"create_new_change_for_all_not_in_target,omitempty"`
+	RequireChangeID                  string                       `json:"require_change_id,omitempty"`
+	MaxObjectSizeLimit               MaxObjectSizeLimitInfo       `json:"max_object_size_limit,omitempty"`
+	SubmitType                       string                       `json:"submit_type,omitempty"`
+	State                            string                       `json:"state,omitempty"`
+	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
 
 // ProjectOptions specifies the parameters to the ProjectsService.ListProjects.

@@ -18,7 +18,7 @@ type AccessSectionInfo struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-access.html#permission-info
 type PermissionInfo struct {
-	Label     string                        `json:"label"`
+	Label     string                        `json:"label,omitempty"`
 	Exclusive bool                          `json:"exclusive"`
 	Rules     map[string]PermissionRuleInfo `json:"rules"`
 }
