@@ -85,6 +85,14 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		return nil, err
 	}
 
+	// Request compact JSON
+	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+	req.Header.Add("Accept", "application/json")
+
+	// TODO: Add gzip encoding
+	// Accept-Encoding request header is set to gzip
+	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+
 	return req, nil
 }
 
