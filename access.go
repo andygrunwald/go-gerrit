@@ -47,3 +47,37 @@ type ProjectAccessInfo struct {
 	CanAdd        bool                         `json:"can_add"`
 	ConfigVisible bool                         `json:"config_visible"`
 }
+
+// ListAccessRightsOptions specifies the parameters to the AccessService.ListAccessRights.
+type ListAccessRightsOptions struct {
+	// The projects for which the access rights should be returned must be specified as project options.
+	// The project can be specified multiple times.
+	Project []string `url:"project,omitempty"`
+}
+
+// ListAccessRights lists the access rights for projects.
+// As result a map is returned that maps the project name to ProjectAccessInfo entities.
+// The entries in the map are sorted by project name.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-access.html#list-access
+func (s *AccessService) ListAccessRights(opt *ListAccessRightsOptions) (map[string]ProjectAccessInfo, *Response, error) {
+	u := "access/"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	accessInformation := new(map[string]ProjectAccessInfo)
+	resp, err := s.client.Do(req, accessInformation)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return *accessInformation, resp, err
+}

@@ -8,6 +8,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"reflect"
+
+	"github.com/google/go-querystring/query"
 )
 
 // A Client manages communication with the Gerrit API.
@@ -27,6 +30,12 @@ type Client struct {
 	Groups   *GroupsService
 	Plugins  *PluginsService
 	Projects *ProjectsService
+}
+
+// Response is a Gerrit API response.
+// This wraps the standard http.Response returned from Gerrit.
+type Response struct {
+	*http.Response
 }
 
 // NewClient returns a new Gerrit API client.
@@ -102,15 +111,18 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 // or returned as an error if an API error has occurred.
 // If v implements the io.Writer interface, the raw response body will be written to v,
 // without attempting to first decode it.
-func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
-	response, err := c.client.Do(req)
+func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	defer response.Body.Close()
+	defer resp.Body.Close()
 
-	err = c.checkResponse(response)
+	// Wrap response
+	response := &Response{Response: resp}
+
+	err = CheckResponse(resp)
 	if err != nil {
 		// even though there was an error, we still return the response
 		// in case the caller wants to inspect it further
@@ -119,9 +131,9 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
-			io.Copy(w, response.Body)
+			io.Copy(w, resp.Body)
 		} else {
-			body, err := ioutil.ReadAll(response.Body)
+			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				// even though there was an error, we still return the response
 				// in case the caller wants to inspect it further
@@ -155,11 +167,33 @@ func RemoveMagicPrefixLine(body []byte) []byte {
 // API error responses are expected to have no response body.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api.html#response-codes
-func (c *Client) checkResponse(r *http.Response) error {
+func CheckResponse(r *http.Response) error {
 	if c := r.StatusCode; 200 <= c && c <= 299 {
 		return nil
 	}
 
-	err := fmt.Errorf("API call failed: %s", r.Status)
+	err := fmt.Errorf("API call to %s failed: %s", r.Request.URL.String(), r.Status)
 	return err
+}
+
+// addOptions adds the parameters in opt as URL query parameters to s.
+// opt must be a struct whose fields may contain "url" tags.
+func addOptions(s string, opt interface{}) (string, error) {
+	v := reflect.ValueOf(opt)
+	if v.Kind() == reflect.Ptr && v.IsNil() {
+		return s, nil
+	}
+
+	u, err := url.Parse(s)
+	if err != nil {
+		return s, err
+	}
+
+	qs, err := query.Values(opt)
+	if err != nil {
+		return s, err
+	}
+
+	u.RawQuery = qs.Encode()
+	return u.String(), nil
 }
