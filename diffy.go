@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -120,10 +121,33 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 		if w, ok := v.(io.Writer); ok {
 			io.Copy(w, response.Body)
 		} else {
-			err = json.NewDecoder(response.Body).Decode(v)
+			body, err := ioutil.ReadAll(response.Body)
+			if err != nil {
+				// even though there was an error, we still return the response
+				// in case the caller wants to inspect it further
+				return response, err
+			}
+
+			body = RemoveMagicPrefixLine(body)
+			err = json.Unmarshal(body, v)
 		}
 	}
 	return response, err
+}
+
+// RemoveMagicPrefixLine removed the "magic prefix line" of Gerris JSON response.
+// the JSON response body starts with a magic prefix line that must be stripped before feeding the rest of the response body to a JSON parser.
+// The reason for this is to prevent against Cross Site Script Inclusion (XSSI) attacks.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+func RemoveMagicPrefixLine(body []byte) []byte {
+	index := bytes.IndexByte(body, '\n')
+	if index > -1 {
+		// +1 to catch the \n as well
+		body = body[(index + 1):]
+	}
+
+	return body
 }
 
 // CheckResponse checks the API response for errors, and returns them if present.

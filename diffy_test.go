@@ -198,7 +198,7 @@ func TestDo(t *testing.T) {
 		if m := "GET"; m != r.Method {
 			t.Errorf("Request method = %v, want %v", r.Method, m)
 		}
-		fmt.Fprint(w, `{"A":"a"}`)
+		fmt.Fprint(w, `)]}'`+"\n"+`{"A":"a"}`)
 	})
 
 	req, _ := testClient.NewRequest("GET", "/", nil)
@@ -245,5 +245,20 @@ func TestDo_RedirectLoop(t *testing.T) {
 	}
 	if err, ok := err.(*url.Error); !ok {
 		t.Errorf("Expected a URL error; got %#v.", err)
+	}
+}
+
+func TestRemoveMagicPrefixLine(t *testing.T) {
+	mockData := []struct {
+		Current, Expected []byte
+	}{
+		{[]byte(`{"A":"a"}`), []byte(`{"A":"a"}`)},
+		{[]byte(`)]}'` + "\n" + `{"A":"a"}`), []byte(`{"A":"a"}`)},
+	}
+	for _, mock := range mockData {
+		body := RemoveMagicPrefixLine(mock.Current)
+		if !reflect.DeepEqual(body, mock.Expected) {
+			t.Errorf("Response body = %v, want %v", body, mock.Expected)
+		}
 	}
 }
