@@ -586,6 +586,46 @@ func (s *ProjectsService) GetTag(projectName, tagName string) (*TagInfo, *Respon
 	return v, resp, err
 }
 
+// ListDashboards list custom dashboards for a project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-dashboards
+func (s *ProjectsService) ListDashboards(projectName string) (*[]DashboardInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/dashboards/", projectName)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]DashboardInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetDashboard list custom dashboards for a project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-dashboard
+func (s *ProjectsService) GetDashboard(projectName, dashboardName string) (*DashboardInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardName)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(DashboardInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /**
 Missing Project Endpoints
 	Set Project Description
@@ -607,8 +647,6 @@ Missing Commit Endpoints
 	Get Content
 
 Missing Dashboard Endpoints
-	List Dashboards
-	Get Dashboard
 	Set Dashboard
 	Delete Dashboard
 */
