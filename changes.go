@@ -508,6 +508,93 @@ func (s *ChangesService) GetTopic(changeID string) (*string, *Response, error) {
 	return getStringResponseWithoutOptions(s.client, u)
 }
 
+// ChangesSubmittedTogether returns a list of all changes which are submitted when {submit} is called for this change, including the current change itself.
+// An empty list is returned if this change will be submitted by itself (no other changes).
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submitted_together
+func (s *ChangesService) ChangesSubmittedTogether(changeID string) (*[]ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/submitted_together", changeID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetIncludedIn retrieves the branches and tags in which a change is included.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-included-in
+func (s *ChangesService) GetIncludedIn(changeID string) (*IncludedInInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/in", changeID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(IncludedInInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListChangeComments lists the published comments of all revisions of the change.
+// The entries in the map are sorted by file path, and the comments for each path are sorted by patch set number.
+// Each comment has the patch_set and author fields set.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-comments
+func (s *ChangesService) ListChangeComments(changeID string) (*map[string]CommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/in", changeID)
+	return s.getCommentInfoMapResponse(u)
+}
+
+// ListChangeDrafts lLists the draft comments of all revisions of the change that belong to the calling user.
+// The entries in the map are sorted by file path, and the comments for each path are sorted by patch set number.
+// Each comment has the patch_set field set, and no author.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-drafts
+func (s *ChangesService) ListChangeDrafts(changeID string) (*map[string]CommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/drafts", changeID)
+	return s.getCommentInfoMapResponse(u)
+}
+
+// getCommentInfoMapResponse retrieved a map of CommentInfo Response for a GET request
+func (s *ChangesService) getCommentInfoMapResponse(u string) (*map[string]CommentInfo, *Response, error) {
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(map[string]CommentInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// CheckChange performs consistency checks on the change, and returns a ChangeInfo entity with the problems field set to a list of ProblemInfo entities.
+// Depending on the type of problem, some fields not marked optional may be missing from the result.
+// At least id, project, branch, and _number will be present.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#check-change
+func (s *ChangesService) CheckChange(changeID string) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/check", changeID)
+	return s.getChangeInfoResponse(u, nil)
+}
+
 /*
 Missing Change Endpoints
 	Create Change
@@ -518,14 +605,9 @@ Missing Change Endpoints
 	Rebase Change
 	Revert Change
 	Submit Change
-	Changes submitted together
 	Publish Draft Change
 	Delete Draft Change
-	Get Included In
 	Index Change
-	List Change Comments
-	List Change Drafts
-	Check change
 	Fix change
 
 Missing Change Edit Endpoints
