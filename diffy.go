@@ -104,10 +104,8 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		return nil, err
 	}
 
-	// Apply HTTP Basic Authentication
-	if c.Authentication.HasBasicAuth() == true {
-		req.SetBasicAuth(c.Authentication.username, c.Authentication.password)
-	}
+	// Apply Authentication
+	c.addAuthentication(req)
 
 	// Request compact JSON
 	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
@@ -159,6 +157,20 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 		}
 	}
 	return response, err
+}
+
+func (c *Client) addAuthentication(req *http.Request) {
+	// Apply HTTP Basic Authentication
+	if c.Authentication.HasBasicAuth() == true {
+		req.SetBasicAuth(c.Authentication.name, c.Authentication.secret)
+	}
+	// Apply HTTP Cookie
+	if c.Authentication.HasCookieAuth() == true {
+		req.AddCookie(&http.Cookie{
+			Name:  c.Authentication.name,
+			Value: c.Authentication.secret,
+		})
+	}
 }
 
 // RemoveMagicPrefixLine removed the "magic prefix line" of Gerris JSON response.
