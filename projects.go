@@ -301,7 +301,7 @@ func (s *ProjectsService) GetProject(projectName string) (*ProjectInfo, *Respons
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-project
 func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput) (*ProjectInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s", projectName)
+	u := fmt.Sprintf("projects/%s/", projectName)
 
 	req, err := s.client.NewRequest("PUT", u, input)
 	if err != nil {
