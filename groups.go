@@ -88,6 +88,15 @@ type ListGroupsOptions struct {
 	Skip int `url:"S,omitempty"`
 }
 
+// ListGroupMembersOptions specifies the different options for the ListGroupMembers call.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#group-members
+type ListGroupMembersOptions struct {
+	// To resolve the included groups of a group recursively and to list all members the parameter recursive can be set.
+	// Members from included external groups and from included groups which are not visible to the calling user are ignored.
+	Recursive bool `url:"recursive,omitempty"`
+}
+
 // ListGroups lists the groups accessible by the caller.
 // This is the same as using the ls-groups command over SSH, and accepts the same options as query parameters.
 // The entries in the map are sorted by group name.
@@ -224,6 +233,93 @@ func (s *GroupsService) GetAuditLog(groupID string) (*[]GroupAuditEventInfo, *Re
 	return v, resp, err
 }
 
+// ListGroupMembers lists the direct members of a Gerrit internal group.
+// The entries in the list are sorted by full name, preferred email and id.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#group-members
+func (s *GroupsService) ListGroupMembers(groupID string, opt *ListGroupMembersOptions) (*[]AccountInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/members/", groupID)
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]AccountInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetGroupMember retrieves a group member.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-member
+func (s *GroupsService) GetGroupMember(groupID, accountID string) (*AccountInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/members/%s", groupID, accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(AccountInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListIncludedGroups lists the directly included groups of a group.
+// The entries in the list are sorted by group name and UUID.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#included-groups
+func (s *GroupsService) ListIncludedGroups(groupID string) (*[]GroupInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/groups/", groupID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetIncludedGroup retrieves an included group.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-included-group
+func (s *GroupsService) GetIncludedGroup(groupID, includeGroupID string) (*GroupInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/groups/%s", groupID, includeGroupID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Missing Group Endpoints
 	Create Group
@@ -234,16 +330,12 @@ Missing Group Endpoints
 	Set Group Owner
 
 Missing Group Member Endpoints
-	List Group Members
-	Get Group Member
 	Add Group Member
 	Add Group Members
 	Delete Group Member
 	Delete Group Members
 
 Missing Group Include Endpoints
-	List Included Groups
-	Get Included Group
 	Include Group
 	Include Groups
 	Delete Included Group
