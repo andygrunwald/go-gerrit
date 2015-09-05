@@ -13,6 +13,10 @@ import (
 	"github.com/google/go-querystring/query"
 )
 
+// TODO Try to reduce the code duplications of a std API req
+// Maybe with http://play.golang.org/p/j-667shCCB
+// and https://groups.google.com/forum/#!topic/golang-nuts/D-gIr24k5uY
+
 // A Client manages communication with the Gerrit API.
 type Client struct {
 	// HTTP client used to communicate with the API.
