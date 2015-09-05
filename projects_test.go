@@ -31,7 +31,7 @@ func TestProjectsService_ListProjects(t *testing.T) {
 		t.Errorf("Projects.ListProjects returned error: %v", err)
 	}
 
-	want := map[string]ProjectInfo{
+	want := &map[string]ProjectInfo{
 		"arch": ProjectInfo{
 			ID:    "arch",
 			State: "ACTIVE",

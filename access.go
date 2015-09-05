@@ -60,7 +60,7 @@ type ListAccessRightsOptions struct {
 // The entries in the map are sorted by project name.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-access.html#list-access
-func (s *AccessService) ListAccessRights(opt *ListAccessRightsOptions) (map[string]ProjectAccessInfo, *Response, error) {
+func (s *AccessService) ListAccessRights(opt *ListAccessRightsOptions) (*map[string]ProjectAccessInfo, *Response, error) {
 	u := "access/"
 
 	u, err := addOptions(u, opt)
@@ -73,11 +73,11 @@ func (s *AccessService) ListAccessRights(opt *ListAccessRightsOptions) (map[stri
 		return nil, nil, err
 	}
 
-	accessInformation := new(map[string]ProjectAccessInfo)
-	resp, err := s.client.Do(req, accessInformation)
+	v := new(map[string]ProjectAccessInfo)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return *accessInformation, resp, err
+	return v, resp, err
 }

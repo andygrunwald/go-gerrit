@@ -255,7 +255,7 @@ type ProjectOptions struct {
 // The entries in the map are sorted by project name.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-projects
-func (s *ProjectsService) ListProjects(opt *ProjectOptions) (map[string]ProjectInfo, *Response, error) {
+func (s *ProjectsService) ListProjects(opt *ProjectOptions) (*map[string]ProjectInfo, *Response, error) {
 	u := "projects/"
 
 	u, err := addOptions(u, opt)
@@ -268,13 +268,13 @@ func (s *ProjectsService) ListProjects(opt *ProjectOptions) (map[string]ProjectI
 		return nil, nil, err
 	}
 
-	projectInfo := new(map[string]ProjectInfo)
-	resp, err := s.client.Do(req, projectInfo)
+	v := new(map[string]ProjectInfo)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return *projectInfo, resp, err
+	return v, resp, err
 }
 
 // GetProject retrieves a project.
@@ -288,13 +288,13 @@ func (s *ProjectsService) GetProject(projectName string) (*ProjectInfo, *Respons
 		return nil, nil, err
 	}
 
-	projectInfo := new(ProjectInfo)
-	resp, err := s.client.Do(req, projectInfo)
+	v := new(ProjectInfo)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return projectInfo, resp, err
+	return v, resp, err
 }
 
 // CreateProject creates a new project.
@@ -308,13 +308,13 @@ func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput)
 		return nil, nil, err
 	}
 
-	projectInfo := new(ProjectInfo)
-	resp, err := s.client.Do(req, projectInfo)
+	v := new(ProjectInfo)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return projectInfo, resp, err
+	return v, resp, err
 }
 
 // GetProjectDescription retrieves the description of a project.
@@ -358,14 +358,54 @@ func (s *ProjectsService) getStringResponse(u string) (*string, *Response, error
 	return v, resp, err
 }
 
+// GetRepositoryStatistics return statistics for the repository of a project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-repository-statistics
+func (s *ProjectsService) GetRepositoryStatistics(projectName string) (*RepositoryStatisticsInfo, *Response, error) {
+	u := fmt.Sprintf("/projects/%s/statistics.git'", projectName)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(RepositoryStatisticsInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetConfig gets some configuration information about a project.
+// Note that this config info is not simply the contents of project.config;
+// it generally contains fields that may have been inherited from parent projects.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-config
+func (s *ProjectsService) GetConfig(projectName string) (*ConfigInfo, *Response, error) {
+	u := fmt.Sprintf("/projects/%s/config'", projectName)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ConfigInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /**
 Missing Project Endpoints
 	Set Project Description
 	Delete Project Description
 	Set Project Parent
 	Set HEAD
-	Get Repository Statistics
-	Get Config
 	Set Config
 	Run GC
 	Ban Commit

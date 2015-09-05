@@ -216,13 +216,13 @@ func (s *AccountsService) GetAccount(account string) (*AccountInfo, *Response, e
 		return nil, nil, err
 	}
 
-	accountInfo := new(AccountInfo)
-	resp, err := s.client.Do(req, accountInfo)
+	v := new(AccountInfo)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return accountInfo, resp, err
+	return v, resp, err
 }
 
 /*

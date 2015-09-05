@@ -28,7 +28,7 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 		t.Errorf("Access.ListAccessRights returned error: %v", err)
 	}
 
-	want := map[string]ProjectAccessInfo{
+	want := &map[string]ProjectAccessInfo{
 		"go": ProjectAccessInfo{
 			Revision: "08f45ba74baef9699b650f42022df6467389c1f0",
 			InheritsFrom: ProjectInfo{
@@ -63,7 +63,7 @@ func TestAccessService_ListAccessRights_WithoutOpts(t *testing.T) {
 		t.Errorf("Access.ListAccessRights returned error: %v", err)
 	}
 
-	want := map[string]ProjectAccessInfo{}
+	want := &map[string]ProjectAccessInfo{}
 	if !reflect.DeepEqual(access, want) {
 		t.Errorf("Access.ListAccessRights returned %+v, want %+v", access, want)
 	}
