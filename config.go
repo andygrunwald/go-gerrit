@@ -1,5 +1,9 @@
 package diffy
 
+import (
+	"fmt"
+)
+
 // ConfigService contains Config related REST endpoints
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html
@@ -225,19 +229,236 @@ type ChangeConfigInfo struct {
 	SubmitWholeTopic bool   `json:"submit_whole_topic"`
 }
 
+// ListCachesOptions specifies the different output formats.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#list-caches
+type ListCachesOptions struct {
+	// Format specifies the different output formats.
+	Format string `url:"format,omitempty"`
+}
+
+// SummaryOptions specifies the different options for the GetSummary call.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-summary
+type SummaryOptions struct {
+	// JVM includes a JVM summary.
+	JVM bool `url:"jvm,omitempty"`
+	// GC requests a Java garbage collection before computing the information about the Java memory heap.
+	GC bool `url:"gc,omitempty"`
+}
+
+// GetVersion returns the version of the Gerrit server.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-version
+func (s *ConfigService) GetVersion() (*string, *Response, error) {
+	u := "config/server/version"
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
+// GetServerInfo returns the information about the Gerrit server configuration.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-info
+func (s *ConfigService) GetServerInfo() (*ServerInfo, *Response, error) {
+	u := "config/server/info"
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ServerInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListCaches lists the caches of the server. Caches defined by plugins are included.
+// The caller must be a member of a group that is granted one of the following capabilities:
+// * View Caches
+// * Maintain Server
+// * Administrate Server
+// The entries in the map are sorted by cache name.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#list-caches
+func (s *ConfigService) ListCaches(opt *ListCachesOptions) (*map[string]CacheInfo, *Response, error) {
+	u := "config/server/caches/"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(map[string]CacheInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetCache retrieves information about a cache.
+// The caller must be a member of a group that is granted one of the following capabilities:
+// * View Caches
+// * Maintain Server
+// * Administrate Server
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-cache
+func (s *ConfigService) GetCache(cacheName string) (*CacheInfo, *Response, error) {
+	u := fmt.Sprintf("config/server/caches/%s", cacheName)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(CacheInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetSummary retrieves a summary of the current server state.
+// The caller must be a member of a group that is granted the Administrate Server capability.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-summary
+func (s *ConfigService) GetSummary(opt *SummaryOptions) (*SummaryInfo, *Response, error) {
+	u := "config/server/summary"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(SummaryInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListCapabilities lists the capabilities that are available in the system.
+// There are two kinds of capabilities: core and plugin-owned capabilities.
+// The entries in the map are sorted by capability ID.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#list-capabilities
+func (s *ConfigService) ListCapabilities() (*map[string]ConfigCapabilityInfo, *Response, error) {
+	u := "config/server/capabilities"
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(map[string]ConfigCapabilityInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListTasks lists the tasks from the background work queues that the Gerrit daemon is currently performing, or will perform in the near future.
+// Gerrit contains an internal scheduler, similar to cron, that it uses to queue and dispatch both short and long term tasks.
+// Tasks that are completed or canceled exit the queue very quickly once they enter this state, but it can be possible to observe tasks in these states.
+// End-users may see a task only if they can also see the project the task is associated with.
+// Tasks operating on other projects, or that do not have a specific project, are hidden.
+//
+// The caller must be a member of a group that is granted one of the following capabilities:
+// * View Queue
+// * Maintain Server
+// * Administrate Server
+//
+// The entries in the list are sorted by task state, remaining delay and command.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#list-tasks
+func (s *ConfigService) ListTasks() (*[]TaskInfo, *Response, error) {
+	u := "config/server/tasks"
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]TaskInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetTask retrieves a task from the background work queue that the Gerrit daemon is currently performing, or will perform in the near future.
+// End-users may see a task only if they can also see the project the task is associated with.
+// Tasks operating on other projects, or that do not have a specific project, are hidden.
+//
+// The caller must be a member of a group that is granted one of the following capabilities:
+// * View Queue
+// * Maintain Server
+// * Administrate Server
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-task
+func (s *ConfigService) GetTask(taskID string) (*TaskInfo, *Response, error) {
+	u := fmt.Sprintf("config/server/tasks/%s", taskID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(TaskInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetTopMenus returns the list of additional top menu entries.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-top-menus
+func (s *ConfigService) GetTopMenus() (*[]TopMenuEntryInfo, *Response, error) {
+	u := "config/server/top-menus"
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]TopMenuEntryInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Missing Config Endpoints
-	Get Version
-	Get Server Info
 	Confirm Email
-	List Caches
 	Cache Operations
-	Get Cache
 	Flush Cache
-	Get Summary
-	List Capabilities
-	List Tasks
-	Get Task
 	Delete Task
-	Get Top Menus
 */
