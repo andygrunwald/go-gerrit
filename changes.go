@@ -1,5 +1,9 @@
 package diffy
 
+import (
+	"fmt"
+)
+
 // ChangesService contains Change related REST endpoints
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html
@@ -393,13 +397,120 @@ type SuggestedReviewerInfo struct {
 	Group   GroupBaseInfo `json:"group,omitempty"`
 }
 
+// QueryChangeOptions specifies the parameters to the ChangesService.QueryChanges.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+type QueryChangeOptions struct {
+	// Query parameter
+	// Clients are allowed to specify more than one query by setting the q parameter multiple times.
+	// In this case the result is an array of arrays, one per query in the same order the queries were given in.
+	//
+	// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/user-search.html#_search_operators
+	Query []string `url:"q,omitempty"`
+
+	// The n parameter can be used to limit the returned results.
+	// If the n query parameter is supplied and additional changes exist that match the query beyond the end, the last change object has a _more_changes: true JSON field set.
+	Limit int `url:"n,omitempty"`
+
+	// The S or start query parameter can be supplied to skip a number of changes from the list.
+	Skip  int `url:"S,omitempty"`
+	Start int `url:"start,omitempty"`
+
+	ChangeOptions
+}
+
+// ChangeOptions specifies the parameters for Query changes.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+type ChangeOptions struct {
+	// Additional fields can be obtained by adding o parameters, each option requires more database lookups and slows down the query response time to the client so they are generally disabled by default.
+	//
+	// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+	AdditionalFields []string `url:"o,omitempty"`
+}
+
+// QueryChanges visible to the caller.
+// The query string must be provided by the q parameter.
+// The n parameter can be used to limit the returned results.
+//
+// The change output is sorted by the last update time, most recently updated to oldest updated.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+func (s *ChangesService) QueryChanges(opt *QueryChangeOptions) (*[]ChangeInfo, *Response, error) {
+	u := "changes/"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetChange retrieves a change.
+// Additional fields can be obtained by adding o parameters, each option requires more database lookups and slows down the query response time to the client so they are generally disabled by default.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-change
+func (s *ChangesService) GetChange(changeID string, opt *ChangeOptions) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s", changeID)
+	return s.getChangeInfoResponse(u, opt)
+}
+
+// GetChangeDetail retrieves a change with labels, detailed labels, detailed accounts, and messages.
+// Additional fields can be obtained by adding o parameters, each option requires more database lookups and slows down the query response time to the client so they are generally disabled by default.
+//
+// This response will contain all votes for each label and include one combined vote.
+// The combined label vote is calculated in the following order (from highest to lowest): REJECTED > APPROVED > DISLIKED > RECOMMENDED.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-change
+func (s *ChangesService) GetChangeDetail(changeID string, opt *ChangeOptions) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/detail", changeID)
+	return s.getChangeInfoResponse(u, opt)
+}
+
+// getChangeInfoResponse retrieved a single ChangeInfo Response for a GET request
+func (s *ChangesService) getChangeInfoResponse(u string, opt *ChangeOptions) (*ChangeInfo, *Response, error) {
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetTopic retrieves the topic of a change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-topic
+func (s *ChangesService) GetTopic(changeID string) (*string, *Response, error) {
+	u := fmt.Sprintf("changes/%s/topic", changeID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
 /*
 Missing Change Endpoints
 	Create Change
-	Query Changes
-	Get Change
-	Get Change Detail
-	Get Topic
 	Set Topic
 	Delete Topic
 	Abandon Change
