@@ -346,3 +346,41 @@ func (s *ProjectsService) GetProjectDescription(name string) (*string, *Response
 	descStr := desc.String()
 	return &descStr, resp, err
 }
+
+/**
+Things TODO
+Project Endpoints
+	Set Project Description
+	Delete Project Description
+	Get Project Parent
+	Set Project Parent
+	Get HEAD
+	Set HEAD
+	Get Repository Statistics
+	Get Config
+	Set Config
+	Run GC
+	Ban Commit
+Branch Endpoints
+	List Branches
+	Get Branch
+	Create Branch
+	Delete Branch
+	Delete Branches
+	Get Content
+	Get Reflog
+Child Project Endpoints
+	List Child Projects
+	Get Child Project
+Tag Endpoints
+	List Tags
+	Get Tag
+Commit Endpoints
+	Get Commit
+	Get Content
+Dashboard Endpoints
+	List Dashboards
+	Get Dashboard
+	Set Dashboard
+	Delete Dashboard
+*/
