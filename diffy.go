@@ -22,6 +22,9 @@ type Client struct {
 	// BaseURL should always be specified with a trailing slash.
 	baseURL *url.URL
 
+	// Diffy service for authentication
+	Authentication *AuthenticationService
+
 	// Services used for talking to different parts of the Gerrit API.
 	Access   *AccessService
 	Accounts *AccountsService
@@ -58,6 +61,7 @@ func NewClient(gerritInstance string, httpClient *http.Client) (*Client, error) 
 		client:  httpClient,
 		baseURL: baseURL,
 	}
+	c.Authentication = &AuthenticationService{client: c}
 	c.Access = &AccessService{client: c}
 	c.Accounts = &AccountsService{client: c}
 	c.Changes = &ChangesService{client: c}
@@ -74,6 +78,11 @@ func NewClient(gerritInstance string, httpClient *http.Client) (*Client, error) 
 // Relative URLs should always be specified without a preceding slash.
 // If specified, the value pointed to by body is JSON encoded and included as the request body.
 func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
+	// If we are authenticated, lets apply the a/ prefix
+	if c.Authentication.HasAuth() == true {
+		urlStr = "a/" + urlStr
+	}
+
 	rel, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -93,6 +102,11 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	req, err := http.NewRequest(method, u.String(), buf)
 	if err != nil {
 		return nil, err
+	}
+
+	// Apply HTTP Basic Authentication
+	if c.Authentication.HasBasicAuth() == true {
+		req.SetBasicAuth(c.Authentication.username, c.Authentication.password)
 	}
 
 	// Request compact JSON
@@ -171,6 +185,11 @@ func CheckResponse(r *http.Response) error {
 	if c := r.StatusCode; 200 <= c && c <= 299 {
 		return nil
 	}
+
+	// Some calls require an authentification
+	// In such cases errors like:
+	// 		API call to https://review.typo3.org/accounts/self failed: 403 Forbidden
+	// will be thrown.
 
 	err := fmt.Errorf("API call to %s failed: %s", r.Request.URL.String(), r.Status)
 	return err
