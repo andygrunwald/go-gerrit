@@ -280,8 +280,8 @@ func (s *ProjectsService) ListProjects(opt *ProjectOptions) (map[string]ProjectI
 // GetProject retrieves a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project
-func (s *ProjectsService) GetProject(name string) (*ProjectInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s", name)
+func (s *ProjectsService) GetProject(projectName string) (*ProjectInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s", projectName)
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -300,8 +300,8 @@ func (s *ProjectsService) GetProject(name string) (*ProjectInfo, *Response, erro
 // CreateProject creates a new project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-project
-func (s *ProjectsService) CreateProject(name string, input *ProjectInput) (*ProjectInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s", name)
+func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput) (*ProjectInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s", projectName)
 
 	req, err := s.client.NewRequest("PUT", u, input)
 	if err != nil {
