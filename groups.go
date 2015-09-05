@@ -1,5 +1,9 @@
 package diffy
 
+import (
+	"fmt"
+)
+
 // GroupsService contains Group related REST endpoints
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html
@@ -60,22 +64,174 @@ type MembersInput struct {
 	Members   []string `json:"members,omitempty"`
 }
 
+// ListGroupsOptions specifies the different options for the ListGroups call.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#list-groups
+type ListGroupsOptions struct {
+	// Group Options
+	// Options fields can be obtained by adding o parameters, each option requires more lookups and slows down the query response time to the client so they are generally disabled by default.
+	// Optional fields are:
+	//	INCLUDES: include list of directly included groups.
+	//	MEMBERS: include list of direct group members.
+	Options []string `url:"o,omitempty"`
+
+	// Check if a group is owned by the calling user
+	// By setting the option owned and specifying a group to inspect with the option q, it is possible to find out, if this group is owned by the calling user.
+	// If the group is owned by the calling user, the returned map contains this group. If the calling user doesn’t own this group an empty map is returned.
+	Owned string `url:"owned,omitempty"`
+	Group string `url:"q,omitempty"`
+
+	// Group Limit
+	// The /groups/ URL also accepts a limit integer in the n parameter. This limits the results to show n groups.
+	Limit int `url:"n,omitempty"`
+	// The /groups/ URL also accepts a start integer in the S parameter. The results will skip S groups from group list.
+	Skip int `url:"S,omitempty"`
+}
+
+// ListGroups lists the groups accessible by the caller.
+// This is the same as using the ls-groups command over SSH, and accepts the same options as query parameters.
+// The entries in the map are sorted by group name.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#list-groups
+func (s *GroupsService) ListGroups(opt *ListGroupsOptions) (*map[string]GroupInfo, *Response, error) {
+	u := "groups/"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(map[string]GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetGroup retrieves a group.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group
+func (s *GroupsService) GetGroup(groupID string) (*GroupInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s", groupID)
+	return s.getGroupInfoResponse(u)
+}
+
+// GetGroupDetail retrieves a group with the direct members and the directly included groups.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-detail
+func (s *GroupsService) GetGroupDetail(groupID string) (*GroupInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/detail", groupID)
+	return s.getGroupInfoResponse(u)
+}
+
+// getGroupInfoResponse retrieved a single GroupInfo Response for a GET request
+func (s *GroupsService) getGroupInfoResponse(u string) (*GroupInfo, *Response, error) {
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetGroupName retrieves the name of a group.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-name
+func (s *GroupsService) GetGroupName(groupID string) (*string, *Response, error) {
+	u := fmt.Sprintf("groups/%s/name", groupID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
+// GetGroupDescription retrieves the description of a group.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-description
+func (s *GroupsService) GetGroupDescription(groupID string) (*string, *Response, error) {
+	u := fmt.Sprintf("groups/%s/description", groupID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
+// GetGroupOptions retrieves the options of a group.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-options
+func (s *GroupsService) GetGroupOptions(groupID string) (*GroupOptionsInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/options", groupID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GroupOptionsInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetGroupOwner retrieves the owner group of a Gerrit internal group.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-owner
+func (s *GroupsService) GetGroupOwner(groupID string) (*GroupInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/owner", groupID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetAuditLog gets the audit log of a Gerrit internal group.
+// The returned audit events are sorted by date in reverse order so that the newest audit event comes first.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-audit-log
+func (s *GroupsService) GetAuditLog(groupID string) (*[]GroupAuditEventInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/log.audit", groupID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]GroupAuditEventInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Missing Group Endpoints
-	List Groups
-	Get Group
 	Create Group
-	Get Group Detail
-	Get Group Name
 	Rename Group
-	Get Group Description
 	Set Group Description
 	Delete Group Description
-	Get Group Options
 	Set Group Options
-	Get Group Owner
 	Set Group Owner
-	Get Audit Log
 
 Missing Group Member Endpoints
 	List Group Members
