@@ -228,3 +228,19 @@ func addOptions(s string, opt interface{}) (string, error) {
 	u.RawQuery = qs.Encode()
 	return u.String(), nil
 }
+
+// getStringResponseWithoutOptions retrieved a single string Response for a GET request
+func getStringResponseWithoutOptions(client *Client, u string) (*string, *Response, error) {
+	req, err := client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}

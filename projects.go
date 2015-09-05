@@ -351,7 +351,7 @@ func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput)
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-description
 func (s *ProjectsService) GetProjectDescription(projectName string) (*string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/description", projectName)
-	return s.getStringResponse(u)
+	return getStringResponseWithoutOptions(s.client, u)
 }
 
 // GetProjectParent retrieves the name of a project’s parent project.
@@ -360,7 +360,7 @@ func (s *ProjectsService) GetProjectDescription(projectName string) (*string, *R
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-parent
 func (s *ProjectsService) GetProjectParent(projectName string) (*string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/parent", projectName)
-	return s.getStringResponse(u)
+	return getStringResponseWithoutOptions(s.client, u)
 }
 
 // GetHEAD retrieves for a project the name of the branch to which HEAD points.
@@ -368,23 +368,7 @@ func (s *ProjectsService) GetProjectParent(projectName string) (*string, *Respon
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-head
 func (s *ProjectsService) GetHEAD(projectName string) (*string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/HEAD", projectName)
-	return s.getStringResponse(u)
-}
-
-// getStringResponse retrieved a single string Response for a GET request
-func (s *ProjectsService) getStringResponse(u string) (*string, *Response, error) {
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(string)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
+	return getStringResponseWithoutOptions(s.client, u)
 }
 
 // GetRepositoryStatistics return statistics for the repository of a project.

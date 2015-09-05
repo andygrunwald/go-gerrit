@@ -259,19 +259,7 @@ func (s *AccountsService) GetAccountDetails(accountID string) (*AccountDetailInf
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account-name
 func (s *AccountsService) GetAccountName(accountID string) (*string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/name", accountID)
-
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(string)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
+	return getStringResponseWithoutOptions(s.client, u)
 }
 
 // GetUsername retrieves the username of an account.
@@ -279,19 +267,7 @@ func (s *AccountsService) GetAccountName(accountID string) (*string, *Response, 
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-username
 func (s *AccountsService) GetUsername(accountID string) (*string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/username", accountID)
-
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(string)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
+	return getStringResponseWithoutOptions(s.client, u)
 }
 
 // GetHTTPPassword retrieves the HTTP password of an account.
@@ -299,19 +275,7 @@ func (s *AccountsService) GetUsername(accountID string) (*string, *Response, err
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-http-password
 func (s *AccountsService) GetHTTPPassword(accountID string) (*string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/password.http", accountID)
-
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(string)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
+	return getStringResponseWithoutOptions(s.client, u)
 }
 
 // ListAccountEmails returns the email addresses that are configured for the specified user.
