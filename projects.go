@@ -236,7 +236,7 @@ type ProjectOptions struct {
 	Description bool `url:"d,omitempty"`
 
 	// Limit the number of projects to be included in the results.
-	Limit int
+	Limit int `url:"n,omitempty"`
 
 	// Limit the results to those projects that start with the specified prefix.
 	Prefix string `url:"p,omitempty"`

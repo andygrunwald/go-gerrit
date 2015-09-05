@@ -23,7 +23,6 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 	opt := &ListAccessRightsOptions{
 		Project: []string{"go"},
 	}
-
 	access, _, err := testClient.Access.ListAccessRights(opt)
 	if err != nil {
 		t.Errorf("Access.ListAccessRights returned error: %v", err)

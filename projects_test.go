@@ -8,6 +8,45 @@ import (
 	"testing"
 )
 
+func TestProjectsService_ListProjects(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testMux.HandleFunc("/projects/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testFormValues(t, r, testValues{
+			"r": "(arch|benchmarks)",
+			"n": "2",
+		})
+
+		fmt.Fprint(w, `)]}'`+"\n"+`{"arch":{"id":"arch","state":"ACTIVE"},"benchmarks":{"id":"benchmarks","state":"ACTIVE"}}`)
+	})
+
+	opt := &ProjectOptions{
+		Regex: "(arch|benchmarks)",
+		Limit: 2,
+	}
+	project, _, err := testClient.Projects.ListProjects(opt)
+	if err != nil {
+		t.Errorf("Projects.ListProjects returned error: %v", err)
+	}
+
+	want := map[string]ProjectInfo{
+		"arch": ProjectInfo{
+			ID:    "arch",
+			State: "ACTIVE",
+		},
+		"benchmarks": ProjectInfo{
+			ID:    "benchmarks",
+			State: "ACTIVE",
+		},
+	}
+
+	if !reflect.DeepEqual(project, want) {
+		t.Errorf("Projects.ListProjects returned %+v, want %+v", project, want)
+	}
+}
+
 func TestProjectsService_GetProject(t *testing.T) {
 	setup()
 	defer teardown()
