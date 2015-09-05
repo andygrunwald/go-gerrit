@@ -91,8 +91,8 @@ type AccountNameInput struct {
 	Name string `json:"name,omitempty"`
 }
 
-// CapabilityInfo entity contains information about the global capabilities of a user.
-type CapabilityInfo struct {
+// AccountCapabilityInfo entity contains information about the global capabilities of a user.
+type AccountCapabilityInfo struct {
 	AccessDatabase     bool           `json:"accessDatabase,omitempty"`
 	AdministrateServer bool           `json:"administrateServer,omitempty"`
 	CreateAccount      bool           `json:"createAccount,omitempty"`

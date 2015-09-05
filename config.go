@@ -45,8 +45,8 @@ type CacheOperationInput struct {
 	Caches    []string `json:"caches,omitempty"`
 }
 
-// CapabilityInfo entity contains information about a capability.type CapabilityInfo struct {
-type CapabilityInfo struct {
+// ConfigCapabilityInfo entity contains information about a capability.type
+type ConfigCapabilityInfo struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
