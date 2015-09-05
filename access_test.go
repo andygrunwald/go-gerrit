@@ -48,3 +48,24 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 		t.Errorf("Access.ListAccessRights returned %+v, want %+v", access, want)
 	}
 }
+
+func TestAccessService_ListAccessRights_WithoutOpts(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testMux.HandleFunc("/access/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+
+		fmt.Fprint(w, `)]}'`+"\n"+`{}`)
+	})
+
+	access, _, err := testClient.Access.ListAccessRights(nil)
+	if err != nil {
+		t.Errorf("Access.ListAccessRights returned error: %v", err)
+	}
+
+	want := map[string]ProjectAccessInfo{}
+	if !reflect.DeepEqual(access, want) {
+		t.Errorf("Access.ListAccessRights returned %+v, want %+v", access, want)
+	}
+}
