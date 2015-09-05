@@ -59,3 +59,37 @@ type MembersInput struct {
 	OneMember string   `json:"_one_member,omitempty"`
 	Members   []string `json:"members,omitempty"`
 }
+
+/*
+Missing Group Endpoints
+	List Groups
+	Get Group
+	Create Group
+	Get Group Detail
+	Get Group Name
+	Rename Group
+	Get Group Description
+	Set Group Description
+	Delete Group Description
+	Get Group Options
+	Set Group Options
+	Get Group Owner
+	Set Group Owner
+	Get Audit Log
+
+Missing Group Member Endpoints
+	List Group Members
+	Get Group Member
+	Add Group Member
+	Add Group Members
+	Delete Group Member
+	Delete Group Members
+
+Missing Group Include Endpoints
+	List Included Groups
+	Get Included Group
+	Include Group
+	Include Groups
+	Delete Included Group
+	Delete Included Groups
+*/

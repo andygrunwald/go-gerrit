@@ -392,3 +392,77 @@ type SuggestedReviewerInfo struct {
 	Account AccountInfo   `json:"account,omitempty"`
 	Group   GroupBaseInfo `json:"group,omitempty"`
 }
+
+/*
+Missing Change Endpoints
+	Create Change
+	Query Changes
+	Get Change
+	Get Change Detail
+	Get Topic
+	Set Topic
+	Delete Topic
+	Abandon Change
+	Restore Change
+	Rebase Change
+	Revert Change
+	Submit Change
+	Changes submitted together
+	Publish Draft Change
+	Delete Draft Change
+	Get Included In
+	Index Change
+	List Change Comments
+	List Change Drafts
+	Check change
+	Fix change
+
+Missing Change Edit Endpoints
+	Get Change Edit Details
+	Change file content in Change Edit
+	Restore file content or rename files in Change Edit
+	Change commit message in Change Edit
+	Delete file in Change Edit
+	Retrieve file content from Change Edit
+	Retrieve meta data of a file from Change Edit
+	Retrieve commit message from Change Edit or current patch set of the change
+	Publish Change Edit
+	Rebase Change Edit
+	Delete Change Edit
+
+Missing Reviewer Endpoints
+	List Reviewers
+	Suggest Reviewers
+	Get Reviewer
+	Add Reviewer
+	Delete Reviewer
+
+Missing Revision Endpoints
+	Get Commit
+	Get Revision Actions
+	Get Review
+	Get Related Changes
+	Set Review
+	Rebase Revision
+	Submit Revision
+	Publish Draft Revision
+	Delete Draft Revision
+	Get Patch
+	Get Mergeable
+	Get Submit Type
+	Test Submit Type
+	Test Submit Rule
+	List Revision Drafts
+	Create Draft
+	Get Draft
+	Update Draft
+	Delete Draft
+	List Revision Comments
+	Get Comment
+	List Files
+	Get Content
+	Get Diff
+	Set Reviewed
+	Delete Reviewed
+	Cherry Pick Revision
+*/

@@ -348,8 +348,7 @@ func (s *ProjectsService) GetProjectDescription(name string) (*string, *Response
 }
 
 /**
-Things TODO
-Project Endpoints
+Missing Project Endpoints
 	Set Project Description
 	Delete Project Description
 	Get Project Parent
@@ -361,7 +360,8 @@ Project Endpoints
 	Set Config
 	Run GC
 	Ban Commit
-Branch Endpoints
+
+Missing Branch Endpoints
 	List Branches
 	Get Branch
 	Create Branch
@@ -369,16 +369,20 @@ Branch Endpoints
 	Delete Branches
 	Get Content
 	Get Reflog
-Child Project Endpoints
+
+Missing Child Project Endpoints
 	List Child Projects
 	Get Child Project
-Tag Endpoints
+
+Missing Tag Endpoints
 	List Tags
 	Get Tag
-Commit Endpoints
+
+Missing Commit Endpoints
 	Get Commit
 	Get Content
-Dashboard Endpoints
+
+Missing Dashboard Endpoints
 	List Dashboards
 	Get Dashboard
 	Set Dashboard

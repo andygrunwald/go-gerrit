@@ -224,3 +224,20 @@ type ChangeConfigInfo struct {
 	UpdateDelay      int    `json:"update_delay"`
 	SubmitWholeTopic bool   `json:"submit_whole_topic"`
 }
+
+/*
+Missing Config Endpoints
+	Get Version
+	Get Server Info
+	Confirm Email
+	List Caches
+	Cache Operations
+	Get Cache
+	Flush Cache
+	Get Summary
+	List Capabilities
+	List Tasks
+	Get Task
+	Delete Task
+	Get Top Menus
+*/

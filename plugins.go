@@ -19,3 +19,13 @@ type PluginInfo struct {
 type PluginInput struct {
 	URL string `json:"url"`
 }
+
+/*
+Missing Plugin Endpoints
+	List Plugins
+	Install Plugin
+	Get Plugin Status
+	Enable Plugin
+	Disable Plugin
+	Reload Plugin
+*/

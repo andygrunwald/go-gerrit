@@ -224,3 +224,46 @@ func (s *AccountsService) GetAccount(account string) (*AccountInfo, *Response, e
 
 	return accountInfo, resp, err
 }
+
+/*
+Missing Account Endpoints:
+	Suggest Account
+	Create Account
+	Get Account Details
+	Get Account Name
+	Set Account Name
+	Delete Account Name
+	Get Username
+	Set Username
+	Get Active
+	Set Active
+	Delete Active
+	Get HTTP Password
+	Set/Generate HTTP Password
+	Delete HTTP Password
+	List Account Emails
+	Get Account Email
+	Create Account Email
+	Delete Account Email
+	Set Preferred Email
+	List SSH Keys
+	Get SSH Key
+	Add SSH Key
+	Delete SSH Key
+	List GPG Keys
+	Get GPG Key
+	Add/Delete GPG Keys
+	Delete GPG Key
+	List Account Capabilities
+	Check Account Capability
+	List Groups
+	Get Avatar
+	Get Avatar Change URL
+	Get User Preferences
+	Set User Preferences
+	Get Diff Preferences
+	Set Diff Preferences
+	Get Starred Changes
+	Star Change
+	Unstar Change
+*/
