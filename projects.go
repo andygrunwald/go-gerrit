@@ -281,7 +281,7 @@ func (s *ProjectsService) ListProjects(opt *ProjectOptions) (map[string]ProjectI
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project
 func (s *ProjectsService) GetProject(name string) (*ProjectInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/", name)
+	u := fmt.Sprintf("projects/%s", name)
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -301,7 +301,7 @@ func (s *ProjectsService) GetProject(name string) (*ProjectInfo, *Response, erro
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-project
 func (s *ProjectsService) CreateProject(name string, input *ProjectInput) (*ProjectInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/", name)
+	u := fmt.Sprintf("projects/%s", name)
 
 	req, err := s.client.NewRequest("PUT", u, input)
 	if err != nil {
@@ -320,30 +320,49 @@ func (s *ProjectsService) CreateProject(name string, input *ProjectInput) (*Proj
 // GetProjectDescription retrieves the description of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-description
-func (s *ProjectsService) GetProjectDescription(name string) (*string, *Response, error) {
-	u := fmt.Sprintf("/projects/%s/description/", name)
+func (s *ProjectsService) GetProjectDescription(projectName string) (*string, *Response, error) {
+	u := fmt.Sprintf("/projects/%s/description", projectName)
+	return s.getStringResponse(u)
+}
 
+// GetProjectParent retrieves the name of a project’s parent project.
+// For the All-Projects root project an empty string is returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-parent
+func (s *ProjectsService) GetProjectParent(projectName string) (*string, *Response, error) {
+	u := fmt.Sprintf("/projects/%s/parent", projectName)
+	return s.getStringResponse(u)
+}
+
+// GetHEAD retrieves for a project the name of the branch to which HEAD points.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-head
+func (s *ProjectsService) GetHEAD(projectName string) (*string, *Response, error) {
+	u := fmt.Sprintf("/projects/%s/HEAD", projectName)
+	return s.getStringResponse(u)
+}
+
+// getStringResponse retrieved a single string Response for a GET request
+func (s *ProjectsService) getStringResponse(u string) (*string, *Response, error) {
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	desc := new(string)
-	resp, err := s.client.Do(req, desc)
+	v := new(string)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return desc, resp, err
+	return v, resp, err
 }
 
 /**
 Missing Project Endpoints
 	Set Project Description
 	Delete Project Description
-	Get Project Parent
 	Set Project Parent
-	Get HEAD
 	Set HEAD
 	Get Repository Statistics
 	Get Config
