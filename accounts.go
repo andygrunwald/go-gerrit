@@ -225,45 +225,237 @@ func (s *AccountsService) GetAccount(account string) (*AccountInfo, *Response, e
 	return v, resp, err
 }
 
+// GetAccountDetails retrieves the details of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-detail
+func (s *AccountsService) GetAccountDetails(accountID string) (*AccountDetailInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/detail", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(AccountDetailInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetAccountName retrieves the full name of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account-name
+func (s *AccountsService) GetAccountName(accountID string) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/name", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetUsername retrieves the username of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-username
+func (s *AccountsService) GetUsername(accountID string) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/username", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetHTTPPassword retrieves the HTTP password of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-http-password
+func (s *AccountsService) GetHTTPPassword(accountID string) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/password.http", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListAccountEmails returns the email addresses that are configured for the specified user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#list-account-emails
+func (s *AccountsService) ListAccountEmails(accountID string) (*[]EmailInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/emails", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]EmailInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetAccountEmail retrieves an email address of a user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account-email
+func (s *AccountsService) GetAccountEmail(accountID, emailID string) (*EmailInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/emails/%s", accountID, emailID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(EmailInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListSSHKeys returns the SSH keys of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#list-ssh-keys
+func (s *AccountsService) ListSSHKeys(accountID string) (*[]SSHKeyInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/sshkeys", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]SSHKeyInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetSSHKey retrieves an SSH key of a user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-ssh-key
+func (s *AccountsService) GetSSHKey(accountID, sshKeyID string) (*SSHKeyInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/sshkeys/%s", accountID, sshKeyID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(SSHKeyInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListGPGKeys returns the GPG keys of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#list-gpg-keys
+func (s *AccountsService) ListGPGKeys(accountID string) (*map[string]GpgKeyInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/gpgkeys", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(map[string]GpgKeyInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetGPGKey retrieves a GPG key of a user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-gpg-key
+func (s *AccountsService) GetGPGKey(accountID, gpgKeyID string) (*GpgKeyInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/gpgkeys/%s", accountID, gpgKeyID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GpgKeyInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+/*
+List Account Capabilities
+List Groups
+Get Avatar
+Get Avatar Change URL
+Get User Preferences
+Get Diff Preferences
+Get Starred Changes
+*/
 /*
 Missing Account Endpoints:
 	Suggest Account
 	Create Account
-	Get Account Details
-	Get Account Name
 	Set Account Name
 	Delete Account Name
-	Get Username
 	Set Username
 	Get Active
 	Set Active
 	Delete Active
-	Get HTTP Password
 	Set/Generate HTTP Password
 	Delete HTTP Password
-	List Account Emails
-	Get Account Email
 	Create Account Email
 	Delete Account Email
 	Set Preferred Email
-	List SSH Keys
-	Get SSH Key
 	Add SSH Key
 	Delete SSH Key
-	List GPG Keys
-	Get GPG Key
 	Add/Delete GPG Keys
 	Delete GPG Key
-	List Account Capabilities
 	Check Account Capability
-	List Groups
-	Get Avatar
-	Get Avatar Change URL
-	Get User Preferences
 	Set User Preferences
-	Get Diff Preferences
 	Set Diff Preferences
-	Get Starred Changes
 	Star Change
 	Unstar Change
 */
