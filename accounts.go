@@ -204,6 +204,15 @@ type PreferencesInput struct {
 	URLAliases                string            `json:"url_aliases,omitempty"`
 }
 
+// CapabilityOptions specifies the parameters to filter for capabilities.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#list-account-capabilities
+type CapabilityOptions struct {
+	// To filter the set of global capabilities the q parameter can be used.
+	// Filtering may decrease the response time by avoiding looking at every possible alternative for the caller.
+	Filter []string `url:"q,omitempty"`
+}
+
 // GetAccount returns an account as an AccountInfo entity.
 // If account is "self" the current authenticated account will be returned.
 //
@@ -425,15 +434,114 @@ func (s *AccountsService) GetGPGKey(accountID, gpgKeyID string) (*GpgKeyInfo, *R
 	return v, resp, err
 }
 
-/*
-List Account Capabilities
-List Groups
-Get Avatar
-Get Avatar Change URL
-Get User Preferences
-Get Diff Preferences
-Get Starred Changes
-*/
+// ListAccountCapabilities returns the global capabilities that are enabled for the specified user.
+// If the global capabilities for the calling user should be listed, self can be used as account-id.
+// This can be used by UI tools to discover if administrative features are available to the caller, so they can hide (or show) relevant UI actions.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#list-account-capabilities
+func (s *AccountsService) ListAccountCapabilities(accountID string, opt *CapabilityOptions) (*AccountCapabilityInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/capabilities", accountID)
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(AccountCapabilityInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListGroups lists all groups that contain the specified user as a member.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#list-groups
+func (s *AccountsService) ListGroups(accountID string) (*[]GroupInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/groups", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetUserPreferences retrieves the user’s preferences.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-user-preferences
+func (s *AccountsService) GetUserPreferences(accountID string) (*PreferencesInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/preferences", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(PreferencesInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetDiffPreferences retrieves the diff preferences of a user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-diff-preferences
+func (s *AccountsService) GetDiffPreferences(accountID string) (*DiffPreferencesInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/preferences.diff", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(DiffPreferencesInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetStarredChanges gets the changes starred by the identified user account.
+// This URL endpoint is functionally identical to the changes query GET /changes/?q=is:starred.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-starred-changes
+func (s *AccountsService) GetStarredChanges(accountID string) (*[]ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/starred.changes", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Missing Account Endpoints:
 	Suggest Account
@@ -450,6 +558,8 @@ Missing Account Endpoints:
 	Delete Account Email
 	Set Preferred Email
 	Add SSH Key
+	Get Avatar
+	Get Avatar Change URL
 	Delete SSH Key
 	Add/Delete GPG Keys
 	Delete GPG Key
