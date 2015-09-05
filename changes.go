@@ -448,6 +448,25 @@ type ChangeEditDetailOptions struct {
 	DownloadCommands bool `url:"download-commands,omitempty"`
 }
 
+// DiffOptions specifies the parameters for GetDiff call.
+type DiffOptions struct {
+	// If the intraline parameter is specified, intraline differences are included in the diff.
+	Intraline bool `url:"intraline,omitempty"`
+
+	//The base parameter can be specified to control the base patch set from which the diff should be generated.
+	Base bool `url:"base,omitempty"`
+
+	// If the weblinks-only parameter is specified, only the diff web links are returned.
+	WeblinksOnly bool `url:"weblinks-only,omitempty"`
+
+	// The ignore-whitespace parameter can be specified to control how whitespace differences are reported in the result. Valid values are NONE, TRAILING, CHANGED or ALL.
+	IgnoreWhitespace string `url:"ignore-whitespace,omitempty"`
+
+	// The context parameter can be specified to control the number of lines of surrounding context in the diff.
+	// Valid values are ALL or number of lines.
+	Context string `url:"context,omitempty"`
+}
+
 // QueryChanges visible to the caller.
 // The query string must be provided by the q parameter.
 // The n parameter can be used to limit the returned results.
@@ -738,6 +757,31 @@ func (s *ChangesService) GetReviewer(changeID, accountID string) (*ReviewerInfo,
 	return v, resp, err
 }
 
+// GetDiff gets the diff of a file from a certain revision.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-diff
+func (s *ChangesService) GetDiff(changeID, revisionID, fileID string, opt *DiffOptions) (*DiffInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/files/%s/diff", changeID, revisionID, fileID)
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(DiffInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Get calls
 	Get Commit
@@ -751,7 +795,6 @@ Get calls
 	List Revision Comments
 	Get Comment
 	List Files
-	Get Diff
 
 Missing Change Endpoints
 	Create Change
