@@ -397,10 +397,10 @@ type SuggestedReviewerInfo struct {
 	Group   GroupBaseInfo `json:"group,omitempty"`
 }
 
-// QueryChangeOptions specifies the parameters to the ChangesService.QueryChanges.
+// QueryOptions specifies global parameters to query changes / reviewers.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
-type QueryChangeOptions struct {
+type QueryOptions struct {
 	// Query parameter
 	// Clients are allowed to specify more than one query by setting the q parameter multiple times.
 	// In this case the result is an array of arrays, one per query in the same order the queries were given in.
@@ -411,6 +411,13 @@ type QueryChangeOptions struct {
 	// The n parameter can be used to limit the returned results.
 	// If the n query parameter is supplied and additional changes exist that match the query beyond the end, the last change object has a _more_changes: true JSON field set.
 	Limit int `url:"n,omitempty"`
+}
+
+// QueryChangeOptions specifies the parameters to the ChangesService.QueryChanges.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+type QueryChangeOptions struct {
+	QueryOptions
 
 	// The S or start query parameter can be supplied to skip a number of changes from the list.
 	Skip  int `url:"S,omitempty"`
@@ -427,6 +434,18 @@ type ChangeOptions struct {
 	//
 	// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
 	AdditionalFields []string `url:"o,omitempty"`
+}
+
+// ChangeEditDetailOptions specifies the parameters to the ChangesService.GetChangeEditDetails.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-detail
+type ChangeEditDetailOptions struct {
+	// When request parameter list is provided the response also includes the file list.
+	List bool `url:"list,omitempty"`
+	// When base request parameter is provided the file list is computed against this base revision.
+	Base bool `url:"base,omitempty"`
+	// When request parameter download-commands is provided fetch info map is also included.
+	DownloadCommands bool `url:"download-commands,omitempty"`
 }
 
 // QueryChanges visible to the caller.
@@ -595,7 +614,145 @@ func (s *ChangesService) CheckChange(changeID string) (*ChangeInfo, *Response, e
 	return s.getChangeInfoResponse(u, nil)
 }
 
+// GetChangeEditDetails retrieves a change edit details.
+// As response an EditInfo entity is returned that describes the change edit, or “204 No Content” when change edit doesn’t exist for this change.
+// Change edits are stored on special branches and there can be max one edit per user per change.
+// Edits aren’t tracked in the database.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-detail
+func (s *ChangesService) GetChangeEditDetails(changeID string, opt *ChangeEditDetailOptions) (*EditInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/edit", changeID)
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(EditInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// RetrieveMetaDataOfAFileFromChangeEdit retrieves meta data of a file from a change edit.
+// Currently only web links are returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-meta-data
+func (s *ChangesService) RetrieveMetaDataOfAFileFromChangeEdit(changeID, filePath string) (*EditFileInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/edit/%s/meta", changeID, filePath)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(EditFileInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// RetrieveCommitMessageFromChangeEdit retrieves commit message from change edit.
+// The commit message is returned as base64 encoded string.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-message
+func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(changeID string) (*string, *Response, error) {
+	u := fmt.Sprintf("changes/%s/edit:message", changeID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
+// ListReviewers lists the reviewers of a change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-reviewers
+func (s *ChangesService) ListReviewers(changeID string) (*[]ReviewerInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/reviewers/", changeID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]ReviewerInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SuggestReviewers suggest the reviewers for a given query q and result limit n.
+// If result limit is not passed, then the default 10 is used.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#suggest-reviewers
+func (s *ChangesService) SuggestReviewers(changeID string, opt *QueryOptions) (*[]SuggestedReviewerInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/suggest_reviewers", changeID)
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]SuggestedReviewerInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetReviewer retrieves a reviewer of a change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-reviewer
+func (s *ChangesService) GetReviewer(changeID, accountID string) (*ReviewerInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/reviewers/%s", changeID, accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ReviewerInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
+Get calls
+	Get Commit
+	Get Revision Actions
+	Get Review
+	Get Related Changes
+	Get Mergeable
+	Get Submit Type
+	List Revision Drafts
+	Get Draft
+	List Revision Comments
+	Get Comment
+	List Files
+	Get Diff
+
 Missing Change Endpoints
 	Create Change
 	Set Topic
@@ -611,50 +768,32 @@ Missing Change Endpoints
 	Fix change
 
 Missing Change Edit Endpoints
-	Get Change Edit Details
 	Change file content in Change Edit
 	Restore file content or rename files in Change Edit
 	Change commit message in Change Edit
 	Delete file in Change Edit
 	Retrieve file content from Change Edit
-	Retrieve meta data of a file from Change Edit
-	Retrieve commit message from Change Edit or current patch set of the change
 	Publish Change Edit
 	Rebase Change Edit
 	Delete Change Edit
 
 Missing Reviewer Endpoints
-	List Reviewers
-	Suggest Reviewers
-	Get Reviewer
 	Add Reviewer
 	Delete Reviewer
 
 Missing Revision Endpoints
-	Get Commit
-	Get Revision Actions
-	Get Review
-	Get Related Changes
 	Set Review
 	Rebase Revision
 	Submit Revision
 	Publish Draft Revision
 	Delete Draft Revision
 	Get Patch
-	Get Mergeable
-	Get Submit Type
 	Test Submit Type
 	Test Submit Rule
-	List Revision Drafts
 	Create Draft
-	Get Draft
 	Update Draft
 	Delete Draft
-	List Revision Comments
-	Get Comment
-	List Files
 	Get Content
-	Get Diff
 	Set Reviewed
 	Delete Reviewed
 	Cherry Pick Revision
