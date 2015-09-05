@@ -218,15 +218,6 @@ type ConfigInput struct {
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
 
-// ProjectDescription entity describes a project description.
-// In some API functions no JSON will be returned, only strings.
-// E.g. GetProjectDescription
-type ProjectDescription string
-
-func (d *ProjectDescription) String() string {
-	return string(*d)
-}
-
 // ProjectOptions specifies the parameters to the ProjectsService.ListProjects.
 type ProjectOptions struct {
 	// Limit the results to the projects having the specified branch and include the sha1 of the branch in the results.
@@ -337,14 +328,13 @@ func (s *ProjectsService) GetProjectDescription(name string) (*string, *Response
 		return nil, nil, err
 	}
 
-	desc := new(ProjectDescription)
-
+	desc := new(string)
 	resp, err := s.client.Do(req, desc)
 	if err != nil {
 		return nil, resp, err
 	}
-	descStr := desc.String()
-	return &descStr, resp, err
+
+	return desc, resp, err
 }
 
 /**
