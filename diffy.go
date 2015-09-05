@@ -44,15 +44,15 @@ type Response struct {
 // NewClient returns a new Gerrit API client.
 // gerritInstance has to be the HTTP endpoint of the Gerrit instance.
 // If a nil httpClient is provided, http.DefaultClient will be used.
-func NewClient(gerritInstance string, httpClient *http.Client) (*Client, error) {
+func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
 
-	if len(gerritInstance) == 0 {
+	if len(gerritURL) == 0 {
 		return nil, fmt.Errorf("No Gerrit instance given.")
 	}
-	baseURL, err := url.Parse(gerritInstance)
+	baseURL, err := url.Parse(gerritURL)
 	if err != nil {
 		return nil, err
 	}
