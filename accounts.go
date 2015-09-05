@@ -1,5 +1,9 @@
 package diffy
 
+import (
+	"fmt"
+)
+
 // AccountsService contains Account related REST endpoints
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html
@@ -198,4 +202,25 @@ type PreferencesInput struct {
 	DiffView                  string            `json:"diff_view,omitempty"`
 	My                        []TopMenuItemInfo `json:"my,omitempty"`
 	URLAliases                string            `json:"url_aliases,omitempty"`
+}
+
+// GetAccount returns an account as an AccountInfo entity.
+// If account is "self" the current authenticated account will be returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account
+func (s *AccountsService) GetAccount(account string) (*AccountInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s", account)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	accountInfo := new(AccountInfo)
+	resp, err := s.client.Do(req, accountInfo)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return accountInfo, resp, err
 }
