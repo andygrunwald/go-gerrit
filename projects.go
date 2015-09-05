@@ -233,7 +233,8 @@ type ProjectOptions struct {
 	Prefix string `url:"p,omitempty"`
 
 	// Limit the results to those projects that match the specified regex.
-	// Boundary matchers '^' and '$' are implicit. For example: the regex 'test.*' will match any projects that start with 'test' and regex '.*test' will match any project that end with 'test'.
+	// Boundary matchers '^' and '$' are implicit.
+	// For example: the regex 'test.*' will match any projects that start with 'test' and regex '.*test' will match any project that end with 'test'.
 	Regex string `url:"r,omitempty"`
 
 	// Skip the given number of projects from the beginning of the list.
@@ -248,6 +249,25 @@ type ProjectOptions struct {
 
 	// Get projects with specified type: ALL, CODE, PERMISSIONS.
 	Type string `url:"type,omitempty"`
+}
+
+// BranchOptions specifies the parameters to the branch API endpoints.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#branch-options
+type BranchOptions struct {
+	// Limit the number of branches to be included in the results.
+	Limit int `url:"n,omitempty"`
+
+	// Skip the given number of branches from the beginning of the list.
+	Skip string `url:"s,omitempty"`
+
+	// Substring limits the results to those projects that match the specified substring.
+	Substring string `url:"m,omitempty"`
+
+	// Limit the results to those branches that match the specified regex.
+	// Boundary matchers '^' and '$' are implicit.
+	// For example: the regex 't*' will match any branches that start with 'test' and regex '*t' will match any branches that end with 'test'.
+	Regex string `url:"r,omitempty"`
 }
 
 // ListProjects lists the projects accessible by the caller.
@@ -321,7 +341,7 @@ func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput)
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-description
 func (s *ProjectsService) GetProjectDescription(projectName string) (*string, *Response, error) {
-	u := fmt.Sprintf("/projects/%s/description", projectName)
+	u := fmt.Sprintf("projects/%s/description", projectName)
 	return s.getStringResponse(u)
 }
 
@@ -330,7 +350,7 @@ func (s *ProjectsService) GetProjectDescription(projectName string) (*string, *R
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-parent
 func (s *ProjectsService) GetProjectParent(projectName string) (*string, *Response, error) {
-	u := fmt.Sprintf("/projects/%s/parent", projectName)
+	u := fmt.Sprintf("projects/%s/parent", projectName)
 	return s.getStringResponse(u)
 }
 
@@ -338,7 +358,7 @@ func (s *ProjectsService) GetProjectParent(projectName string) (*string, *Respon
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-head
 func (s *ProjectsService) GetHEAD(projectName string) (*string, *Response, error) {
-	u := fmt.Sprintf("/projects/%s/HEAD", projectName)
+	u := fmt.Sprintf("projects/%s/HEAD", projectName)
 	return s.getStringResponse(u)
 }
 
@@ -362,7 +382,7 @@ func (s *ProjectsService) getStringResponse(u string) (*string, *Response, error
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-repository-statistics
 func (s *ProjectsService) GetRepositoryStatistics(projectName string) (*RepositoryStatisticsInfo, *Response, error) {
-	u := fmt.Sprintf("/projects/%s/statistics.git'", projectName)
+	u := fmt.Sprintf("projects/%s/statistics.git", projectName)
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -384,7 +404,7 @@ func (s *ProjectsService) GetRepositoryStatistics(projectName string) (*Reposito
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-config
 func (s *ProjectsService) GetConfig(projectName string) (*ConfigInfo, *Response, error) {
-	u := fmt.Sprintf("/projects/%s/config'", projectName)
+	u := fmt.Sprintf("projects/%s/config'", projectName)
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -392,6 +412,72 @@ func (s *ProjectsService) GetConfig(projectName string) (*ConfigInfo, *Response,
 	}
 
 	v := new(ConfigInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// ListBranches list the branches of a project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-branches
+func (s *ProjectsService) ListBranches(projectName string, opt *BranchOptions) (*[]BranchInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/branches/", projectName)
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]BranchInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetBranch retrieves a branch of a project.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-branch
+func (s *ProjectsService) GetBranch(projectName, branchID string) (*BranchInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/branches/%s", projectName, branchID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(BranchInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetReflog gets the reflog of a certain branch.
+// The caller must be project owner.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-reflog
+func (s *ProjectsService) GetReflog(projectName, branchID string) (*[]ReflogEntryInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/branches/%s/reflog", projectName, branchID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]ReflogEntryInfo)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
@@ -411,13 +497,10 @@ Missing Project Endpoints
 	Ban Commit
 
 Missing Branch Endpoints
-	List Branches
-	Get Branch
 	Create Branch
 	Delete Branch
 	Delete Branches
 	Get Content
-	Get Reflog
 
 Missing Child Project Endpoints
 	List Child Projects
