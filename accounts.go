@@ -506,11 +506,84 @@ func (s *AccountsService) GetStarredChanges(accountID string) (*[]ChangeInfo, *R
 	return v, resp, err
 }
 
+// SuggestAccount suggests users for a given query q and result limit n.
+// If result limit is not passed, then the default 10 is used.
+// Returns a list of matching AccountInfo entities.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-starred-changes
+func (s *AccountsService) SuggestAccount(opt *QueryOptions) (*[]AccountInfo, *Response, error) {
+	u := "accounts/"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]AccountInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// CreateAccount creates a new account.
+// In the request body additional data for the account can be provided as AccountInput.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#create-account
+func (s *AccountsService) CreateAccount(username string, input *AccountInput) (*AccountInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s", username)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(AccountInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetAccountName sets the full name of an account.
+// The new account name must be provided in the request body inside an AccountNameInput entity.
+//
+// As response the new account name is returned.
+// If the name was deleted the response is “204 No Content”.
+// Some realms may not allow to modify the account name.
+// In this case the request is rejected with “405 Method Not Allowed”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#create-account
+func (s *AccountsService) SetAccountName(accountID string, input *AccountNameInput) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/name", accountID)
+
+	// TODO Use here the getStringResponseWithoutOptions (for PUT requests)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Missing Account Endpoints:
-	Suggest Account
-	Create Account
-	Set Account Name
 	Delete Account Name
 	Set Username
 	Get Active
