@@ -103,11 +103,5 @@ func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *D
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-dashboard
 func (s *ProjectsService) DeleteDashboard(projectName, dashboardID string, input *DashboardInput) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardID)
-
-	req, err := s.client.NewRequest("DELETE", u, input)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	return s.client.DeleteRequest(u, input)
 }

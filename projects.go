@@ -362,13 +362,7 @@ func (s *ProjectsService) SetProjectDescription(projectName string, input *Proje
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-project-description
 func (s *ProjectsService) DeleteProjectDescription(projectName string) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/description'", projectName)
-
-	req, err := s.client.NewRequest("DELETE", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	return s.client.DeleteRequest(u, nil)
 }
 
 // BanCommit marks commits as banned for the project.

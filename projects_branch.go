@@ -134,13 +134,7 @@ func (s *ProjectsService) CreateBranch(projectName, branchID string, input *Bran
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branch
 func (s *ProjectsService) DeleteBranch(projectName, branchID string) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/%s", projectName, branchID)
-
-	req, err := s.client.NewRequest("DELETE", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	return s.client.DeleteRequest(u, nil)
 }
 
 // DeleteBranches delete one or more branches.
@@ -149,13 +143,7 @@ func (s *ProjectsService) DeleteBranch(projectName, branchID string) (*Response,
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branches
 func (s *ProjectsService) DeleteBranches(projectName string, input *DeleteBranchesInput) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/branches:delete", projectName)
-
-	req, err := s.client.NewRequest("DELETE", u, input)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	return s.client.DeleteRequest(u, input)
 }
 
 // GetBranchContent gets the content of a file from the HEAD revision of a certain branch.

@@ -177,6 +177,20 @@ func (c *Client) addAuthentication(req *http.Request) {
 	}
 }
 
+// DeleteRequest sends an DELETE API Request to urlStr with optional body.
+// It is a shorthand combination for Client.NewRequest with Client.Do.
+//
+// Relative URLs should always be specified without a preceding slash.
+// If specified, the value pointed to by body is JSON encoded and included as the request body.
+func (c *Client) DeleteRequest(urlStr string, body interface{}) (*Response, error) {
+	req, err := c.NewRequest("DELETE", urlStr, body)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Do(req, nil)
+}
+
 // RemoveMagicPrefixLine removed the "magic prefix line" of Gerris JSON response.
 // the JSON response body starts with a magic prefix line that must be stripped before feeding the rest of the response body to a JSON parser.
 // The reason for this is to prevent against Cross Site Script Inclusion (XSSI) attacks.

@@ -524,11 +524,5 @@ func (s *ConfigService) FlushCache(cacheName string, input *CacheOperationInput)
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#delete-task
 func (s *ConfigService) DeleteTask(taskID string) (*Response, error) {
 	u := fmt.Sprintf("config/server/tasks/%s", taskID)
-
-	req, err := s.client.NewRequest("DELETE", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	return s.client.DeleteRequest(u, nil)
 }
