@@ -582,24 +582,67 @@ func (s *AccountsService) SetAccountName(accountID string, input *AccountNameInp
 	return v, resp, err
 }
 
+// DeleteAccountName deletes the name of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#delete-account-name
+func (s *AccountsService) DeleteAccountName(accountID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/name", accountID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteActive sets the account state to inactive.
+// If the account was already inactive the response is “404 Not Found”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#delete-active
+func (s *AccountsService) DeleteActive(accountID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/active", accountID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteHTTPPassword deletes the HTTP password of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#delete-http-password
+func (s *AccountsService) DeleteHTTPPassword(accountID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/password.http", accountID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteAccountEmail deletes an email address of an account.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#delete-account-email
+func (s *AccountsService) DeleteAccountEmail(accountID, emailID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/emails/%s", accountID, emailID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteSSHKey deletes an SSH key of a user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#delete-ssh-key
+func (s *AccountsService) DeleteSSHKey(accountID, sshKeyID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/sshkeys/%s", accountID, sshKeyID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteGPGKey deletes a GPG key of a user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#delete-gpg-key
+func (s *AccountsService) DeleteGPGKey(accountID, gpgKeyID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/gpgkeys/%s", accountID, gpgKeyID)
+	return s.client.DeleteRequest(u, nil)
+}
+
 /*
 Missing Account Endpoints:
-	Delete Account Name
 	Set Username
 	Get Active
 	Set Active
-	Delete Active
 	Set/Generate HTTP Password
-	Delete HTTP Password
 	Create Account Email
-	Delete Account Email
 	Set Preferred Email
 	Add SSH Key
 	Get Avatar
 	Get Avatar Change URL
-	Delete SSH Key
 	Add/Delete GPG Keys
-	Delete GPG Key
 	Check Account Capability
 	Set User Preferences
 	Set Diff Preferences
