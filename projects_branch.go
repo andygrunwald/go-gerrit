@@ -108,10 +108,57 @@ func (s *ProjectsService) GetReflog(projectName, branchID string) (*[]ReflogEntr
 	return v, resp, err
 }
 
+// CreateBranch creates a new branch.
+// In the request body additional data for the branch can be provided as BranchInput.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-branch
+func (s *ProjectsService) CreateBranch(projectName, branchID string, input *BranchInput) (*BranchInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/branches/%s", projectName, branchID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(BranchInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// DeleteBranch deletes a branch.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branch
+func (s *ProjectsService) DeleteBranch(projectName, branchID string) (*Response, error) {
+	u := fmt.Sprintf("projects/%s/branches/%s", projectName, branchID)
+
+	req, err := s.client.NewRequest("DELETE", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// DeleteBranches delete one or more branches.
+// If some branches could not be deleted, the response is “409 Conflict” and the error message is contained in the response body.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branches
+func (s *ProjectsService) DeleteBranches(projectName string, input *DeleteBranchesInput) (*Response, error) {
+	u := fmt.Sprintf("projects/%s/branches:delete", projectName)
+
+	req, err := s.client.NewRequest("DELETE", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
 /**
 Missing Branch Endpoints
-	Create Branch
-	Delete Branch
-	Delete Branches
 	Get Content
 */
