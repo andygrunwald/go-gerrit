@@ -224,12 +224,142 @@ func (s *GroupsService) GetAuditLog(groupID string) (*[]GroupAuditEventInfo, *Re
 	return v, resp, err
 }
 
-/*
-Missing Group Endpoints
-	Create Group
-	Rename Group
-	Set Group Description
-	Delete Group Description
-	Set Group Options
-	Set Group Owner
-*/
+// CreateGroup creates a new Gerrit internal group.
+// In the request body additional data for the group can be provided as GroupInput.
+//
+// As response the GroupInfo entity is returned that describes the created group.
+// If the group creation fails because the name is already in use the response is “409 Conflict”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#create-group
+func (s *GroupsService) CreateGroup(groupID string, input *GroupInput) (*GroupInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s", groupID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// RenameGroup renames a Gerrit internal group.
+// The new group name must be provided in the request body.
+//
+// As response the new group name is returned.
+// If renaming the group fails because the new name is already in use the response is “409 Conflict”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#rename-group
+func (s *GroupsService) RenameGroup(groupID, name string) (*string, *Response, error) {
+	u := fmt.Sprintf("groups/%s/name", groupID)
+	input := struct {
+		Name string `json:"name"`
+	}{
+		Name: name,
+	}
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetGroupDescription sets the description of a Gerrit internal group.
+// The new group description must be provided in the request body.
+//
+// As response the new group description is returned.
+// If the description was deleted the response is “204 No Content”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#set-group-description
+func (s *GroupsService) SetGroupDescription(groupID, description string) (*string, *Response, error) {
+	u := fmt.Sprintf("groups/%s/description", groupID)
+	input := struct {
+		Description string `json:"description"`
+	}{
+		Description: description,
+	}
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// DeleteGroupDescription deletes the description of a Gerrit internal group.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#delete-group-description
+func (s *GroupsService) DeleteGroupDescription(groupID string) (*Response, error) {
+	u := fmt.Sprintf("groups/%s/description'", groupID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// SetGroupOptions sets the options of a Gerrit internal group.
+// The new group options must be provided in the request body as a GroupOptionsInput entity.
+//
+// As response the new group options are returned as a GroupOptionsInfo entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#set-group-options
+func (s *GroupsService) SetGroupOptions(groupID string, input *GroupOptionsInput) (*GroupOptionsInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/options", groupID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GroupOptionsInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetGroupOwner sets the owner group of a Gerrit internal group.
+// The new owner group must be provided in the request body.
+// The new owner can be specified by name, by group UUID or by the legacy numeric group ID.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#set-group-owner
+func (s *GroupsService) SetGroupOwner(groupID, owner string) (*GroupInfo, *Response, error) {
+	u := fmt.Sprintf("groups/%s/owner", groupID)
+	input := struct {
+		Owner string `json:"owner"`
+	}{
+		Owner: owner,
+	}
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(GroupInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
