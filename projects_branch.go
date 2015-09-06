@@ -158,7 +158,11 @@ func (s *ProjectsService) DeleteBranches(projectName string, input *DeleteBranch
 	return s.client.Do(req, nil)
 }
 
-/**
-Missing Branch Endpoints
-	Get Content
-*/
+// GetBranchContent gets the content of a file from the HEAD revision of a certain branch.
+// The content is returned as base64 encoded string.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-content
+func (s *ProjectsService) GetBranchContent(projectName, branchID, fileID string) (*string, *Response, error) {
+	u := fmt.Sprintf("projects/%s/branches/%s/files/%s/content", projectName, branchID, fileID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
