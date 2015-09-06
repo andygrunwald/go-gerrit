@@ -466,7 +466,5 @@ func (s *ProjectsService) SetProjectParent(projectName string, input *ProjectPar
 	return v, resp, err
 }
 
-/**
-Missing Project Endpoints
-	Run GC
-*/
+// TODO: Run GC
+// https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#run-gc
