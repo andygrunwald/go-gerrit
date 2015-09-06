@@ -455,10 +455,80 @@ func (s *ConfigService) GetTopMenus() (*[]TopMenuEntryInfo, *Response, error) {
 	return v, resp, err
 }
 
-/*
-Missing Config Endpoints
-	Confirm Email
-	Cache Operations
-	Flush Cache
-	Delete Task
-*/
+// ConfirmEmail confirms that the user owns an email address.
+// The email token must be provided in the request body inside an EmailConfirmationInput entity.
+//
+// The response is “204 No Content”.
+// If the token is invalid or if it’s the token of another user the request fails and the response is “422 Unprocessable Entity”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#confirm-email
+func (s *ConfigService) ConfirmEmail(input *EmailConfirmationInput) (*Response, error) {
+	u := "config/server/email.confirm"
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// CacheOperations executes a cache operation that is specified in the request body in a CacheOperationInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#cache-operations
+func (s *ConfigService) CacheOperations(input *CacheOperationInput) (*Response, error) {
+	u := "config/server/caches/"
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// FlushCache flushes a cache.
+// The caller must be a member of a group that is granted one of the following capabilities:
+//
+// * Flush Caches (any cache except "web_sessions")
+// * Maintain Server (any cache including "web_sessions")
+// * Administrate Server (any cache including "web_sessions")
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#flush-cache
+func (s *ConfigService) FlushCache(cacheName string, input *CacheOperationInput) (*Response, error) {
+	u := fmt.Sprintf("config/server/caches/%s/flush", cacheName)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// DeleteTask kills a task from the background work queue that the Gerrit daemon is currently performing, or will perform in the near future.
+// The caller must be a member of a group that is granted one of the following capabilities:
+//
+// * Kill Task
+// * Maintain Server
+// * Administrate Server
+//
+// End-users may see a task only if they can also see the project the task is associated with.
+// Tasks operating on other projects, or that do not have a specific project, are hidden.
+// Members of a group granted one of the following capabilities may view all tasks:
+//
+// * View Queue
+// * Maintain Server
+// * Administrate Server
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#delete-task
+func (s *ConfigService) DeleteTask(taskID string) (*Response, error) {
+	u := fmt.Sprintf("config/server/tasks/%s", taskID)
+
+	req, err := s.client.NewRequest("DELETE", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
