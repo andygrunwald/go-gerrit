@@ -49,12 +49,6 @@ type AddReviewerResult struct {
 	Confirm   bool           `json:"confirm,omitempty"`
 }
 
-// ReviewerInfo entity contains information about a reviewer and its votes on a change.
-type ReviewerInfo struct {
-	AccountInfo
-	Approvals string `json:"approvals"`
-}
-
 // ApprovalInfo entity contains information about an approval from a user for a label on a change.
 type ApprovalInfo struct {
 	AccountInfo
@@ -378,12 +372,6 @@ type DiffInfo struct {
 	Binary          bool              `json:"binary,omitempty"`
 }
 
-// SuggestedReviewerInfo entity contains information about a reviewer that can be added to a change (an account or a group).
-type SuggestedReviewerInfo struct {
-	Account AccountInfo   `json:"account,omitempty"`
-	Group   GroupBaseInfo `json:"group,omitempty"`
-}
-
 // QueryOptions specifies global parameters to query changes / reviewers.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
@@ -622,72 +610,6 @@ func (s *ChangesService) getCommentInfoMapResponse(u string) (*map[string]Commen
 func (s *ChangesService) CheckChange(changeID string) (*ChangeInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/check", changeID)
 	return s.getChangeInfoResponse(u, nil)
-}
-
-// ListReviewers lists the reviewers of a change.
-//
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-reviewers
-func (s *ChangesService) ListReviewers(changeID string) (*[]ReviewerInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/reviewers/", changeID)
-
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new([]ReviewerInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
-}
-
-// SuggestReviewers suggest the reviewers for a given query q and result limit n.
-// If result limit is not passed, then the default 10 is used.
-//
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#suggest-reviewers
-func (s *ChangesService) SuggestReviewers(changeID string, opt *QueryOptions) (*[]SuggestedReviewerInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/suggest_reviewers", changeID)
-
-	u, err := addOptions(u, opt)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new([]SuggestedReviewerInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
-}
-
-// GetReviewer retrieves a reviewer of a change.
-//
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-reviewer
-func (s *ChangesService) GetReviewer(changeID, accountID string) (*ReviewerInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/reviewers/%s", changeID, accountID)
-
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(ReviewerInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
 }
 
 // GetDiff gets the diff of a file from a certain revision.
@@ -970,10 +892,6 @@ Missing Change Endpoints
 	Delete Draft Change
 	Index Change
 	Fix change
-
-Missing Reviewer Endpoints
-	Add Reviewer
-	Delete Reviewer
 
 Missing Revision Endpoints
 	Set Review
