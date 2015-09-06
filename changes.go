@@ -556,18 +556,128 @@ func (s *ChangesService) getCommentInfoMapSliceResponse(u string) (*map[string][
 	return v, resp, err
 }
 
+// CreateChange creates a new change.
+// The change info ChangeInfo entity must be provided in the request body.
+// Only the following attributes are honored: project, branch, subject, status and topic.
+// The first three attributes are mandatory.
+// Valid values for status are: DRAFT and NEW.
+//
+// As response a ChangeInfo entity is returned that describes the resulting change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-change
+func (s *ChangesService) CreateChange(input *ChangeInfo) (*ChangeInfo, *Response, error) {
+	u := "changes"
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetTopic sets the topic of a change.
+// The new topic must be provided in the request body inside a TopicInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#set-topic
+func (s *ChangesService) SetTopic(changeID string, input *TopicInput) (*string, *Response, error) {
+	u := fmt.Sprintf("changes/%s/topic", changeID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// DeleteTopic deletes the topic of a change.
+// The request body does not need to include a TopicInput entity if no review comment is added.
+//
+// Please note that some proxies prohibit request bodies for DELETE requests.
+// In this case, if you want to specify a commit message, use PUT to delete the topic.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-topic
+func (s *ChangesService) DeleteTopic(changeID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/topic", changeID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteDraftChange deletes a draft change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-draft-change
+func (s *ChangesService) DeleteDraftChange(changeID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s", changeID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// PublishDraftChange publishes a draft change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#publish-draft-change
+func (s *ChangesService) PublishDraftChange(changeID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/publish", changeID)
+
+	req, err := s.client.NewRequest("POST", u, nil)
+	if err != nil {
+		return nil, err
+	}
+	return s.client.Do(req, nil)
+}
+
+// IndexChange adds or updates the change in the secondary index.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#index-change
+func (s *ChangesService) IndexChange(changeID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/index", changeID)
+
+	req, err := s.client.NewRequest("POST", u, nil)
+	if err != nil {
+		return nil, err
+	}
+	return s.client.Do(req, nil)
+}
+
+// FixChange performs consistency checks on the change as with GET /check, and additionally fixes any problems that can be fixed automatically.
+// The returned field values reflect any fixes.
+//
+// Some fixes have options controlling their behavior, which can be set in the FixInput entity body.
+// Only the change owner, a project owner, or an administrator may fix changes.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#fix-change
+func (s *ChangesService) FixChange(changeID string, input *FixInput) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/check", changeID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Missing Change Endpoints
-	Create Change
-	Set Topic
-	Delete Topic
 	Abandon Change
 	Restore Change
 	Rebase Change
 	Revert Change
 	Submit Change
-	Publish Draft Change
-	Delete Draft Change
-	Index Change
-	Fix change
 */
