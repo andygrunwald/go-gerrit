@@ -330,13 +330,143 @@ func (s *ProjectsService) GetConfig(projectName string) (*ConfigInfo, *Response,
 	return v, resp, err
 }
 
+// SetProjectDescription sets the description of a project.
+// The new project description must be provided in the request body inside a ProjectDescriptionInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-project-description
+func (s *ProjectsService) SetProjectDescription(projectName string, input *ProjectDescriptionInput) (*string, *Response, error) {
+	u := fmt.Sprintf("projects/%s/description'", projectName)
+
+	// TODO Use here the getStringResponseWithoutOptions (for PUT requests)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// DeleteProjectDescription deletes the description of a project.
+// The request body does not need to include a ProjectDescriptionInput entity if no commit message is specified.
+//
+// Please note that some proxies prohibit request bodies for DELETE requests.
+// In this case, if you want to specify a commit message, use PUT to delete the description.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-project-description
+func (s *ProjectsService) DeleteProjectDescription(projectName string) (*Response, error) {
+	u := fmt.Sprintf("projects/%s/description'", projectName)
+
+	req, err := s.client.NewRequest("DELETE", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// BanCommit marks commits as banned for the project.
+// If a commit is banned Gerrit rejects every push that includes this commit with contains banned commit ...
+//
+// Note:
+// This REST endpoint only marks the commits as banned, but it does not remove the commits from the history of any central branch.
+// This needs to be done manually.
+// The commits to be banned must be specified in the request body as a BanInput entity.
+//
+// The caller must be project owner.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#ban-commit
+func (s *ProjectsService) BanCommit(projectName string, input *BanInput) (*BanResultInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/ban'", projectName)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(BanResultInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetConfig sets the configuration of a project.
+// The new configuration must be provided in the request body as a ConfigInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-config
+func (s *ProjectsService) SetConfig(projectName string, input *ConfigInput) (*ConfigInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/config'", projectName)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ConfigInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetHEAD sets HEAD for a project.
+// The new ref to which HEAD should point must be provided in the request body inside a HeadInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-head
+func (s *ProjectsService) SetHEAD(projectName string, input *HeadInput) (*string, *Response, error) {
+	u := fmt.Sprintf("projects/%s/HEAD'", projectName)
+
+	// TODO Use here the getStringResponseWithoutOptions (for PUT requests)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetProjectParent sets the parent project for a project.
+// The new name of the parent project must be provided in the request body inside a ProjectParentInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-project-parent
+func (s *ProjectsService) SetProjectParent(projectName string, input *ProjectParentInput) (*string, *Response, error) {
+	u := fmt.Sprintf("projects/%s/parent'", projectName)
+
+	// TODO Use here the getStringResponseWithoutOptions (for PUT requests)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /**
 Missing Project Endpoints
-	Set Project Description
-	Delete Project Description
-	Set Project Parent
-	Set HEAD
-	Set Config
 	Run GC
-	Ban Commit
 */
