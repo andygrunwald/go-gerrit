@@ -631,21 +631,237 @@ func (s *AccountsService) DeleteGPGKey(accountID, gpgKeyID string) (*Response, e
 	return s.client.DeleteRequest(u, nil)
 }
 
+// SetUsername sets a new username.
+// The new username must be provided in the request body inside a UsernameInput entity.
+// Once set, the username cannot be changed or deleted.
+// If attempted this fails with “405 Method Not Allowed”.
+//
+// As response the new username is returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#set-username
+func (s *AccountsService) SetUsername(accountID string, input *UsernameInput) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/username", accountID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetActive checks if an account is active.
+//
+// If the account is active the string ok is returned.
+// If the account is inactive the response is “204 No Content”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-active
+func (s *AccountsService) GetActive(accountID string) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/active", accountID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
+// SetActive sets the account state to active.
+//
+// If the account was already active the response is “200 OK”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#set-active
+func (s *AccountsService) SetActive(accountID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/active", accountID)
+
+	req, err := s.client.NewRequest("PUT", u, nil)
+	if err != nil {
+		return nil, err
+	}
+	return s.client.Do(req, nil)
+}
+
+// SetHTTPPassword sets/Generates the HTTP password of an account.
+// The options for setting/generating the HTTP password must be provided in the request body inside a HTTPPasswordInput entity.
+//
+// As response the new HTTP password is returned.
+// If the HTTP password was deleted the response is “204 No Content”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#set-http-password
+func (s *AccountsService) SetHTTPPassword(accountID string, input *HTTPPasswordInput) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/password.http", accountID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// CreateAccountEmail registers a new email address for the user.
+// A verification email is sent with a link that needs to be visited to confirm the email address, unless DEVELOPMENT_BECOME_ANY_ACCOUNT is used as authentication type.
+// For the development mode email addresses are directly added without confirmation.
+// A Gerrit administrator may add an email address without confirmation by setting no_confirmation in the EmailInput.
+// In the request body additional data for the email address can be provided as EmailInput.
+//
+// As response the new email address is returned as EmailInfo entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#create-account-email
+func (s *AccountsService) CreateAccountEmail(accountID, emailID string, input *EmailInput) (*EmailInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/emails/%s", accountID, emailID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(EmailInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetPreferredEmail sets an email address as preferred email address for an account.
+//
+// If the email address was already the preferred email address of the account the response is “200 OK”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#set-preferred-email
+func (s *AccountsService) SetPreferredEmail(accountID, emailID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/emails/%s/preferred", accountID, emailID)
+
+	req, err := s.client.NewRequest("PUT", u, nil)
+	if err != nil {
+		return nil, err
+	}
+	return s.client.Do(req, nil)
+}
+
+// GetAvatarChangeURL retrieves the URL where the user can change the avatar image.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-avatar-change-url
+func (s *AccountsService) GetAvatarChangeURL(accountID string) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/avatar.change.url", accountID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
+// AddGPGKeys Add or delete one or more GPG keys for a user.
+// The changes must be provided in the request body as a GpgKeysInput entity.
+// Each new GPG key is provided in ASCII armored format, and must contain a self-signed certification matching a registered email or other identity of the user.
+//
+// As a response, the modified GPG keys are returned as a map of GpgKeyInfo entities, keyed by ID. Deleted keys are represented by an empty object.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#add-delete-gpg-keys
+func (s *AccountsService) AddGPGKeys(accountID string, input *GpgKeysInput) (*map[string]GpgKeyInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/gpgkeys", accountID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(map[string]GpgKeyInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// CheckAccountCapability checks if a user has a certain global capability.
+//
+// If the user has the global capability the string ok is returned.
+// If the user doesn’t have the global capability the response is “404 Not Found”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#check-account-capability
+func (s *AccountsService) CheckAccountCapability(accountID, capabilityID string) (*string, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/capabilities/%s", accountID, capabilityID)
+	return getStringResponseWithoutOptions(s.client, u)
+}
+
+// SetUserPreferences sets the user’s preferences.
+// The new preferences must be provided in the request body as a PreferencesInput entity.
+//
+// As result the new preferences of the user are returned as a PreferencesInfo entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#set-user-preferences
+func (s *AccountsService) SetUserPreferences(accountID string, input *PreferencesInput) (*PreferencesInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/preferences", accountID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(PreferencesInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// SetDiffPreferences sets the diff preferences of a user.
+// The new diff preferences must be provided in the request body as a DiffPreferencesInput entity.
+//
+// As result the new diff preferences of the user are returned as a DiffPreferencesInfo entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#set-diff-preferences
+func (s *AccountsService) SetDiffPreferences(accountID string, input *DiffPreferencesInput) (*DiffPreferencesInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/preferences.diff", accountID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(DiffPreferencesInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// StarChange star a change.
+// Starred changes are returned for the search query is:starred or starredby:USER and automatically notify the user whenever updates are made to the change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#star-change
+func (s *AccountsService) StarChange(accountID, changeID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/starred.changes/%s", accountID, changeID)
+
+	req, err := s.client.NewRequest("PUT", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// UnstarChange nstar a change.
+// Removes the starred flag, stopping notifications.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#unstar-change
+func (s *AccountsService) UnstarChange(accountID, changeID string) (*Response, error) {
+	u := fmt.Sprintf("accounts/%s/starred.changes/%s", accountID, changeID)
+	return s.client.DeleteRequest(u, nil)
+}
+
 /*
 Missing Account Endpoints:
-	Set Username
-	Get Active
-	Set Active
-	Set/Generate HTTP Password
-	Create Account Email
-	Set Preferred Email
 	Add SSH Key
 	Get Avatar
-	Get Avatar Change URL
-	Add/Delete GPG Keys
-	Check Account Capability
-	Set User Preferences
-	Set Diff Preferences
-	Star Change
-	Unstar Change
 */
