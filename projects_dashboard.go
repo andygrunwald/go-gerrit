@@ -101,19 +101,13 @@ func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *D
 // Please note that some proxies prohibit request bodies for DELETE requests.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-dashboard
-func (s *ProjectsService) DeleteDashboard(projectName, dashboardID string, input *DashboardInput) (*DashboardInfo, *Response, error) {
+func (s *ProjectsService) DeleteDashboard(projectName, dashboardID string, input *DashboardInput) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardID)
 
 	req, err := s.client.NewRequest("DELETE", u, input)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	v := new(DashboardInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
+	return s.client.Do(req, nil)
 }
