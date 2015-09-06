@@ -631,6 +631,53 @@ func (s *ProjectsService) GetCommit(projectName, commitID string) (*CommitInfo, 
 	return v, resp, err
 }
 
+// SetDashboard updates/Creates a project dashboard.
+// Currently only supported for the default dashboard.
+//
+// The creation/update information for the dashboard must be provided in the request body as a DashboardInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-dashboard
+func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *DashboardInput) (*DashboardInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(DashboardInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// DeleteDashboard deletes a project dashboard.
+// Currently only supported for the default dashboard.
+//
+// The request body does not need to include a DashboardInput entity if no commit message is specified.
+// Please note that some proxies prohibit request bodies for DELETE requests.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-dashboard
+func (s *ProjectsService) DeleteDashboard(projectName, dashboardID string, input *DashboardInput) (*DashboardInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardID)
+
+	req, err := s.client.NewRequest("DELETE", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(DashboardInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /**
 Missing Project Endpoints
 	Set Project Description
@@ -650,7 +697,4 @@ Missing Branch Endpoints
 Missing Commit Endpoints
 	Get Content
 
-Missing Dashboard Endpoints
-	Set Dashboard
-	Delete Dashboard
 */
