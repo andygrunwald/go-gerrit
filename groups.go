@@ -58,12 +58,6 @@ type GroupsInput struct {
 	Groups   []string `json:"groups,omitempty"`
 }
 
-// MembersInput entity contains information about accounts that should be added as members to a group or that should be deleted from the group
-type MembersInput struct {
-	OneMember string   `json:"_one_member,omitempty"`
-	Members   []string `json:"members,omitempty"`
-}
-
 // ListGroupsOptions specifies the different options for the ListGroups call.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#list-groups
