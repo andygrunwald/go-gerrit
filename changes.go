@@ -33,13 +33,6 @@ type AbandonInput struct {
 	Message string `json:"message,omitempty"`
 }
 
-// AddReviewerResult entity describes the result of adding a reviewer to a change.
-type AddReviewerResult struct {
-	Reviewers []ReviewerInfo `json:"reviewers,omitempty"`
-	Error     string         `json:"error,omitempty"`
-	Confirm   bool           `json:"confirm,omitempty"`
-}
-
 // ApprovalInfo entity contains information about an approval from a user for a label on a change.
 type ApprovalInfo struct {
 	AccountInfo
