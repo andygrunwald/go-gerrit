@@ -42,6 +42,8 @@ A few more examples are available in the [GoDoc examples section](https://godoc.
 
 ### Get version of Gerrit instance
 
+Receive the version of the [Gerrit instance used by the Gerrit team](https://gerrit-review.googlesource.com/) for development:
+
 ```go
 package main
 
