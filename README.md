@@ -60,7 +60,7 @@ fmt.Printf("Username: %s", self.Name)
 
 #### HTTP Basic
 
-Some Gerrit instances (like TYPO3) has [auth.gitBasicAuth](https://gerrit-review.googlesource.com/Documentation/config-gerrit.html#auth.gitBasicAuth) activated.
+Some Gerrit instances (like [TYPO3](https://review.typo3.org/)) has [auth.gitBasicAuth](https://gerrit-review.googlesource.com/Documentation/config-gerrit.html#auth.gitBasicAuth) activated.
 With this you can authenticate with HTTP Basic like this:
 
 ```go
