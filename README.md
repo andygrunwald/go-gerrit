@@ -10,20 +10,30 @@ diffy is a [Go(lang)](https://golang.org/) client library for accessing the [Ger
 
 ## Features
 
-* Authentication (HTTP Basic, HTTP Cookie)
-* API complete
-* TODO more features
+* [Authentication](https://godoc.org/github.com/andygrunwald/diffy#AuthenticationService) (HTTP Basic, HTTP Cookie)
+* Every API Endpoint like Gerrit
+	* [/access/](https://godoc.org/github.com/andygrunwald/diffy#AccessService)
+	* [/accounts/](https://godoc.org/github.com/andygrunwald/diffy#AccountsService)
+	* [/changes/](https://godoc.org/github.com/andygrunwald/diffy#ChangesService)
+	* [/config/](https://godoc.org/github.com/andygrunwald/diffy#ConfigService)
+	* [/groups/](https://godoc.org/github.com/andygrunwald/diffy#GroupsService)
+	* [/plugins/](https://godoc.org/github.com/andygrunwald/diffy#PluginsService)
+	* [/projects/](https://godoc.org/github.com/andygrunwald/diffy#ProjectsService)
 
 ## Installation
 
-It is go gettable
+It is go gettable ...
 
-    $ go get github.com/andygrunwald/diffy
+```sh
+$ go get github.com/andygrunwald/diffy
+```
 
-(optional) to run unit / example tests:
+... (optional) to run unit / example tests:
 
-    $ cd $GOPATH/src/github.com/andygrunwald/diffy
-    $ go test -v
+```sh
+$ cd $GOPATH/src/github.com/andygrunwald/diffy
+$ go test -v
+```
 
 ## API / Usage
 
