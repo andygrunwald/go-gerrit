@@ -1,43 +1,43 @@
-# diffy
+# go-gerrit
 
-[![GoDoc](https://godoc.org/github.com/andygrunwald/diffy?status.svg)](https://godoc.org/github.com/andygrunwald/diffy)
-[![Build Status](https://travis-ci.org/andygrunwald/diffy.svg?branch=master)](https://travis-ci.org/andygrunwald/diffy)
-[![Coverage Status](https://coveralls.io/repos/andygrunwald/diffy/badge.svg?branch=master&service=github)](https://coveralls.io/github/andygrunwald/diffy?branch=master)
+[![GoDoc](https://godoc.org/github.com/andygrunwald/go-gerrit?status.svg)](https://godoc.org/github.com/andygrunwald/go-gerrit)
+[![Build Status](https://travis-ci.org/andygrunwald/go-gerrit.svg?branch=master)](https://travis-ci.org/andygrunwald/go-gerrit)
+[![Coverage Status](https://coveralls.io/repos/andygrunwald/go-gerrit/badge.svg?branch=master&service=github)](https://coveralls.io/github/andygrunwald/go-gerrit?branch=master)
 
-diffy is a [Go(lang)](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
+go-gerrit is a [Go(lang)](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
 
-![Diffy - Go(lang) client/library for Gerrit Code Review](./img/diffy.png "Diffy - Go(lang) client/library for Gerrit Code Review")
+![go-gerrit - Go(lang) client/library for Gerrit Code Review](./img/logo.png "go-gerrit - Go(lang) client/library for Gerrit Code Review")
 
 ## Features
 
-* [Authentication](https://godoc.org/github.com/andygrunwald/diffy#AuthenticationService) (HTTP Basic, HTTP Cookie)
+* [Authentication](https://godoc.org/github.com/andygrunwald/go-gerrit#AuthenticationService) (HTTP Basic, HTTP Cookie)
 * Every API Endpoint like Gerrit
-	* [/access/](https://godoc.org/github.com/andygrunwald/diffy#AccessService)
-	* [/accounts/](https://godoc.org/github.com/andygrunwald/diffy#AccountsService)
-	* [/changes/](https://godoc.org/github.com/andygrunwald/diffy#ChangesService)
-	* [/config/](https://godoc.org/github.com/andygrunwald/diffy#ConfigService)
-	* [/groups/](https://godoc.org/github.com/andygrunwald/diffy#GroupsService)
-	* [/plugins/](https://godoc.org/github.com/andygrunwald/diffy#PluginsService)
-	* [/projects/](https://godoc.org/github.com/andygrunwald/diffy#ProjectsService)
+	* [/access/](https://godoc.org/github.com/andygrunwald/go-gerrit#AccessService)
+	* [/accounts/](https://godoc.org/github.com/andygrunwald/go-gerrit#AccountsService)
+	* [/changes/](https://godoc.org/github.com/andygrunwald/go-gerrit#ChangesService)
+	* [/config/](https://godoc.org/github.com/andygrunwald/go-gerrit#ConfigService)
+	* [/groups/](https://godoc.org/github.com/andygrunwald/go-gerrit#GroupsService)
+	* [/plugins/](https://godoc.org/github.com/andygrunwald/go-gerrit#PluginsService)
+	* [/projects/](https://godoc.org/github.com/andygrunwald/go-gerrit#ProjectsService)
 
 ## Installation
 
 It is go gettable ...
 
 ```sh
-$ go get github.com/andygrunwald/diffy
+$ go get github.com/andygrunwald/go-gerrit
 ```
 
 ... (optional) to run unit / example tests:
 
 ```sh
-$ cd $GOPATH/src/github.com/andygrunwald/diffy
+$ cd $GOPATH/src/github.com/andygrunwald/go-gerrit
 $ go test -v
 ```
 
 ## API / Usage
 
-Please have a look at the [GoDoc documentation](https://godoc.org/github.com/andygrunwald/diffy) for a detailed API description.
+Please have a look at the [GoDoc documentation](https://godoc.org/github.com/andygrunwald/go-gerrit) for a detailed API description.
 
 The [Gerrit Code Review - REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html) was the base document.
 
@@ -58,7 +58,7 @@ Your cookie secret will be something like `git-your@email.com=SomeHash...`.
 
 ```go
 instance := "https://gerrit-review.googlesource.com/"
-client, _ := diffy.NewClient(instance, nil)
+client, _ := gerrit.NewClient(instance, nil)
 client.Authentication.SetCookieAuth("o", "my-cookie-secret")
 
 self, _, _ := client.Accounts.GetAccount("self")
@@ -75,7 +75,7 @@ With this you can authenticate with HTTP Basic like this:
 
 ```go
 instance := "https://review.typo3.org/"
-client, _ := diffy.NewClient(instance, nil)
+client, _ := gerrit.NewClient(instance, nil)
 client.Authentication.SetBasicAuth("andy.grunwald", "my secrect password")
 
 self, _, _ := client.Accounts.GetAccount("self")
@@ -88,13 +88,13 @@ fmt.Printf("Username: %s", self.Name)
 ### More more more
 
 In the examples chapter below you will find a few more examples.
-If you miss one or got a question how to do something please [open a new issue](https://github.com/andygrunwald/diffy/issues/new) with your question.
+If you miss one or got a question how to do something please [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) with your question.
 We will be happy to answer them.
 
 ## Examples
 
 Further a few examples how the API can be used.
-A few more examples are available in the [GoDoc examples section](https://godoc.org/github.com/andygrunwald/diffy#pkg-examples).
+A few more examples are available in the [GoDoc examples section](https://godoc.org/github.com/andygrunwald/go-gerrit#pkg-examples).
 
 ### Get version of Gerrit instance
 
@@ -105,12 +105,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/andygrunwald/diffy"
+	"github.com/andygrunwald/go-gerrit"
 )
 
 func main() {
 	instance := "https://gerrit-review.googlesource.com/"
-	client, err := diffy.NewClient(instance, nil)
+	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -132,17 +132,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/andygrunwald/diffy"
+	"github.com/andygrunwald/go-gerrit"
 )
 
 func main() {
 	instance := "http://review.cyanogenmod.org/"
-	client, err := diffy.NewClient(instance, nil)
+	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	opt := &diffy.ProjectOptions{
+	opt := &gerrit.ProjectOptions{
 		Description: true,
 	}
 	projects, _, err := client.Projects.ListProjects(opt)
@@ -166,17 +166,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/andygrunwald/diffy"
+	"github.com/andygrunwald/go-gerrit"
 )
 
 func main() {
 	instance := "https://android-review.googlesource.com/"
-	client, err := diffy.NewClient(instance, nil)
+	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	opt := &diffy.QueryChangeOptions{}
+	opt := &gerrit.QueryChangeOptions{}
 	opt.Query = []string{"project:kernel/common"}
 	opt.AdditionalFields = []string{"LABELS"}
 	changes, _, err := client.Changes.QueryChanges(opt)
@@ -194,22 +194,14 @@ func main() {
 
 ## FAQ
 
-### Where does the name come from?
-
-*Diffy* is "The Kung Fu Review Cuckoo" by Gerrit itself.
-As far as i know Diffy is the (official) logo of the Gerrit project.
-
-All credits for name and logo goes to the Gerrit team.
-Thank you!
-
 ### How is the source code organized?
 
 The source code organisation was inspired by [go-github by Google](https://github.com/google/go-github).
 
 Every REST API Endpoint (e.g. [/access/](https://gerrit-review.googlesource.com/Documentation/rest-api-access.html) or [/changes/](https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html)) is coupled in a service (e.g. [AccessService in access.go](./access.go) or [ChangesService in changes.go](./changes.go)).
-Every service is part of [diffy.Client](./diffy.go) as a member variable.
+Every service is part of [gerrit.Client](./gerrit.go) as a member variable.
 
-diffy.Client can provide basic helper functions to avoid unnecessary code duplications such as building a new request, parse responses and so on.
+gerrit.Client can provide basic helper functions to avoid unnecessary code duplications such as building a new request, parse responses and so on.
 
 Based on this structure implementing a new API functionality is straight forwarded. Here is an example of *ChangeService.DeleteTopic* / [DELETE /changes/{change-id}/topic](https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-topic):
 
@@ -225,7 +217,7 @@ func (s *ChangesService) DeleteTopic(changeID string) (*Response, error) {
 The library was implemented based on the REST API of Gerrit version 2.11.3-1230-gb8336f1 and tested against this version.
 
 This library might be working with older versions as well.
-If you notice an incompatibility [open a new issue](https://github.com/andygrunwald/diffy/issues/new) or try to fix it.
+If you notice an incompatibility [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) or try to fix it.
 We welcome contribution!
 
 ## License

@@ -1,1 +1,1 @@
-package diffy
+package gerrit

@@ -1,4 +1,4 @@
-package diffy
+package gerrit
 
 // AccessService contains Access Right related REST endpoints
 //

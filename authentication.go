@@ -1,4 +1,4 @@
-package diffy
+package gerrit
 
 const (
 	// HTTP Basic Authentication

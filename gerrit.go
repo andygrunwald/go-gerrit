@@ -1,4 +1,4 @@
-package diffy
+package gerrit
 
 import (
 	"bytes"
@@ -26,7 +26,7 @@ type Client struct {
 	// BaseURL should always be specified with a trailing slash.
 	baseURL *url.URL
 
-	// Diffy service for authentication
+	// Gerrit service for authentication
 	Authentication *AuthenticationService
 
 	// Services used for talking to different parts of the Gerrit API.

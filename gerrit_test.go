@@ -1,4 +1,4 @@
-package diffy
+package gerrit
 
 import (
 	"bytes"
@@ -22,7 +22,7 @@ var (
 	// testMux is the HTTP request multiplexer used with the test server.
 	testMux *http.ServeMux
 
-	// testClient is the diffy client being tested.
+	// testClient is the gerrit client being tested.
 	testClient *Client
 
 	// testServer is a test HTTP server used to provide mock API responses.
@@ -31,14 +31,14 @@ var (
 
 type testValues map[string]string
 
-// setup sets up a test HTTP server along with a diffy.Client that is configured to talk to that test server.
+// setup sets up a test HTTP server along with a gerrit.Client that is configured to talk to that test server.
 // Tests should register handlers on mux which provide mock responses for the API method being tested.
 func setup() {
 	// Test server
 	testMux = http.NewServeMux()
 	testServer = httptest.NewServer(testMux)
 
-	// diffy client configured to use test server
+	// gerrit client configured to use test server
 	testClient, _ = NewClient(testServer.URL, nil)
 }
 
@@ -189,7 +189,7 @@ func TestNewRequest_BadURL(t *testing.T) {
 	testURLParseError(t, err)
 }
 
-// If a nil body is passed to diffy.NewRequest, make sure that nil is also passed to http.NewRequest.
+// If a nil body is passed to gerrit.NewRequest, make sure that nil is also passed to http.NewRequest.
 // In most cases, passing an io.Reader that returns no content is fine,
 // since there is no difference between an HTTP request body that is an empty string versus one that is not set at all.
 // However in certain cases, intermediate systems may treat these differently resulting in subtle errors.
