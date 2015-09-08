@@ -37,7 +37,26 @@ Gerrit support multiple ways for [authentication](https://gerrit-review.googleso
 
 #### HTTP Cookie
 
-TODO
+Some Gerrit instances hosted like the one hosted googlesource.com (e.g. [Go(lang)](https://go-review.googlesource.com/), [Android](https://android-review.googlesource.com/) or [Gerrit](https://gerrit-review.googlesource.com/)) support HTTP Cookie authentication.
+
+You need the cookie name and the cookie value.
+You can get them by click on "Settings > HTTP Password > Obtain Password" in your Gerrit instance.
+
+There you can recieve your values.
+The cookie name will be (mostly) `o` (if hosted on googlesource.com).
+Your cookie secret will be something like `git-your@email.com=SomeHash...`.
+
+```go
+instance := "https://gerrit-review.googlesource.com/"
+client, _ := diffy.NewClient(instance, nil)
+client.Authentication.SetCookieAuth("o", "my-cookie-secret")
+
+self, _, _ := client.Accounts.GetAccount("self")
+
+fmt.Printf("Username: %s", self.Name)
+
+// Username: Andy G.
+```
 
 #### HTTP Basic
 
