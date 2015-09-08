@@ -87,14 +87,143 @@ func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(changeID string) (*
 	return getStringResponseWithoutOptions(s.client, u)
 }
 
+// ChangeFileContentInChangeEdit put content of a file to a change edit.
+//
+// When change edit doesn’t exist for this change yet it is created.
+// When file content isn’t provided, it is wiped out for that file.
+// As response “204 No Content” is returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#put-edit-file
+func (s *ChangesService) ChangeFileContentInChangeEdit(changeID, filePath string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
+
+	req, err := s.client.NewRequest("PUT", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// ChangeCommitMessageInChangeEdit modify commit message.
+// The request body needs to include a ChangeEditMessageInput entity.
+//
+// If a change edit doesn’t exist for this change yet, it is created.
+// As response “204 No Content” is returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#put-change-edit-message
+func (s *ChangesService) ChangeCommitMessageInChangeEdit(changeID string, input *ChangeEditMessageInput) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit:message", changeID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// DeleteFileInChangeEdit deletes a file from a change edit.
+// This deletes the file from the repository completely.
+// This is not the same as reverting or restoring a file to its previous contents.
+//
+// When change edit doesn’t exist for this change yet it is created.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-edit-file
+func (s *ChangesService) DeleteFileInChangeEdit(changeID, filePath string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteChangeEdit deletes change edit.
+//
+// As response “204 No Content” is returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-edit-file
+func (s *ChangesService) DeleteChangeEdit(changeID, filePath string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit", changeID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// PublishChangeEdit promotes change edit to a regular patch set.
+//
+// As response “204 No Content” is returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#publish-edit
+func (s *ChangesService) PublishChangeEdit(changeID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit:publish", changeID)
+
+	req, err := s.client.NewRequest("POST", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// RebaseChangeEdit rebases change edit on top of latest patch set.
+//
+// When change was rebased on top of latest patch set, response “204 No Content” is returned.
+// When change edit is already based on top of the latest patch set, the response “409 Conflict” is returned.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#rebase-edit
+func (s *ChangesService) RebaseChangeEdit(changeID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit:rebase", changeID)
+
+	req, err := s.client.NewRequest("POST", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// RetrieveFileContentFromChangeEdit retrieves content of a file from a change edit.
+//
+// The content of the file is returned as text encoded inside base64.
+// The Content-Type header will always be text/plain reflecting the outer base64 encoding.
+// A Gerrit-specific X-FYI-Content-Type header can be examined to find the server detected content type of the file.
+//
+// When the specified file was deleted in the change edit “204 No Content” is returned.
+// If only the content type is required, callers should use HEAD to avoid downloading the encoded file contents.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-file
+func (s *ChangesService) RetrieveFileContentFromChangeEdit(changeID, filePath string) (*string, *Response, error) {
+	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// RetrieveFileContentTypeFromChangeEdit retrieves content type of a file from a change edit.
+// This is nearly the same as RetrieveFileContentFromChangeEdit.
+// But if only the content type is required, callers should use HEAD to avoid downloading the encoded file contents.
+//
+// For further documentation please have a look at RetrieveFileContentFromChangeEdit.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-file
+func (s *ChangesService) RetrieveFileContentTypeFromChangeEdit(changeID, filePath string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
+
+	req, err := s.client.NewRequest("HEAD", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
 /*
 Missing Change Edit Endpoints
-	Change file content in Change Edit
 	Restore file content or rename files in Change Edit
-	Change commit message in Change Edit
-	Delete file in Change Edit
-	Retrieve file content from Change Edit
-	Publish Change Edit
-	Rebase Change Edit
-	Delete Change Edit
 */
