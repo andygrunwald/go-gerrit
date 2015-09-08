@@ -67,7 +67,37 @@ func main() {
 
 ### Get all public projects
 
-TODO
+List all projects from [cyanogenmod](http://review.cyanogenmod.org/):
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andygrunwald/diffy"
+)
+
+func main() {
+	instance := "http://review.cyanogenmod.org/"
+	client, err := diffy.NewClient(instance, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	opt := &diffy.ProjectOptions{
+		Description: true,
+	}
+	projects, _, err := client.Projects.ListProjects(opt)
+	for name, p := range *projects {
+		fmt.Printf("%s - State: %s\n", name, p.State)
+	}
+
+	// CyanogenMod/android_external_drm - State: ACTIVE
+	// CyanogenMod/android_external_jhead - State: ACTIVE
+	// CyanogenMod/android_external_libppp - State: ACTIVE
+	// ...
+}
+```
 
 ### Query changes
 
