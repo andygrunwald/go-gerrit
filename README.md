@@ -60,7 +60,9 @@ func main() {
 	}
 
 	v, _, err := client.Config.GetVersion()
+
 	fmt.Printf("Version: %s", *v)
+
 	// Version: 2.11.3-1230-gb8336f1
 }
 ```
@@ -130,6 +132,7 @@ func main() {
 	// Project: kernel/common -> android: binder: Fix BR_ERROR usage and change LSM denials to use it. -> https://android-review.googlesource.com/150839
 	// Project: kernel/common -> android: binder: fix duplicate error return. -> https://android-review.googlesource.com/155031
 	// Project: kernel/common -> dm-verity: Add modes and emit uevent on corrupted blocks -> https://android-review.googlesource.com/169572
+	// ...
 }
 ```
 
