@@ -190,7 +190,7 @@ type ProjectOptions struct {
 
 	// Get projects inheritance in a tree-like format.
 	// This option does not work together with the branch option.
-	Tree string `url:"t,omitempty"`
+	Tree bool `url:"t,omitempty"`
 
 	// Get projects with specified type: ALL, CODE, PERMISSIONS.
 	Type string `url:"type,omitempty"`
