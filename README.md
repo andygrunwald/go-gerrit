@@ -101,7 +101,37 @@ func main() {
 
 ### Query changes
 
-TODO
+Get some changes of the [kernel/common project](https://android-review.googlesource.com/#/q/project:kernel/common) from the [Android](http://source.android.com/) [Gerrit Review System](https://android-review.googlesource.com/).
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/andygrunwald/diffy"
+)
+
+func main() {
+	instance := "https://android-review.googlesource.com/"
+	client, err := diffy.NewClient(instance, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	opt := &diffy.QueryChangeOptions{}
+	opt.Query = []string{"project:kernel/common"}
+	opt.AdditionalFields = []string{"LABELS"}
+	changes, _, err := client.Changes.QueryChanges(opt)
+
+	for _, change := range *changes {
+		fmt.Printf("Project: %s -> %s -> %s%d\n", change.Project, change.Subject, instance, change.Number)
+	}
+
+	// Project: kernel/common -> android: binder: Fix BR_ERROR usage and change LSM denials to use it. -> https://android-review.googlesource.com/150839
+	// Project: kernel/common -> android: binder: fix duplicate error return. -> https://android-review.googlesource.com/155031
+	// Project: kernel/common -> dm-verity: Add modes and emit uevent on corrupted blocks -> https://android-review.googlesource.com/169572
+}
+```
 
 ## FAQ
 
