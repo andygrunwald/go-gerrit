@@ -33,7 +33,34 @@ The [Gerrit Code Review - REST API](https://gerrit-review.googlesource.com/Docum
 
 ### Authentication
 
+Gerrit support multiple ways for [authentication](https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication).
+
+#### HTTP Cookie
+
 TODO
+
+#### HTTP Basic
+
+Some Gerrit instances (like TYPO3) has [auth.gitBasicAuth](https://gerrit-review.googlesource.com/Documentation/config-gerrit.html#auth.gitBasicAuth) activated.
+With this you can authenticate with HTTP Basic like this:
+
+```go
+instance := "https://review.typo3.org/"
+client, _ := diffy.NewClient(instance, nil)
+client.Authentication.SetBasicAuth("andy.grunwald", "my secrect password")
+
+self, _, _ := client.Accounts.GetAccount("self")
+
+fmt.Printf("Username: %s", self.Name)
+
+// Username: Andy Grunwald
+```
+
+### More more more
+
+In the examples chapter below you will find a few more examples.
+If you miss one or got a question how to do something please [open a new issue](https://github.com/andygrunwald/diffy/issues/new) with your question.
+We will be happy to answer them.
 
 ## Examples
 
