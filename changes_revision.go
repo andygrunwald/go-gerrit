@@ -92,6 +92,19 @@ type MergableOptions struct {
 	OtherBranches bool `url:"other-branches,omitempty"`
 }
 
+// PatchOptions specifies the parameters for GetPatch call.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-patch
+type PatchOptions struct {
+	// Adding query parameter zip (for example /changes/.../patch?zip) returns the patch as a single file inside of a ZIP archive.
+	// Clients can expand the ZIP to obtain the plain text patch, avoiding the need for a base64 decoding step.
+	// This option implies download.
+	Zip bool `url:"zip,omitempty"`
+
+	// Query parameter download (e.g. /changes/.../patch?download) will suggest the browser save the patch as commitsha1.diff.base64, for later processing by command line tools.
+	Download bool `url:"download,omitempty"`
+}
+
 // GetDiff gets the diff of a file from a certain revision.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-diff
@@ -326,21 +339,273 @@ func (s *ChangesService) ListFilesReviewed(changeID, revisionID string) (*[]File
 	return v, resp, err
 }
 
+// SetReview sets a review on a revision.
+// The review must be provided in the request body as a ReviewInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#set-review
+func (s *ChangesService) SetReview(changeID, revisionID string, input *ReviewInput) (*ReviewInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/review", changeID, revisionID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ReviewInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// PublishDraftRevision publishes a draft revision.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#publish-draft-revision
+func (s *ChangesService) PublishDraftRevision(changeID, revisionID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/publish", changeID, revisionID)
+
+	req, err := s.client.NewRequest("POST", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// DeleteDraftRevision deletes a draft revision.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-draft-revision
+func (s *ChangesService) DeleteDraftRevision(changeID, revisionID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s", changeID, revisionID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// GetPatch gets the formatted patch for one revision.
+//
+// The formatted patch is returned as text encoded inside base64.
+// Adding query parameter zip (for example /changes/.../patch?zip) returns the patch as a single file inside of a ZIP archive.
+// Clients can expand the ZIP to obtain the plain text patch, avoiding the need for a base64 decoding step.
+// This option implies download.
+//
+// Query parameter download (e.g. /changes/.../patch?download) will suggest the browser save the patch as commitsha1.diff.base64, for later processing by command line tools.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-patch
+func (s *ChangesService) GetPatch(changeID, revisionID string, opt *PatchOptions) (*string, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/patch", changeID, revisionID)
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// TestSubmitType tests the submit_type Prolog rule in the project, or the one given.
+//
+// Request body may be either the Prolog code as text/plain or a RuleInput object.
+// The query parameter filters may be set to SKIP to bypass parent project filters while testing a project-specific rule.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#test-submit-type
+func (s *ChangesService) TestSubmitType(changeID, revisionID string, input *RuleInput) (*string, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/test.submit_type", changeID, revisionID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// TestSubmitRule tests the submit_rule Prolog rule in the project, or the one given.
+//
+// Request body may be either the Prolog code as text/plain or a RuleInput object.
+// The query parameter filters may be set to SKIP to bypass parent project filters while testing a project-specific rule.
+//
+// The response is a list of SubmitRecord entries describing the permutations that satisfy the tested submit rule.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#test-submit-rule
+func (s *ChangesService) TestSubmitRule(changeID, revisionID string, input *RuleInput) (*[]SubmitRecord, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/test.submit_rule", changeID, revisionID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]SubmitRecord)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// CreateDraft creates a draft comment on a revision.
+// The new draft comment must be provided in the request body inside a CommentInput entity.
+//
+// As response a CommentInfo entity is returned that describes the draft comment.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-draft
+func (s *ChangesService) CreateDraft(changeID, revisionID string, input *CommentInput) (*CommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/drafts", changeID, revisionID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(CommentInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// UpdateDraft updates a draft comment on a revision.
+// The new draft comment must be provided in the request body inside a CommentInput entity.
+//
+// As response a CommentInfo entity is returned that describes the draft comment.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#update-draft
+func (s *ChangesService) UpdateDraft(changeID, revisionID, draftID string, input *CommentInput) (*CommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/drafts/%s", changeID, revisionID, draftID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(CommentInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// DeleteDraft deletes a draft comment from a revision.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-draft
+func (s *ChangesService) DeleteDraft(changeID, revisionID, draftID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/drafts/%s", changeID, revisionID, draftID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// DeleteReviewed deletes the reviewed flag of the calling user from a file of a revision.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-reviewed
+func (s *ChangesService) DeleteReviewed(changeID, revisionID, fileID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/files/%s/reviewed", changeID, revisionID, fileID)
+	return s.client.DeleteRequest(u, nil)
+}
+
+// GetContent gets the content of a file from a certain revision.
+// The content is returned as base64 encoded string.
+// The HTTP response Content-Type is always text/plain, reflecting the base64 wrapping.
+// A Gerrit-specific X-FYI-Content-Type header is returned describing the server detected content type of the file.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-content
+func (s *ChangesService) GetContent(changeID, revisionID, fileID string) (*string, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/files/%s/content", changeID, revisionID, fileID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(string)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetContentType gets the content type of a file from a certain revision.
+// This is nearly the same as GetContent.
+// But if only the content type is required, callers should use HEAD to avoid downloading the encoded file contents.
+//
+// For further documentation see GetContent.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-content
+func (s *ChangesService) GetContentType(changeID, revisionID, fileID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/files/%s/content", changeID, revisionID, fileID)
+
+	req, err := s.client.NewRequest("HEAD", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// SetReviewed marks a file of a revision as reviewed by the calling user.
+//
+// If the file was already marked as reviewed by the calling user the response is “200 OK”.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#set-reviewed
+func (s *ChangesService) SetReviewed(changeID, revisionID, fileID string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/files/%s/reviewed", changeID, revisionID, fileID)
+
+	req, err := s.client.NewRequest("PUT", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// CherryPickRevision cherry picks a revision to a destination branch.
+// The commit message and destination branch must be provided in the request body inside a CherryPickInput entity.
+//
+// As response a ChangeInfo entity is returned that describes the resulting cherry picked change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#cherry-pick
+func (s *ChangesService) CherryPickRevision(changeID, revisionID string, input *CherryPickInput) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/cherrypick", changeID, revisionID)
+
+	req, err := s.client.NewRequest("POST", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 /*
 Missing Revision Endpoints
-	Set Review
 	Rebase Revision
 	Submit Revision
-	Publish Draft Revision
-	Delete Draft Revision
-	Get Patch
-	Test Submit Type
-	Test Submit Rule
-	Create Draft
-	Update Draft
-	Delete Draft
-	Get Content
-	Set Reviewed
-	Delete Reviewed
-	Cherry Pick Revision
 */
