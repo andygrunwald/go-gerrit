@@ -107,6 +107,9 @@ func TestNewClient_Services(t *testing.T) {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
 
+	if c.Authentication == nil {
+		t.Error("No AuthenticationService found.")
+	}
 	if c.Access == nil {
 		t.Error("No AccessService found.")
 	}
