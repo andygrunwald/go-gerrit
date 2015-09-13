@@ -53,6 +53,12 @@ func testMethod(t *testing.T, r *http.Request, want string) {
 	}
 }
 
+func testRequestURL(t *testing.T, r *http.Request, want string) {
+	if got := r.URL.String(); got != want {
+		t.Errorf("Request URL: %v, want %v", got, want)
+	}
+}
+
 func testFormValues(t *testing.T, r *http.Request, values testValues) {
 	want := url.Values{}
 	for k, v := range values {

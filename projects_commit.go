@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"fmt"
+	"net/url"
 )
 
 // GetCommit retrieves a commit of a project.
@@ -9,7 +10,7 @@ import (
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-commit
 func (s *ProjectsService) GetCommit(projectName, commitID string) (*CommitInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/commits/%s", projectName, commitID)
+	u := fmt.Sprintf("projects/%s/commits/%s", url.QueryEscape(projectName), commitID)
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -30,6 +31,6 @@ func (s *ProjectsService) GetCommit(projectName, commitID string) (*CommitInfo, 
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-content
 func (s *ProjectsService) GetCommitContent(projectName, branchID, fileID string) (*string, *Response, error) {
-	u := fmt.Sprintf("projects/%s/branches/%s/files/%s/content", projectName, branchID, fileID)
+	u := fmt.Sprintf("projects/%s/branches/%s/files/%s/content", url.QueryEscape(projectName), branchID, fileID)
 	return getStringResponseWithoutOptions(s.client, u)
 }

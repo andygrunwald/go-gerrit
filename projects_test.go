@@ -75,6 +75,34 @@ func TestProjectsService_GetProject(t *testing.T) {
 	}
 }
 
+func TestProjectsService_GetProject_WithSlash(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testMux.HandleFunc("/projects/plugins/delete-project", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testRequestURL(t, r, "/projects/plugins%2Fdelete-project")
+
+		fmt.Fprint(w, `)]}'`+"\n"+`{"id":"plugins%2Fdelete-project","name":"plugins/delete-project","parent":"Public-Plugins","description":"A plugin which allows projects to be deleted from Gerrit via an SSH command","state":"ACTIVE"}`)
+	})
+	project, _, err := testClient.Projects.GetProject("plugins/delete-project")
+	if err != nil {
+		t.Errorf("Projects.GetProject returned error: %v", err)
+	}
+
+	want := &ProjectInfo{
+		ID:          "plugins%2Fdelete-project",
+		Name:        "plugins/delete-project",
+		Parent:      "Public-Plugins",
+		Description: "A plugin which allows projects to be deleted from Gerrit via an SSH command",
+		State:       "ACTIVE",
+	}
+
+	if !reflect.DeepEqual(project, want) {
+		t.Errorf("Projects.GetProject returned %+v, want %+v", project, want)
+	}
+}
+
 // +func (s *ProjectsService) CreateProject(name string, input *ProjectInput) (*ProjectInfo, *Response, error) {
 func TestProjectsService_CreateProject(t *testing.T) {
 	setup()

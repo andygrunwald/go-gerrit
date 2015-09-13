@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"fmt"
+	"net/url"
 )
 
 // ChildProjectOptions specifies the parameters to the Child Project API endpoints.
@@ -17,7 +18,7 @@ type ChildProjectOptions struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-child-projects
 func (s *ProjectsService) ListChildProjects(projectName string, opt *ChildProjectOptions) (*[]ProjectInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/children/", projectName)
+	u := fmt.Sprintf("projects/%s/children/", url.QueryEscape(projectName))
 
 	u, err := addOptions(u, opt)
 	if err != nil {
@@ -43,7 +44,7 @@ func (s *ProjectsService) ListChildProjects(projectName string, opt *ChildProjec
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-child-project
 func (s *ProjectsService) GetChildProject(projectName, childProjectName string, opt *ChildProjectOptions) (*ProjectInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/children/%s", projectName, childProjectName)
+	u := fmt.Sprintf("projects/%s/children/%s", url.QueryEscape(projectName), url.QueryEscape(childProjectName))
 
 	u, err := addOptions(u, opt)
 	if err != nil {

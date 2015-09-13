@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"fmt"
+	"net/url"
 )
 
 // DashboardSectionInfo entity contains information about a section in a dashboard.
@@ -35,7 +36,7 @@ type DashboardInfo struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-dashboards
 func (s *ProjectsService) ListDashboards(projectName string) (*[]DashboardInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/dashboards/", projectName)
+	u := fmt.Sprintf("projects/%s/dashboards/", url.QueryEscape(projectName))
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -55,7 +56,7 @@ func (s *ProjectsService) ListDashboards(projectName string) (*[]DashboardInfo, 
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-dashboard
 func (s *ProjectsService) GetDashboard(projectName, dashboardName string) (*DashboardInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardName)
+	u := fmt.Sprintf("projects/%s/dashboards/%s", url.QueryEscape(projectName), url.QueryEscape(dashboardName))
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -78,7 +79,7 @@ func (s *ProjectsService) GetDashboard(projectName, dashboardName string) (*Dash
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-dashboard
 func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *DashboardInput) (*DashboardInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardID)
+	u := fmt.Sprintf("projects/%s/dashboards/%s", url.QueryEscape(projectName), url.QueryEscape(dashboardID))
 
 	req, err := s.client.NewRequest("PUT", u, input)
 	if err != nil {
@@ -102,6 +103,6 @@ func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *D
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-dashboard
 func (s *ProjectsService) DeleteDashboard(projectName, dashboardID string, input *DashboardInput) (*Response, error) {
-	u := fmt.Sprintf("projects/%s/dashboards/%s", projectName, dashboardID)
+	u := fmt.Sprintf("projects/%s/dashboards/%s", url.QueryEscape(projectName), url.QueryEscape(dashboardID))
 	return s.client.DeleteRequest(u, input)
 }

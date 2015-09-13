@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"fmt"
+	"net/url"
 )
 
 // BranchInfo entity contains information about a branch.
@@ -46,7 +47,7 @@ type BranchOptions struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-branches
 func (s *ProjectsService) ListBranches(projectName string, opt *BranchOptions) (*[]BranchInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/branches/", projectName)
+	u := fmt.Sprintf("projects/%s/branches/", url.QueryEscape(projectName))
 
 	u, err := addOptions(u, opt)
 	if err != nil {
@@ -71,7 +72,7 @@ func (s *ProjectsService) ListBranches(projectName string, opt *BranchOptions) (
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-branch
 func (s *ProjectsService) GetBranch(projectName, branchID string) (*BranchInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/branches/%s", projectName, branchID)
+	u := fmt.Sprintf("projects/%s/branches/%s", url.QueryEscape(projectName), branchID)
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -92,7 +93,7 @@ func (s *ProjectsService) GetBranch(projectName, branchID string) (*BranchInfo, 
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-reflog
 func (s *ProjectsService) GetReflog(projectName, branchID string) (*[]ReflogEntryInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/branches/%s/reflog", projectName, branchID)
+	u := fmt.Sprintf("projects/%s/branches/%s/reflog", url.QueryEscape(projectName), branchID)
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -113,7 +114,7 @@ func (s *ProjectsService) GetReflog(projectName, branchID string) (*[]ReflogEntr
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-branch
 func (s *ProjectsService) CreateBranch(projectName, branchID string, input *BranchInput) (*BranchInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/branches/%s", projectName, branchID)
+	u := fmt.Sprintf("projects/%s/branches/%s", url.QueryEscape(projectName), branchID)
 
 	req, err := s.client.NewRequest("PUT", u, input)
 	if err != nil {
@@ -133,7 +134,7 @@ func (s *ProjectsService) CreateBranch(projectName, branchID string, input *Bran
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branch
 func (s *ProjectsService) DeleteBranch(projectName, branchID string) (*Response, error) {
-	u := fmt.Sprintf("projects/%s/branches/%s", projectName, branchID)
+	u := fmt.Sprintf("projects/%s/branches/%s", url.QueryEscape(projectName), branchID)
 	return s.client.DeleteRequest(u, nil)
 }
 
@@ -142,7 +143,7 @@ func (s *ProjectsService) DeleteBranch(projectName, branchID string) (*Response,
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branches
 func (s *ProjectsService) DeleteBranches(projectName string, input *DeleteBranchesInput) (*Response, error) {
-	u := fmt.Sprintf("projects/%s/branches:delete", projectName)
+	u := fmt.Sprintf("projects/%s/branches:delete", url.QueryEscape(projectName))
 	return s.client.DeleteRequest(u, input)
 }
 
@@ -151,6 +152,6 @@ func (s *ProjectsService) DeleteBranches(projectName string, input *DeleteBranch
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-content
 func (s *ProjectsService) GetBranchContent(projectName, branchID, fileID string) (*string, *Response, error) {
-	u := fmt.Sprintf("projects/%s/branches/%s/files/%s/content", projectName, branchID, fileID)
+	u := fmt.Sprintf("projects/%s/branches/%s/files/%s/content", url.QueryEscape(projectName), branchID, fileID)
 	return getStringResponseWithoutOptions(s.client, u)
 }

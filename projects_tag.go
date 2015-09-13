@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"fmt"
+	"net/url"
 )
 
 // TagInfo entity contains information about a tag.
@@ -17,7 +18,7 @@ type TagInfo struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-tags
 func (s *ProjectsService) ListTags(projectName string) (*[]TagInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/tags/", projectName)
+	u := fmt.Sprintf("projects/%s/tags/", url.QueryEscape(projectName))
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -37,7 +38,7 @@ func (s *ProjectsService) ListTags(projectName string) (*[]TagInfo, *Response, e
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-tag
 func (s *ProjectsService) GetTag(projectName, tagName string) (*TagInfo, *Response, error) {
-	u := fmt.Sprintf("projects/%s/tags/%s", projectName, tagName)
+	u := fmt.Sprintf("projects/%s/tags/%s", url.QueryEscape(projectName), url.QueryEscape(tagName))
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
