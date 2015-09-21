@@ -210,17 +210,8 @@ func (s *ProjectsService) ListProjects(opt *ProjectOptions) (*map[string]Project
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
 	v := new(map[string]ProjectInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
+	resp, err := s.client.Call("GET", u, nil, v)
 	return v, resp, err
 }
 
@@ -229,17 +220,9 @@ func (s *ProjectsService) ListProjects(opt *ProjectOptions) (*map[string]Project
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project
 func (s *ProjectsService) GetProject(projectName string) (*ProjectInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s", url.QueryEscape(projectName))
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
 
 	v := new(ProjectInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
+	resp, err := s.client.Call("GET", u, nil, v)
 	return v, resp, err
 }
 
@@ -249,17 +232,8 @@ func (s *ProjectsService) GetProject(projectName string) (*ProjectInfo, *Respons
 func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput) (*ProjectInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("PUT", u, input)
-	if err != nil {
-		return nil, nil, err
-	}
-
 	v := new(ProjectInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
+	resp, err := s.client.Call("PUT", u, input, v)
 	return v, resp, err
 }
 
@@ -268,6 +242,7 @@ func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput)
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-description
 func (s *ProjectsService) GetProjectDescription(projectName string) (*string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/description", url.QueryEscape(projectName))
+
 	return getStringResponseWithoutOptions(s.client, u)
 }
 

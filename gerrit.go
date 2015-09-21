@@ -117,6 +117,33 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	return req, nil
 }
 
+// Call is a combine function for Client.NewRequest and Client.Do.
+//
+// Most API methods are quite the same.
+// Get the URL, apply options, make a request, and get the response.
+// Without adding special headers or something.
+// To avoid a big amount of code duplication you can Client.Call.
+//
+// method is the HTTP method you want to call.
+// u is the URL you want to call.
+// body is the HTTP body.
+// v is the HTTP response.
+//
+// For more information read https://github.com/google/go-github/issues/234
+func (c *Client) Call(method, u string, body interface{}, v interface{}) (*Response, error) {
+	req, err := c.NewRequest(method, u, body)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.Do(req, v)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, err
+}
+
 // buildURLForRequest will build the URL (as string) that will be called.
 // We need such a utility method, because the URL.Path needs to be escaped (partly).
 //
@@ -277,16 +304,7 @@ func addOptions(s string, opt interface{}) (string, error) {
 
 // getStringResponseWithoutOptions retrieved a single string Response for a GET request
 func getStringResponseWithoutOptions(client *Client, u string) (*string, *Response, error) {
-	req, err := client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
 	v := new(string)
-	resp, err := client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
+	resp, err := client.Call("GET", u, nil, v)
 	return v, resp, err
 }

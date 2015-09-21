@@ -68,16 +68,7 @@ func (s *AccessService) ListAccessRights(opt *ListAccessRightsOptions) (*map[str
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
 	v := new(map[string]ProjectAccessInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
+	resp, err := s.client.Call("GET", u, nil, v)
 	return v, resp, err
 }
