@@ -160,7 +160,7 @@ func TestProjectsService_GetProjectDescription(t *testing.T) {
 
 	want := "The Go Programming Language"
 
-	if !reflect.DeepEqual(*description, want) {
-		t.Errorf("Projects.GetProjectDescription returned %+v, want %+v", *description, want)
+	if !reflect.DeepEqual(description, want) {
+		t.Errorf("Projects.GetProjectDescription returned %+v, want %+v", description, want)
 	}
 }

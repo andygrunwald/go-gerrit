@@ -250,7 +250,7 @@ type SummaryOptions struct {
 // GetVersion returns the version of the Gerrit server.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-config.html#get-version
-func (s *ConfigService) GetVersion() (*string, *Response, error) {
+func (s *ConfigService) GetVersion() (string, *Response, error) {
 	u := "config/server/version"
 	return getStringResponseWithoutOptions(s.client, u)
 }

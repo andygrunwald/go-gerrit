@@ -257,7 +257,7 @@ func (s *AccountsService) GetAccountDetails(accountID string) (*AccountDetailInf
 // GetAccountName retrieves the full name of an account.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account-name
-func (s *AccountsService) GetAccountName(accountID string) (*string, *Response, error) {
+func (s *AccountsService) GetAccountName(accountID string) (string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/name", accountID)
 	return getStringResponseWithoutOptions(s.client, u)
 }
@@ -265,7 +265,7 @@ func (s *AccountsService) GetAccountName(accountID string) (*string, *Response, 
 // GetUsername retrieves the username of an account.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-username
-func (s *AccountsService) GetUsername(accountID string) (*string, *Response, error) {
+func (s *AccountsService) GetUsername(accountID string) (string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/username", accountID)
 	return getStringResponseWithoutOptions(s.client, u)
 }
@@ -273,7 +273,7 @@ func (s *AccountsService) GetUsername(accountID string) (*string, *Response, err
 // GetHTTPPassword retrieves the HTTP password of an account.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-http-password
-func (s *AccountsService) GetHTTPPassword(accountID string) (*string, *Response, error) {
+func (s *AccountsService) GetHTTPPassword(accountID string) (string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/password.http", accountID)
 	return getStringResponseWithoutOptions(s.client, u)
 }
@@ -662,7 +662,7 @@ func (s *AccountsService) SetUsername(accountID string, input *UsernameInput) (*
 // If the account is inactive the response is “204 No Content”.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-active
-func (s *AccountsService) GetActive(accountID string) (*string, *Response, error) {
+func (s *AccountsService) GetActive(accountID string) (string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/active", accountID)
 	return getStringResponseWithoutOptions(s.client, u)
 }
@@ -750,7 +750,7 @@ func (s *AccountsService) SetPreferredEmail(accountID, emailID string) (*Respons
 // GetAvatarChangeURL retrieves the URL where the user can change the avatar image.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-avatar-change-url
-func (s *AccountsService) GetAvatarChangeURL(accountID string) (*string, *Response, error) {
+func (s *AccountsService) GetAvatarChangeURL(accountID string) (string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/avatar.change.url", accountID)
 	return getStringResponseWithoutOptions(s.client, u)
 }
@@ -785,7 +785,7 @@ func (s *AccountsService) AddGPGKeys(accountID string, input *GpgKeysInput) (*ma
 // If the user doesn’t have the global capability the response is “404 Not Found”.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#check-account-capability
-func (s *AccountsService) CheckAccountCapability(accountID, capabilityID string) (*string, *Response, error) {
+func (s *AccountsService) CheckAccountCapability(accountID, capabilityID string) (string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/capabilities/%s", accountID, capabilityID)
 	return getStringResponseWithoutOptions(s.client, u)
 }

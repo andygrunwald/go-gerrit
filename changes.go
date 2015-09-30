@@ -425,7 +425,7 @@ func (s *ChangesService) getChangeInfoResponse(u string, opt *ChangeOptions) (*C
 // GetTopic retrieves the topic of a change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-topic
-func (s *ChangesService) GetTopic(changeID string) (*string, *Response, error) {
+func (s *ChangesService) GetTopic(changeID string) (string, *Response, error) {
 	u := fmt.Sprintf("changes/%s/topic", changeID)
 	return getStringResponseWithoutOptions(s.client, u)
 }

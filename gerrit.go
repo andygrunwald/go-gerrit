@@ -303,8 +303,8 @@ func addOptions(s string, opt interface{}) (string, error) {
 }
 
 // getStringResponseWithoutOptions retrieved a single string Response for a GET request
-func getStringResponseWithoutOptions(client *Client, u string) (*string, *Response, error) {
+func getStringResponseWithoutOptions(client *Client, u string) (string, *Response, error) {
 	v := new(string)
 	resp, err := client.Call("GET", u, nil, v)
-	return v, resp, err
+	return *v, resp, err
 }

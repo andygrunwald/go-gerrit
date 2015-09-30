@@ -144,7 +144,7 @@ func (s *GroupsService) getGroupInfoResponse(u string) (*GroupInfo, *Response, e
 // GetGroupName retrieves the name of a group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-name
-func (s *GroupsService) GetGroupName(groupID string) (*string, *Response, error) {
+func (s *GroupsService) GetGroupName(groupID string) (string, *Response, error) {
 	u := fmt.Sprintf("groups/%s/name", groupID)
 	return getStringResponseWithoutOptions(s.client, u)
 }
@@ -152,7 +152,7 @@ func (s *GroupsService) GetGroupName(groupID string) (*string, *Response, error)
 // GetGroupDescription retrieves the description of a group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-description
-func (s *GroupsService) GetGroupDescription(groupID string) (*string, *Response, error) {
+func (s *GroupsService) GetGroupDescription(groupID string) (string, *Response, error) {
 	u := fmt.Sprintf("groups/%s/description", groupID)
 	return getStringResponseWithoutOptions(s.client, u)
 }

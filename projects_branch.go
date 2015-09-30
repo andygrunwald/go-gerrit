@@ -151,7 +151,7 @@ func (s *ProjectsService) DeleteBranches(projectName string, input *DeleteBranch
 // The content is returned as base64 encoded string.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-content
-func (s *ProjectsService) GetBranchContent(projectName, branchID, fileID string) (*string, *Response, error) {
+func (s *ProjectsService) GetBranchContent(projectName, branchID, fileID string) (string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/%s/files/%s/content", url.QueryEscape(projectName), branchID, fileID)
 	return getStringResponseWithoutOptions(s.client, u)
 }

@@ -170,7 +170,7 @@ func (s *ChangesService) GetComment(changeID, revisionID, commentID string) (*Co
 // GetSubmitType gets the method the server will use to submit (merge) the change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-submit-type
-func (s *ChangesService) GetSubmitType(changeID, revisionID string) (*string, *Response, error) {
+func (s *ChangesService) GetSubmitType(changeID, revisionID string) (string, *Response, error) {
 	u := fmt.Sprintf("changes/%s/revisions/%s/submit_type", changeID, revisionID)
 	return getStringResponseWithoutOptions(s.client, u)
 }

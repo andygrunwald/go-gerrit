@@ -82,7 +82,7 @@ func (s *ChangesService) RetrieveMetaDataOfAFileFromChangeEdit(changeID, filePat
 // The commit message is returned as base64 encoded string.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-message
-func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(changeID string) (*string, *Response, error) {
+func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(changeID string) (string, *Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:message", changeID)
 	return getStringResponseWithoutOptions(s.client, u)
 }
