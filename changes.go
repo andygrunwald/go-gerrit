@@ -282,7 +282,7 @@ type LabelInfo struct {
 	Disliked     AccountInfo `json:"disliked,omitempty"`
 	Blocking     bool        `json:"blocking,omitempty"`
 	Value        int         `json:"value,omitempty"`
-	DefaultValue string      `json:"default_value,omitempty"`
+	DefaultValue int         `json:"default_value,omitempty"`
 
 	// Fields set by DETAILED_LABELS
 	All    []ApprovalInfo    `json:"all,omitempty"`
