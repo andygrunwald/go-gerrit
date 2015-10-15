@@ -23,7 +23,7 @@ type WebLinkInfo struct {
 // GitPersonInfo entity contains information about the author/committer of a commit.
 type GitPersonInfo struct {
 	Name  string `json:"name"`
-	EMail string `json:"email"`
+	Email string `json:"email"`
 	Date  string `json:"date"`
 	TZ    int    `json:"tz"`
 }
