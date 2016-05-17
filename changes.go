@@ -187,13 +187,15 @@ type ReviewerInput struct {
 
 // ReviewInput entity contains information for adding a review to a revision.
 type ReviewInput struct {
-	Message      string                    `json:"message,omitempty"`
-	Labels       map[string]string         `json:"labels,omitempty"`
-	Comments     map[string][]CommentInput `json:"comments,omitempty"`
-	StrictLabels bool                      `json:"strict_labels,omitempty"`
-	Drafts       string                    `json:"drafts,omitempty"`
-	Notify       string                    `json:"notify,omitempty"`
-	OnBehalfOf   string                    `json:"on_behalf_of,omitempty"`
+	Message               string                    `json:"message,omitempty"`
+	Tag                   string                    `json:"tag,omitempty"`
+	Labels                map[string]string         `json:"labels,omitempty"`
+	Comments              map[string][]CommentInput `json:"comments,omitempty"`
+	StrictLabels          bool                      `json:"strict_labels,omitempty"`
+	Drafts                string                    `json:"drafts,omitempty"`
+	Notify                string                    `json:"notify,omitempty"`
+	OmitDuplicateComments bool                      `json:"omit_duplicate_comments,omitempty"`
+	OnBehalfOf            string                    `json:"on_behalf_of,omitempty"`
 }
 
 // RelatedChangeAndCommitInfo entity contains information about a related change and commit.
