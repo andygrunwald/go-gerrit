@@ -118,9 +118,9 @@ func main() {
 
 	v, _, err := client.Config.GetVersion()
 
-	fmt.Printf("Version: %s", *v)
+	fmt.Printf("Version: %s", v)
 
-	// Version: 2.11.3-1230-gb8336f1
+	// Version: 2.12.2-2512-g0b1bccd
 }
 ```
 

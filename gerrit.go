@@ -224,6 +224,7 @@ func (c *Client) addAuthentication(req *http.Request) {
 	if c.Authentication.HasBasicAuth() == true {
 		req.SetBasicAuth(c.Authentication.name, c.Authentication.secret)
 	}
+
 	// Apply HTTP Cookie
 	if c.Authentication.HasCookieAuth() == true {
 		req.AddCookie(&http.Cookie{
