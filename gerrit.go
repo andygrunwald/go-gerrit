@@ -205,7 +205,8 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 		if w, ok := v.(io.Writer); ok {
 			io.Copy(w, resp.Body)
 		} else {
-			body, err := ioutil.ReadAll(resp.Body)
+			var body []byte
+			body, err = ioutil.ReadAll(resp.Body)
 			if err != nil {
 				// even though there was an error, we still return the response
 				// in case the caller wants to inspect it further
