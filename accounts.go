@@ -84,7 +84,7 @@ type AccountInput struct {
 	Groups       []string `json:"groups,omitempty"`
 }
 
-// AccountDetailInfo entity contains detailled information about an account.
+// AccountDetailInfo entity contains detailed information about an account.
 type AccountDetailInfo struct {
 	AccountInfo
 	RegisteredOn string `json:"registered_on"`

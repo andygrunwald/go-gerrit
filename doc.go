@@ -33,7 +33,7 @@ https://android-review.googlesource.com/ or https://gerrit-review.googlesource.c
 
 You need the cookie name and the cookie value.
 You can get them by click on "Settings > HTTP Password > Obtain Password" in your Gerrit instance.
-There you can recieve your values.
+There you can receive your values.
 The cookie name will be (mostly) "o" (if hosted on googlesource.com).
 Your cookie secret will be something like "git-your@email.com=SomeHash...".
 
@@ -60,7 +60,7 @@ With this you can authenticate with HTTP Basic like this:
 
 	// Username: Andy Grunwald
 
-Addionally when creating a new client, pass an http.Client that supports further actions for you.
+Additionally when creating a new client, pass an http.Client that supports further actions for you.
 For more information regarding authentication have a look at the Gerrit documentation:
 https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication
 

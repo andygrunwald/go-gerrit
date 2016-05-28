@@ -53,7 +53,7 @@ Some Gerrit instances hosted like the one hosted googlesource.com (e.g. [Go(lang
 You need the cookie name and the cookie value.
 You can get them by click on "Settings > HTTP Password > Obtain Password" in your Gerrit instance.
 
-There you can recieve your values.
+There you can receive your values.
 The cookie name will be (mostly) `o` (if hosted on googlesource.com).
 Your cookie secret will be something like `git-your@email.com=SomeHash...`.
 
