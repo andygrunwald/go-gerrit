@@ -7,7 +7,7 @@ import (
 // ReviewerInfo entity contains information about a reviewer and its votes on a change.
 type ReviewerInfo struct {
 	AccountInfo
-	Approvals string `json:"approvals"`
+	Approvals map[string]string `json:"approvals"`
 }
 
 // SuggestedReviewerInfo entity contains information about a reviewer that can be added to a change (an account or a group).
