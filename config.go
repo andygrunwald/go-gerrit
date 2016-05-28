@@ -126,7 +126,7 @@ type ServerInfo struct {
 	Auth       AuthInfo          `json:"auth"`
 	Change     ChangeConfigInfo  `json:"change"`
 	Download   DownloadInfo      `json:"download"`
-	Gerrit     GerritInfo        `json:"gerrit"`
+	Gerrit     Info              `json:"gerrit"`
 	Gitweb     map[string]string `json:"gitweb,omitempty"`
 	Plugin     PluginConfigInfo  `json:"plugin"`
 	Receive    ReceiveInfo       `json:"receive,omitempty"`
@@ -170,8 +170,8 @@ type JvmSummaryInfo struct {
 	Site                    string `json:"site"`
 }
 
-// GerritInfo entity contains information about Gerrit configuration from the gerrit section.
-type GerritInfo struct {
+// Info entity contains information about Gerrit configuration from the gerrit section.
+type Info struct {
 	AllProjectsName string `json:"all_projects_name"`
 	AllUsersName    string `json:"all_users_name"`
 	DocURL          string `json:"doc_url,omitempty"`
