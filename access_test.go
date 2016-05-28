@@ -29,7 +29,7 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 	}
 
 	want := &map[string]ProjectAccessInfo{
-		"go": ProjectAccessInfo{
+		"go": {
 			Revision: "08f45ba74baef9699b650f42022df6467389c1f0",
 			InheritsFrom: ProjectInfo{
 				ID:          "All-Projects",

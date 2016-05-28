@@ -32,11 +32,11 @@ func TestProjectsService_ListProjects(t *testing.T) {
 	}
 
 	want := &map[string]ProjectInfo{
-		"arch": ProjectInfo{
+		"arch": {
 			ID:    "arch",
 			State: "ACTIVE",
 		},
-		"benchmarks": ProjectInfo{
+		"benchmarks": {
 			ID:    "benchmarks",
 			State: "ACTIVE",
 		},
