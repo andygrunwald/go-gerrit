@@ -1,5 +1,15 @@
 package gerrit
 
+import (
+	"crypto/md5"
+	"crypto/rand"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"encoding/base64"
+)
+
 const (
 	// HTTP Basic Authentication
 	authTypeBasic = 1
@@ -8,8 +18,6 @@ const (
 	// HTTP Cookie Authentication
 	authTypeCookie = 3
 )
-
-// TODO Digest auth
 
 // AuthenticationService contains Authentication related functions.
 //
@@ -32,6 +40,100 @@ func (s *AuthenticationService) SetBasicAuth(username, password string) {
 	s.authType = authTypeBasic
 }
 
+// SetDigestAuth sets digest parameters for HTTP Digest auth.
+func (s *AuthenticationService) SetDigestAuth(username, password string) {
+	s.name = username
+	s.secret = password
+	s.authType = authTypeDigest
+}
+
+// digestAuthHeader is called by gerrit.Client.Do in the event the server
+// returns 401 Unauthorized and authType was set to authTypeDigest. The
+// resulting string is used to set the Authorization header before retrying
+// the request.
+func (s *AuthenticationService) digestAuthHeader(response *http.Response) (string, error) {
+	authenticateHeader := response.Header.Get("WWW-Authenticate")
+	if authenticateHeader == "" {
+		return "", fmt.Errorf("WWW-Authenticate header is missing")
+	}
+
+	split := strings.SplitN(authenticateHeader, " ", 2)
+	if len(split) != 2 {
+		return "", fmt.Errorf("WWW-Authenticate header is invalid")
+	}
+
+	if split[0] != "Digest" {
+		return "", fmt.Errorf("WWW-Authenticate header type is not Digest")
+	}
+
+	// Iterate over all the fields from the WWW-Authenticate header
+	// and create a map of keys and values.
+	authenticate := map[string]string{}
+	for _, value := range strings.Split(split[1], ",") {
+		kv := strings.SplitN(value, "=", 2)
+		if len(kv) != 2 {
+			continue
+		}
+
+		key := strings.Trim(strings.Trim(kv[0], " "), "\"")
+		value := strings.Trim(strings.Trim(kv[1], " "), "\"")
+		authenticate[key] = value
+	}
+
+	// Gerrit usually responds without providing the algorithm.  According
+	// to RFC2617 if no algorithm is provided then the default is to use
+	// MD5.  At the time this code was implemented Gerrit did no appear
+	// to support other algorithms or provide a means of changing the
+	// algorithm.
+	if value, ok := authenticate["algorithm"]; ok {
+		if value != "MD5" {
+			return "", fmt.Errorf(
+				"algorithm not implemented: %s", value)
+		}
+	}
+
+	realmHeader := authenticate["realm"]
+	qopHeader := authenticate["qop"]
+	nonceHeader := authenticate["nonce"]
+
+	// If the server does not inform us what the uri is supposed
+	// to be then use the last requests's uri instead.
+	if _, ok := authenticate["uri"]; !ok {
+		authenticate["uri"] = response.Request.URL.Path
+	}
+
+	uriHeader := authenticate["uri"]
+
+	// A1
+	h := md5.New()
+	A1 := fmt.Sprintf("%s:%s:%s", s.name, realmHeader, s.secret)
+	io.WriteString(h, A1)
+	HA1 := fmt.Sprintf("%x", h.Sum(nil))
+
+	// A2
+	h = md5.New()
+	A2 := fmt.Sprintf("GET:%s", uriHeader)
+	io.WriteString(h, A2)
+	HA2 := fmt.Sprintf("%x", h.Sum(nil))
+
+	k := make([]byte, 12)
+	for bytes := 0; bytes < len(k); {
+		n, err := rand.Read(k[bytes:])
+		if err != nil {
+			return "", fmt.Errorf("cnonce generation failed: %s", err)
+		}
+		bytes += n
+	}
+	cnonce := base64.StdEncoding.EncodeToString(k)
+	digest := md5.New()
+	digest.Write([]byte(strings.Join([]string{HA1, nonceHeader, "00000001", cnonce, qopHeader, HA2}, ":")))
+	responseField := fmt.Sprintf("%x", digest.Sum(nil))
+
+	return fmt.Sprintf(
+		`Digest username="%s", realm="%s", nonce="%s", uri="%s", cnonce="%s", nc=00000001, qop=%s, response="%s"`,
+		s.name, realmHeader, nonceHeader, uriHeader, cnonce, qopHeader, responseField), nil
+}
+
 // SetCookieAuth sets basic parameters for HTTP Cookie
 func (s *AuthenticationService) SetCookieAuth(name, value string) {
 	s.name = name
@@ -42,6 +144,11 @@ func (s *AuthenticationService) SetCookieAuth(name, value string) {
 // HasBasicAuth checks if the auth type is HTTP Basic auth
 func (s *AuthenticationService) HasBasicAuth() bool {
 	return s.authType == authTypeBasic
+}
+
+// HasDigestAuth checks if the auth type is HTTP Digest based
+func (s *AuthenticationService) HasDigestAuth() bool {
+	return s.authType == authTypeDigest
 }
 
 // HasCookieAuth checks if the auth type is HTTP Cookie based

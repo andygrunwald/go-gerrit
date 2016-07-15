@@ -189,6 +189,22 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 		return nil, err
 	}
 
+	// If the server responds with 401 Unauthorized and we're using digest
+	// authentication then generate an Authorization header and retry
+	// the request.
+	if resp.StatusCode == http.StatusUnauthorized && c.Authentication.HasDigestAuth() {
+		digestAuthHeader, err := c.Authentication.digestAuthHeader(resp)
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Authorization", digestAuthHeader)
+		resp, err = c.client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	// Wrap response
 	response := &Response{Response: resp}
 
