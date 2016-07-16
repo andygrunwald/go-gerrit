@@ -176,14 +176,13 @@ func ExampleListProjects() {
 
 	opt := &gerrit.ProjectOptions{
 		Description: true,
+		Prefix: "CyanogenMod/android_device_htc_pyramid",
 	}
 	projects, _, err := client.Projects.ListProjects(opt)
 	for name, p := range *projects {
 		fmt.Printf("%s - State: %s\n", name, p.State)
 	}
 
-	// CyanogenMod/android_external_drm - State: ACTIVE
-	// CyanogenMod/android_external_jhead - State: ACTIVE
-	// CyanogenMod/android_external_libppp - State: ACTIVE
-	// ...
+	// Output:
+	// CyanogenMod/android_device_htc_pyramid - State: ACTIVE
 }
