@@ -193,7 +193,8 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	// authentication then generate an Authorization header and retry
 	// the request.
 	if resp.StatusCode == http.StatusUnauthorized && c.Authentication.HasDigestAuth() {
-		digestAuthHeader, err := c.Authentication.digestAuthHeader(resp)
+		var digestAuthHeader string
+		digestAuthHeader, err = c.Authentication.digestAuthHeader(resp)
 		if err != nil {
 			return nil, err
 		}
