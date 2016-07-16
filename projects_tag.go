@@ -17,8 +17,12 @@ type TagInfo struct {
 // ListTags list the tags of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-tags
-func (s *ProjectsService) ListTags(projectName string) (*[]TagInfo, *Response, error) {
+func (s *ProjectsService) ListTags(projectName string, opt *ProjectBaseOptions) (*[]TagInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/tags/", url.QueryEscape(projectName))
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {

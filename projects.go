@@ -164,16 +164,25 @@ type ConfigInput struct {
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
 
+// ProjectBaseOptions specifies the really basic options for projects
+// and sub functionality (e.g. Tags)
+type ProjectBaseOptions struct {
+	// Limit the number of projects to be included in the results.
+	Limit int `url:"n,omitempty"`
+
+	// Skip the given number of branches from the beginning of the list.
+	Skip string `url:"s,omitempty"`
+}
+
 // ProjectOptions specifies the parameters to the ProjectsService.ListProjects.
 type ProjectOptions struct {
+	ProjectBaseOptions
+
 	// Limit the results to the projects having the specified branch and include the sha1 of the branch in the results.
 	Branch string `url:"b,omitempty"`
 
 	// Include project description in the results.
 	Description bool `url:"d,omitempty"`
-
-	// Limit the number of projects to be included in the results.
-	Limit int `url:"n,omitempty"`
 
 	// Limit the results to those projects that start with the specified prefix.
 	Prefix string `url:"p,omitempty"`
