@@ -444,5 +444,22 @@ func (s *ProjectsService) SetProjectParent(projectName string, input *ProjectPar
 	return v, resp, err
 }
 
-// TODO: Run GC
-// https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#run-gc
+// RunGC runs the Git garbage collection for the repository of a project.
+// The response is the streamed output of the garbage collection.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#run-gc
+func (s *ProjectsService) RunGC(projectName string, input *GCInput) (*Response, error) {
+	u := fmt.Sprintf("projects/%s/gc'", url.QueryEscape(projectName))
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.client.Do(req, nil)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, err
+}
