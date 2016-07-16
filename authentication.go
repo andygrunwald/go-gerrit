@@ -3,11 +3,11 @@ package gerrit
 import (
 	"crypto/md5"
 	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
-	"encoding/base64"
 )
 
 const (
