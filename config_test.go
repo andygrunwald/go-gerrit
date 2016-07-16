@@ -6,7 +6,7 @@ import (
 	"github.com/andygrunwald/go-gerrit"
 )
 
-func ExampleGetVersion() {
+func ExampleConfigService_GetVersion() {
 	instance := "https://gerrit-review.googlesource.com/"
 	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {

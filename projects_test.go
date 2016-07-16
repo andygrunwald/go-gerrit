@@ -167,7 +167,7 @@ func TestProjectsService_GetProjectDescription(t *testing.T) {
 	}
 }
 
-func ExampleListProjects() {
+func ExampleProjectsService_ListProjects() {
 	instance := "http://review.cyanogenmod.org/"
 	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/andygrunwald/go-gerrit"
 )
 
-func ExampleQueryChanges() {
+func ExampleChangesService_QueryChanges() {
 	instance := "https://android-review.googlesource.com/"
 	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
