@@ -26,8 +26,8 @@ func TestProjectsService_ListProjects(t *testing.T) {
 
 	opt := &gerrit.ProjectOptions{
 		Regex: "(arch|benchmarks)",
-		Limit: 2,
 	}
+	opt.Limit = 2
 	project, _, err := testClient.Projects.ListProjects(opt)
 	if err != nil {
 		t.Errorf("Projects.ListProjects returned error: %v", err)
