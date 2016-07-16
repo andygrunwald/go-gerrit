@@ -605,7 +605,8 @@ func (s *ChangesService) CherryPickRevision(changeID, revisionID string, input *
 }
 
 /*
-Missing Revision Endpoints
+TODO: Missing Revision Endpoints
 	Rebase Revision
 	Submit Revision
+	DownloadContent (https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-safe-content)
 */
