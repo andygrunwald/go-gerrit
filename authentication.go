@@ -82,7 +82,7 @@ func (s *AuthenticationService) digestAuthHeader(response *http.Response) (strin
 
 	// Gerrit usually responds without providing the algorithm.  According
 	// to RFC2617 if no algorithm is provided then the default is to use
-	// MD5.  At the time this code was implemented Gerrit did no appear
+	// MD5. At the time this code was implemented Gerrit did not appear
 	// to support other algorithms or provide a means of changing the
 	// algorithm.
 	if value, ok := authenticate["algorithm"]; ok {
