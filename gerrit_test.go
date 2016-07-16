@@ -1,4 +1,4 @@
-package gerrit
+package gerrit_test
 
 import (
 	"bytes"
@@ -10,7 +10,8 @@ import (
 	"net/url"
 	"reflect"
 	"testing"
-	"time"
+
+	"github.com/andygrunwald/go-gerrit"
 )
 
 const (
@@ -23,7 +24,7 @@ var (
 	testMux *http.ServeMux
 
 	// testClient is the gerrit client being tested.
-	testClient *Client
+	testClient *gerrit.Client
 
 	// testServer is a test HTTP server used to provide mock API responses.
 	testServer *httptest.Server
@@ -39,7 +40,7 @@ func setup() {
 	testServer = httptest.NewServer(testMux)
 
 	// gerrit client configured to use test server
-	testClient, _ = NewClient(testServer.URL, nil)
+	testClient, _ = gerrit.NewClient(testServer.URL, nil)
 }
 
 // teardown closes the test HTTP server.
@@ -74,7 +75,7 @@ func testFormValues(t *testing.T, r *http.Request, values testValues) {
 func TestNewClient_NoGerritInstance(t *testing.T) {
 	mockData := []string{"", "://not-existing"}
 	for _, data := range mockData {
-		c, err := NewClient(data, nil)
+		c, err := gerrit.NewClient(data, nil)
 		if c != nil {
 			t.Errorf("NewClient return is not nil. Expected no client. Go %+v", c)
 		}
@@ -84,31 +85,8 @@ func TestNewClient_NoGerritInstance(t *testing.T) {
 	}
 }
 
-func TestNewClient_HttpClient(t *testing.T) {
-	customHTTPClient := &http.Client{
-		Timeout: 30 * time.Second,
-	}
-	mockData := []struct {
-		HTTPClient         *http.Client
-		ExpectedHTTPClient *http.Client
-	}{
-		{nil, http.DefaultClient},
-		{customHTTPClient, customHTTPClient},
-	}
-
-	for _, mock := range mockData {
-		c, err := NewClient("https://gerrit-review.googlesource.com/", mock.HTTPClient)
-		if err != nil {
-			t.Errorf("An error occured. Expected nil. Got %+v.", err)
-		}
-		if reflect.DeepEqual(c.client, mock.ExpectedHTTPClient) == false {
-			t.Errorf("Wrong HTTP Client. Expected %+v. Got %+v", mock.ExpectedHTTPClient, c.client)
-		}
-	}
-}
-
 func TestNewClient_Services(t *testing.T) {
-	c, err := NewClient("https://gerrit-review.googlesource.com/", nil)
+	c, err := gerrit.NewClient("https://gerrit-review.googlesource.com/", nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -140,13 +118,13 @@ func TestNewClient_Services(t *testing.T) {
 }
 
 func TestNewRequest(t *testing.T) {
-	c, err := NewClient(testGerritInstanceURL, nil)
+	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
 
 	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
-	inBody, outBody := &PermissionRuleInfo{Action: "ALLOW", Force: true, Min: 0, Max: 0}, `{"action":"ALLOW","force":true,"min":0,"max":0}`+"\n"
+	inBody, outBody := &gerrit.PermissionRuleInfo{Action: "ALLOW", Force: true, Min: 0, Max: 0}, `{"action":"ALLOW","force":true,"min":0,"max":0}`+"\n"
 	req, _ := c.NewRequest("GET", inURL, inBody)
 
 	// Test that relative URL was expanded
@@ -162,7 +140,7 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestNewRequest_InvalidJSON(t *testing.T) {
-	c, err := NewClient(testGerritInstanceURL, nil)
+	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -190,7 +168,7 @@ func testURLParseError(t *testing.T, err error) {
 }
 
 func TestNewRequest_BadURL(t *testing.T) {
-	c, err := NewClient(testGerritInstanceURL, nil)
+	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -203,7 +181,7 @@ func TestNewRequest_BadURL(t *testing.T) {
 // since there is no difference between an HTTP request body that is an empty string versus one that is not set at all.
 // However in certain cases, intermediate systems may treat these differently resulting in subtle errors.
 func TestNewRequest_EmptyBody(t *testing.T) {
-	c, err := NewClient(testGerritInstanceURL, nil)
+	c, err :=gerrit. NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -309,7 +287,7 @@ func TestRemoveMagicPrefixLine(t *testing.T) {
 		{[]byte(`)]}'` + "\n" + `{"A":"a"}`), []byte(`{"A":"a"}`)},
 	}
 	for _, mock := range mockData {
-		body := RemoveMagicPrefixLine(mock.Current)
+		body := gerrit.RemoveMagicPrefixLine(mock.Current)
 		if !reflect.DeepEqual(body, mock.Expected) {
 			t.Errorf("Response body = %v, want %v", body, mock.Expected)
 		}

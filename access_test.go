@@ -1,10 +1,12 @@
-package gerrit
+package gerrit_test
 
 import (
 	"fmt"
 	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/andygrunwald/go-gerrit"
 )
 
 func TestAccessService_ListAccessRights(t *testing.T) {
@@ -20,7 +22,7 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"go":{"revision":"08f45ba74baef9699b650f42022df6467389c1f0","inherits_from":{"id":"All-Projects","name":"All-Projects","description":"Access inherited by all other projects.","state":"ACTIVE"},"local":{},"owner_of":[],"config_visible":false}}`)
 	})
 
-	opt := &ListAccessRightsOptions{
+	opt := &gerrit.ListAccessRightsOptions{
 		Project: []string{"go"},
 	}
 	access, _, err := testClient.Access.ListAccessRights(opt)
@@ -28,17 +30,17 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 		t.Errorf("Access.ListAccessRights returned error: %v", err)
 	}
 
-	want := &map[string]ProjectAccessInfo{
+	want := &map[string]gerrit.ProjectAccessInfo{
 		"go": {
 			Revision: "08f45ba74baef9699b650f42022df6467389c1f0",
-			InheritsFrom: ProjectInfo{
+			InheritsFrom: gerrit.ProjectInfo{
 				ID:          "All-Projects",
 				Name:        "All-Projects",
 				Parent:      "",
 				Description: "Access inherited by all other projects.",
 				State:       "ACTIVE",
 			},
-			Local:         map[string]AccessSectionInfo{},
+			Local:         map[string]gerrit.AccessSectionInfo{},
 			OwnerOf:       []string{},
 			ConfigVisible: false,
 		},
@@ -63,7 +65,7 @@ func TestAccessService_ListAccessRights_WithoutOpts(t *testing.T) {
 		t.Errorf("Access.ListAccessRights returned error: %v", err)
 	}
 
-	want := &map[string]ProjectAccessInfo{}
+	want := &map[string]gerrit.ProjectAccessInfo{}
 	if !reflect.DeepEqual(access, want) {
 		t.Errorf("Access.ListAccessRights returned %+v, want %+v", access, want)
 	}

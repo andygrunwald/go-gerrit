@@ -1,4 +1,4 @@
-package gerrit
+package gerrit_test
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/andygrunwald/go-gerrit"
 )
 
 func TestProjectsService_ListProjects(t *testing.T) {
@@ -22,7 +24,7 @@ func TestProjectsService_ListProjects(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"arch":{"id":"arch","state":"ACTIVE"},"benchmarks":{"id":"benchmarks","state":"ACTIVE"}}`)
 	})
 
-	opt := &ProjectOptions{
+	opt := &gerrit.ProjectOptions{
 		Regex: "(arch|benchmarks)",
 		Limit: 2,
 	}
@@ -31,7 +33,7 @@ func TestProjectsService_ListProjects(t *testing.T) {
 		t.Errorf("Projects.ListProjects returned error: %v", err)
 	}
 
-	want := &map[string]ProjectInfo{
+	want := &map[string]gerrit.ProjectInfo{
 		"arch": {
 			ID:    "arch",
 			State: "ACTIVE",
@@ -62,7 +64,7 @@ func TestProjectsService_GetProject(t *testing.T) {
 		t.Errorf("Projects.GetProject returned error: %v", err)
 	}
 
-	want := &ProjectInfo{
+	want := &gerrit.ProjectInfo{
 		ID:          "go",
 		Name:        "go",
 		Parent:      "All-Projects",
@@ -90,7 +92,7 @@ func TestProjectsService_GetProject_WithSlash(t *testing.T) {
 		t.Errorf("Projects.GetProject returned error: %v", err)
 	}
 
-	want := &ProjectInfo{
+	want := &gerrit.ProjectInfo{
 		ID:          "plugins%2Fdelete-project",
 		Name:        "plugins/delete-project",
 		Parent:      "Public-Plugins",
@@ -108,14 +110,14 @@ func TestProjectsService_CreateProject(t *testing.T) {
 	setup()
 	defer teardown()
 
-	input := &ProjectInput{
+	input := &gerrit.ProjectInput{
 		Description: "The Go Programming Language",
 	}
 
 	testMux.HandleFunc("/projects/go/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "PUT")
 
-		v := new(ProjectInput)
+		v := new(gerrit.ProjectInput)
 		json.NewDecoder(r.Body).Decode(v)
 
 		if !reflect.DeepEqual(v, input) {
@@ -130,7 +132,7 @@ func TestProjectsService_CreateProject(t *testing.T) {
 		t.Errorf("Projects.CreateProject returned error: %v", err)
 	}
 
-	want := &ProjectInfo{
+	want := &gerrit.ProjectInfo{
 		ID:          "go",
 		Name:        "go",
 		Parent:      "All-Projects",
@@ -163,4 +165,25 @@ func TestProjectsService_GetProjectDescription(t *testing.T) {
 	if !reflect.DeepEqual(description, want) {
 		t.Errorf("Projects.GetProjectDescription returned %+v, want %+v", description, want)
 	}
+}
+
+func ExampleListProjects() {
+	instance := "http://review.cyanogenmod.org/"
+	client, err := gerrit.NewClient(instance, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	opt := &gerrit.ProjectOptions{
+		Description: true,
+	}
+	projects, _, err := client.Projects.ListProjects(opt)
+	for name, p := range *projects {
+		fmt.Printf("%s - State: %s\n", name, p.State)
+	}
+
+	// CyanogenMod/android_external_drm - State: ACTIVE
+	// CyanogenMod/android_external_jhead - State: ACTIVE
+	// CyanogenMod/android_external_libppp - State: ACTIVE
+	// ...
 }
