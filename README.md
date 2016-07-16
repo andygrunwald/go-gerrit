@@ -11,7 +11,7 @@ go-gerrit is a [Go(lang)](https://golang.org/) client library for accessing the 
 
 ## Features
 
-* [Authentication](https://godoc.org/github.com/andygrunwald/go-gerrit#AuthenticationService) (HTTP Basic, HTTP Cookie)
+* [Authentication](https://godoc.org/github.com/andygrunwald/go-gerrit#AuthenticationService) (HTTP Basic, HTTP Digest, HTTP Cookie)
 * Every API Endpoint like Gerrit
 	* [/access/](https://godoc.org/github.com/andygrunwald/go-gerrit#AccessService)
 	* [/accounts/](https://godoc.org/github.com/andygrunwald/go-gerrit#AccountsService)
@@ -46,6 +46,45 @@ The [Gerrit Code Review - REST API](https://gerrit-review.googlesource.com/Docum
 
 Gerrit support multiple ways for [authentication](https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication).
 
+#### HTTP Basic
+
+Some Gerrit instances (like [TYPO3](https://review.typo3.org/)) has [auth.gitBasicAuth](https://gerrit-review.googlesource.com/Documentation/config-gerrit.html#auth.gitBasicAuth) activated.
+With this you can authenticate with HTTP Basic like this:
+
+```go
+instance := "https://review.typo3.org/"
+client, _ := gerrit.NewClient(instance, nil)
+client.Authentication.SetBasicAuth("andy.grunwald", "my secrect password")
+
+self, _, _ := client.Accounts.GetAccount("self")
+
+fmt.Printf("Username: %s", self.Name)
+
+// Username: Andy Grunwald
+```
+
+If you get an `401 Unauthorized`, check your Account Settings and have a look at the `HTTP Password` configuration.
+
+#### HTTP Digest
+
+Some Gerrit instances (like [Wikimedia](https://gerrit.wikimedia.org/)) has [Digest access authentication](https://en.wikipedia.org/wiki/Digest_access_authentication) activated.
+
+```go
+instance := "https://gerrit.wikimedia.org/r/"
+client, _ := gerrit.NewClient(instance, nil)
+client.Authentication.SetDigestAuth("andy.grunwald", "my secrect http password")
+
+self, resp, err := client.Accounts.GetAccount("self")
+
+fmt.Printf("Username: %s", self.Name)
+
+// Username: Andy Grunwald
+```
+
+If digest auth is not supported by the choosen Gerrit instance, an error like `WWW-Authenticate header type is not Digest` is thrown.
+
+If you get an `401 Unauthorized`, check your Account Settings and have a look at the `HTTP Password` configuration.
+
 #### HTTP Cookie
 
 Some Gerrit instances hosted like the one hosted googlesource.com (e.g. [Go(lang)](https://go-review.googlesource.com/), [Android](https://android-review.googlesource.com/) or [Gerrit](https://gerrit-review.googlesource.com/)) support HTTP Cookie authentication.
@@ -67,23 +106,6 @@ self, _, _ := client.Accounts.GetAccount("self")
 fmt.Printf("Username: %s", self.Name)
 
 // Username: Andy G.
-```
-
-#### HTTP Basic
-
-Some Gerrit instances (like [TYPO3](https://review.typo3.org/)) has [auth.gitBasicAuth](https://gerrit-review.googlesource.com/Documentation/config-gerrit.html#auth.gitBasicAuth) activated.
-With this you can authenticate with HTTP Basic like this:
-
-```go
-instance := "https://review.typo3.org/"
-client, _ := gerrit.NewClient(instance, nil)
-client.Authentication.SetBasicAuth("andy.grunwald", "my secrect password")
-
-self, _, _ := client.Accounts.GetAccount("self")
-
-fmt.Printf("Username: %s", self.Name)
-
-// Username: Andy Grunwald
 ```
 
 ### More more more
