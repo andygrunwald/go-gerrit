@@ -2,6 +2,7 @@ package gerrit_test
 
 import (
 	"fmt"
+
 	"github.com/andygrunwald/go-gerrit"
 )
 

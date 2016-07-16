@@ -181,7 +181,7 @@ func TestNewRequest_BadURL(t *testing.T) {
 // since there is no difference between an HTTP request body that is an empty string versus one that is not set at all.
 // However in certain cases, intermediate systems may treat these differently resulting in subtle errors.
 func TestNewRequest_EmptyBody(t *testing.T) {
-	c, err :=gerrit. NewClient(testGerritInstanceURL, nil)
+	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}

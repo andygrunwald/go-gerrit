@@ -176,7 +176,7 @@ func ExampleListProjects() {
 
 	opt := &gerrit.ProjectOptions{
 		Description: true,
-		Prefix: "CyanogenMod/android_device_htc_pyramid",
+		Prefix:      "CyanogenMod/android_device_htc_pyramid",
 	}
 	projects, _, err := client.Projects.ListProjects(opt)
 	for name, p := range *projects {
