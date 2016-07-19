@@ -484,7 +484,7 @@ func (s *ChangesService) GetIncludedIn(changeID string) (*IncludedInInfo, *Respo
 // Each comment has the patch_set and author fields set.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-comments
-func (s *ChangesService) ListChangeComments(changeID string) (*map[string]CommentInfo, *Response, error) {
+func (s *ChangesService) ListChangeComments(changeID string) (*map[string][]CommentInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/comments", changeID)
 	return s.getCommentInfoMapResponse(u)
 }
@@ -494,19 +494,19 @@ func (s *ChangesService) ListChangeComments(changeID string) (*map[string]Commen
 // Each comment has the patch_set field set, and no author.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-drafts
-func (s *ChangesService) ListChangeDrafts(changeID string) (*map[string]CommentInfo, *Response, error) {
+func (s *ChangesService) ListChangeDrafts(changeID string) (*map[string][]CommentInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/drafts", changeID)
 	return s.getCommentInfoMapResponse(u)
 }
 
 // getCommentInfoMapResponse retrieved a map of CommentInfo Response for a GET request
-func (s *ChangesService) getCommentInfoMapResponse(u string) (*map[string]CommentInfo, *Response, error) {
+func (s *ChangesService) getCommentInfoMapResponse(u string) (*map[string][]CommentInfo, *Response, error) {
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	v := new(map[string]CommentInfo)
+	v := new(map[string][]CommentInfo)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
