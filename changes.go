@@ -485,7 +485,7 @@ func (s *ChangesService) GetIncludedIn(changeID string) (*IncludedInInfo, *Respo
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-comments
 func (s *ChangesService) ListChangeComments(changeID string) (*map[string]CommentInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/in", changeID)
+	u := fmt.Sprintf("changes/%s/comments", changeID)
 	return s.getCommentInfoMapResponse(u)
 }
 
