@@ -15,7 +15,7 @@ func ExampleChangesService_QueryChanges() {
 
 	opt := &gerrit.QueryChangeOptions{}
 	opt.Query = []string{
-		"status:merged",
+		"change:249244",
 	}
 	opt.Limit = 2
 	opt.AdditionalFields = []string{"LABELS"}
@@ -26,6 +26,5 @@ func ExampleChangesService_QueryChanges() {
 	}
 
 	// Output:
-	// Project: platform/external/llvm -> [InstCombine] allow X + signbit --> X ^ signbit for vector splats am: 2e9433d42d -> https://android-review.googlesource.com/248616
-	// Project: platform/external/llvm -> add vector test to show missing transform am: 713ceaf392 -> https://android-review.googlesource.com/248615
+	// Project: platform/art -> ART: Change return types of field access entrypoints -> https://android-review.googlesource.com/249244
 }
