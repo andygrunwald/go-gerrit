@@ -14,7 +14,9 @@ func ExampleConfigService_GetVersion() {
 	}
 
 	v, _, err := client.Config.GetVersion()
-
+	if err != nil {
+		panic(err)
+	}
 	// We can`t output the direct version here, because
 	// the test would fail if gerrit-review.googlesource.com
 	// will upgrade their instance.

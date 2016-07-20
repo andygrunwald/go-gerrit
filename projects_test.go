@@ -179,6 +179,10 @@ func ExampleProjectsService_ListProjects() {
 		Prefix:      "CyanogenMod/android_device_htc_pyramid",
 	}
 	projects, _, err := client.Projects.ListProjects(opt)
+	if err != nil {
+		panic(err)
+	}
+
 	for name, p := range *projects {
 		fmt.Printf("%s - State: %s\n", name, p.State)
 	}
