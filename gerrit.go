@@ -30,7 +30,8 @@ type Client struct {
 	// Gerrit service for authentication
 	Authentication *AuthenticationService
 
-	// Services used for talking to different parts of the Gerrit API.
+	// Services used for talking to different parts of the standard
+	// Gerrit API.
 	Access   *AccessService
 	Accounts *AccountsService
 	Changes  *ChangesService
@@ -38,6 +39,10 @@ type Client struct {
 	Groups   *GroupsService
 	Plugins  *PluginsService
 	Projects *ProjectsService
+
+	// Additional services used for talking to non-standard Gerrit
+	// APIs.
+	EventsLog *EventsLogService
 }
 
 // Response is a Gerrit API response.
@@ -74,6 +79,7 @@ func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
 	c.Groups = &GroupsService{client: c}
 	c.Plugins = &PluginsService{client: c}
 	c.Projects = &ProjectsService{client: c}
+	c.EventsLog = &EventsLogService{client: c}
 
 	return c, nil
 }
