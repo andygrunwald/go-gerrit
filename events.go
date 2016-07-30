@@ -62,7 +62,7 @@ type EventInfo struct {
 	Changer        AccountInfo   `json:"changer,omitempty"`
 }
 
-// EventLogService contains functions for querying the API provided
+// EventsLogService contains functions for querying the API provided
 // by the optional events-log plugin.
 type EventsLogService struct {
 	client *Client
@@ -84,7 +84,6 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 	}
 
 	query := url.Query()
-
 
 	if !options.From.IsZero() {
 		query.Set("t1", options.From.Format("2006-01-02 15:04:05"))
