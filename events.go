@@ -68,11 +68,11 @@ type EventsLogService struct {
 	client *Client
 }
 
-// EventLogService contains options for querying events from the events-logs
+// EventsLogOptions contains options for querying events from the events-logs
 // plugin.
 type EventsLogOptions struct {
-	From *time.Time
-	To   *time.Time
+	From time.Time
+	To   time.Time
 }
 
 // getURL returns the url that should be used in the request.  This will vary
@@ -85,11 +85,12 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 
 	query := url.Query()
 
-	if options.From != nil {
+
+	if !options.From.IsZero() {
 		query.Set("t1", options.From.Format("2006-01-02 15:04:05"))
 	}
 
-	if options.To != nil {
+	if !options.To.IsZero() {
 		query.Set("t2", options.To.Format("2006-01-02 15:04:05"))
 	}
 
