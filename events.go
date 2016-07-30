@@ -78,13 +78,12 @@ type EventsLogOptions struct {
 // getURL returns the url that should be used in the request.  This will vary
 // depending on the options provided to GetEvents.
 func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error) {
-	parsedUrl, err := url.Parse("/plugins/events-log/events/")
-
+	url, err := url.Parse("/plugins/events-log/events/")
 	if err != nil {
 		return "", err
 	}
 
-	query := parsedUrl.Query()
+	query := url.Query()
 
 	if options.From != nil {
 		query.Set("t1", options.From.Format("2006-01-02 15:04:05"))
@@ -94,7 +93,7 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 		query.Set("t2", options.To.Format("2006-01-02 15:04:05"))
 	}
 
-	return parsedUrl.String(), nil
+	return url.String(), nil
 }
 
 // GetEvents returns a list of events for the given input options.  Use of this
