@@ -1,9 +1,11 @@
 package gerrit
 
 import (
-	"time"
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"net/url"
-	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 // PatchSet contains detailed information about a specific patch set.
@@ -101,8 +103,6 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 // Gerrit API docs: https://<yourserver>/plugins/events-log/Documentation/rest-api-events.html
 func (events *EventsLogService) GetEvents(options *EventsLogOptions) (*[]EventInfo, *Response, error) {
 	url, err := events.getURL(options)
-	log.Info(url)
-
 	if err != nil {
 		return nil, nil, err
 	}
@@ -112,13 +112,32 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) (*[]EventIn
 		return nil, nil, err
 	}
 
-	var eventInfo *[]EventInfo
-
-	response, err := events.client.Do(request, eventInfo)
+	// Perform the request but do not pass in a structure to unpack
+	// the response into.  The format of the response is one EventInfo
+	// object per line so we need to manually handle the response here.
+	response, err := events.client.Do(request, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return eventInfo, response, err
+	body, err := ioutil.ReadAll(response.Body)
 
+	defer response.Body.Close()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	eventInfo := new([]EventInfo)
+	for _, line := range bytes.Split(body, []byte("\n")) {
+		if len(line) > 0 {
+			event := EventInfo{}
+			err := json.Unmarshal(line, &event)
+			if err != nil {
+				return nil, nil, err
+			}
+			*eventInfo = append(*eventInfo, event)
+		}
+	}
+
+	return eventInfo, response, err
 }
