@@ -246,6 +246,14 @@ This library might be working with older versions as well.
 If you notice an incompatibility [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) or try to fix it.
 We welcome contribution!
 
+
+### What about adding code to support the REST API of an optional plugin?
+
+It will depend on the plugin, you are welcome to [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) first to propose the idea if you wish.
+As an example the addition of support for events-log plugin was supported because the plugin itself is fairly
+popular and the structures that the REST API uses could also be used by `gerrit stream-events`.
+
+
 ## License
 
 This project is released under the terms of the [MIT license](http://en.wikipedia.org/wiki/MIT_License).
