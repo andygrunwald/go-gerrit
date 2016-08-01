@@ -101,12 +101,12 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 //
 // Gerrit API docs: https://<yourserver>/plugins/events-log/Documentation/rest-api-events.html
 func (events *EventsLogService) GetEvents(options *EventsLogOptions) (*[]EventInfo, *Response, error) {
-	url, err := events.getURL(options)
+	requestURL, err := events.getURL(options)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	request, err := events.client.NewRequest("GET", url, nil)
+	request, err := events.client.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
