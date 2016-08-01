@@ -93,6 +93,11 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 		query.Set("t2", options.To.Format("2006-01-02 15:04:05"))
 	}
 
+	encoded := query.Encode()
+	if len(encoded) > 0 {
+		parsed.RawQuery = encoded
+	}
+
 	return parsed.String(), nil
 }
 
