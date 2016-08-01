@@ -20,6 +20,9 @@ go-gerrit is a [Go(lang)](https://golang.org/) client library for accessing the 
 	* [/groups/](https://godoc.org/github.com/andygrunwald/go-gerrit#GroupsService)
 	* [/plugins/](https://godoc.org/github.com/andygrunwald/go-gerrit#PluginsService)
 	* [/projects/](https://godoc.org/github.com/andygrunwald/go-gerrit#ProjectsService)
+* Supports optional plugin APIs such as
+	* events-log - [About](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/about.md), [REST API](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/rest-api-events.md)
+
 
 ## Installation
 
