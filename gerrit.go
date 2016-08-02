@@ -30,7 +30,8 @@ type Client struct {
 	// Gerrit service for authentication
 	Authentication *AuthenticationService
 
-	// Services used for talking to different parts of the Gerrit API.
+	// Services used for talking to different parts of the standard
+	// Gerrit API.
 	Access   *AccessService
 	Accounts *AccountsService
 	Changes  *ChangesService
@@ -38,6 +39,10 @@ type Client struct {
 	Groups   *GroupsService
 	Plugins  *PluginsService
 	Projects *ProjectsService
+
+	// Additional services used for talking to non-standard Gerrit
+	// APIs.
+	EventsLog *EventsLogService
 }
 
 // Response is a Gerrit API response.
@@ -74,6 +79,7 @@ func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
 	c.Groups = &GroupsService{client: c}
 	c.Plugins = &PluginsService{client: c}
 	c.Projects = &ProjectsService{client: c}
+	c.EventsLog = &EventsLogService{client: c}
 
 	return c, nil
 }
@@ -265,18 +271,22 @@ func (c *Client) DeleteRequest(urlStr string, body interface{}) (*Response, erro
 	return c.Do(req, nil)
 }
 
-// RemoveMagicPrefixLine removed the "magic prefix line" of Gerris JSON response.
-// the JSON response body starts with a magic prefix line that must be stripped before feeding the rest of the response body to a JSON parser.
-// The reason for this is to prevent against Cross Site Script Inclusion (XSSI) attacks.
+// RemoveMagicPrefixLine removes the "magic prefix line" of Gerris JSON
+// response if present. The JSON response body starts with a magic prefix line
+// that must be stripped before feeding the rest of the response body to a JSON
+// parser. The reason for this is to prevent against Cross Site Script
+// Inclusion (XSSI) attacks.  By default all standard Gerrit APIs include this
+// prefix line though some plugins may not.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
 func RemoveMagicPrefixLine(body []byte) []byte {
-	index := bytes.IndexByte(body, '\n')
-	if index > -1 {
-		// +1 to catch the \n as well
-		body = body[(index + 1):]
+	if bytes.HasPrefix(body, []byte(")]}'\n")) {
+		index := bytes.IndexByte(body, '\n')
+		if index > -1 {
+			// +1 to catch the \n as well
+			body = body[(index + 1):]
+		}
 	}
-
 	return body
 }
 

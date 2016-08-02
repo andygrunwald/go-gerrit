@@ -293,3 +293,18 @@ func TestRemoveMagicPrefixLine(t *testing.T) {
 		}
 	}
 }
+
+func TestRemoveMagicPrefixLineDoesNothingWithoutPrefix(t *testing.T) {
+	mockData := []struct {
+		Current, Expected []byte
+	}{
+		{[]byte(`{"A":"a"}`), []byte(`{"A":"a"}`)},
+		{[]byte(`{"A":"a"}`), []byte(`{"A":"a"}`)},
+	}
+	for _, mock := range mockData {
+		body := gerrit.RemoveMagicPrefixLine(mock.Current)
+		if !reflect.DeepEqual(body, mock.Expected) {
+			t.Errorf("Response body = %v, want %v", body, mock.Expected)
+		}
+	}
+}
