@@ -210,12 +210,12 @@ func TestDo(t *testing.T) {
 	})
 
 	req, _ := testClient.NewRequest("GET", "/", nil)
-	body := new(foo)
-	testClient.Do(req, body)
+	responseBody := new(foo)
+	testClient.Do(req, responseBody, nil)
 
 	want := &foo{"a"}
-	if !reflect.DeepEqual(body, want) {
-		t.Errorf("Response body = %v, want %v", body, want)
+	if !reflect.DeepEqual(responseBody, want) {
+		t.Errorf("Response body = %v, want %v", responseBody, want)
 	}
 }
 
@@ -234,7 +234,7 @@ func TestDo_ioWriter(t *testing.T) {
 	req, _ := testClient.NewRequest("GET", "/", nil)
 	var buf []byte
 	actual := bytes.NewBuffer(buf)
-	testClient.Do(req, actual)
+	testClient.Do(req, actual, nil)
 
 	expected := []byte(content)
 	if !reflect.DeepEqual(actual.Bytes(), expected) {
@@ -251,7 +251,7 @@ func TestDo_HTTPError(t *testing.T) {
 	})
 
 	req, _ := testClient.NewRequest("GET", "/", nil)
-	_, err := testClient.Do(req, nil)
+	_, err := testClient.Do(req, nil, nil)
 
 	if err == nil {
 		t.Error("Expected HTTP 400 error.")
@@ -269,7 +269,7 @@ func TestDo_RedirectLoop(t *testing.T) {
 	})
 
 	req, _ := testClient.NewRequest("GET", "/", nil)
-	_, err := testClient.Do(req, nil)
+	_, err := testClient.Do(req, nil, nil)
 
 	if err == nil {
 		t.Error("Expected error to be returned.")
