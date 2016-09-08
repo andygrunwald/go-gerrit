@@ -119,7 +119,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) (*[]EventIn
 	// Perform the request but do not pass in a structure to unpack
 	// the response into.  The format of the response is one EventInfo
 	// object per line so we need to manually handle the response here.
-	response, err := events.client.Do(request, nil)
+	response, err := events.client.Do(request, nil, nil)
 	if err != nil {
 		return nil, nil, err
 	}

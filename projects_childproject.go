@@ -31,7 +31,7 @@ func (s *ProjectsService) ListChildProjects(projectName string, opt *ChildProjec
 	}
 
 	v := new([]ProjectInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -57,7 +57,7 @@ func (s *ProjectsService) GetChildProject(projectName, childProjectName string, 
 	}
 
 	v := new(ProjectInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}

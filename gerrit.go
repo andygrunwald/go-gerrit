@@ -143,7 +143,7 @@ func (c *Client) Call(method, u string, body interface{}, v interface{}) (*Respo
 		return nil, err
 	}
 
-	resp, err := c.Do(req, v)
+	resp, err := c.Do(req, v, body)
 	if err != nil {
 		return resp, err
 	}
@@ -189,7 +189,9 @@ func (c *Client) buildURLForRequest(urlStr string) (string, error) {
 // or returned as an error if an API error has occurred.
 // If v implements the io.Writer interface, the raw response body will be written to v,
 // without attempting to first decode it.
-func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
+// The original body is also required in case case the request needs to be
+// retried.
+func (c *Client) Do(req *http.Request, v interface{}, body interface{}) (*Response, error) {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -199,14 +201,30 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	// authentication then generate an Authorization header and retry
 	// the request.
 	if resp.StatusCode == http.StatusUnauthorized && c.Authentication.HasDigestAuth() {
-		var digestAuthHeader string
-		digestAuthHeader, err = c.Authentication.digestAuthHeader(resp)
+		digestAuthHeader, err := c.Authentication.digestAuthHeader(resp)
 		if err != nil {
 			return nil, err
 		}
 
-		req.Header.Set("Authorization", digestAuthHeader)
-		resp, err = c.client.Do(req)
+		// Use the original url but strip /a.  This will be
+		// automatically added in NewRequest.
+		uri := strings.TrimLeft(req.URL.RequestURI(), "/a")
+
+		authRequest, err := c.NewRequest(req.Method, uri, body)
+		if err != nil {
+			return nil, err
+		}
+
+		// Duplicate the original headers then establish the newly
+		// created Authorization header.
+		// TODO - Need to figure out the header.  Still getting
+		// 401 Unauthorized (which is better than before which was
+		// a straight error).
+		authRequest.Header = req.Header
+		authRequest.Header.Del("WWW-Authenticate")
+		authRequest.Header.Set("Authorization", digestAuthHeader)
+
+		resp, err = c.client.Do(authRequest)
 		if err != nil {
 			return nil, err
 		}
@@ -268,7 +286,7 @@ func (c *Client) DeleteRequest(urlStr string, body interface{}) (*Response, erro
 		return nil, err
 	}
 
-	return c.Do(req, nil)
+	return c.Do(req, nil, body)
 }
 
 // RemoveMagicPrefixLine removes the "magic prefix line" of Gerris JSON

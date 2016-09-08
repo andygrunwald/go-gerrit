@@ -284,7 +284,7 @@ func (s *ProjectsService) GetRepositoryStatistics(projectName string) (*Reposito
 	}
 
 	v := new(RepositoryStatisticsInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -306,7 +306,7 @@ func (s *ProjectsService) GetConfig(projectName string) (*ConfigInfo, *Response,
 	}
 
 	v := new(ConfigInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -329,7 +329,7 @@ func (s *ProjectsService) SetProjectDescription(projectName string, input *Proje
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -369,7 +369,7 @@ func (s *ProjectsService) BanCommit(projectName string, input *BanInput) (*BanRe
 	}
 
 	v := new(BanResultInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -390,7 +390,7 @@ func (s *ProjectsService) SetConfig(projectName string, input *ConfigInput) (*Co
 	}
 
 	v := new(ConfigInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -413,7 +413,7 @@ func (s *ProjectsService) SetHEAD(projectName string, input *HeadInput) (*string
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -436,7 +436,7 @@ func (s *ProjectsService) SetProjectParent(projectName string, input *ProjectPar
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -456,7 +456,7 @@ func (s *ProjectsService) RunGC(projectName string, input *GCInput) (*Response, 
 		return nil, err
 	}
 
-	resp, err := s.client.Do(req, nil)
+	resp, err := s.client.Do(req, nil, input)
 	if err != nil {
 		return resp, err
 	}

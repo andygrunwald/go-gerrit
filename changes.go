@@ -380,7 +380,7 @@ func (s *ChangesService) QueryChanges(opt *QueryChangeOptions) (*[]ChangeInfo, *
 	}
 
 	v := new([]ChangeInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -422,7 +422,7 @@ func (s *ChangesService) getChangeInfoResponse(u string, opt *ChangeOptions) (*C
 	}
 
 	v := new(ChangeInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -451,7 +451,7 @@ func (s *ChangesService) ChangesSubmittedTogether(changeID string) (*[]ChangeInf
 	}
 
 	v := new([]ChangeInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -471,7 +471,7 @@ func (s *ChangesService) GetIncludedIn(changeID string) (*IncludedInInfo, *Respo
 	}
 
 	v := new(IncludedInInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -507,7 +507,7 @@ func (s *ChangesService) getCommentInfoMapResponse(u string) (*map[string][]Comm
 	}
 
 	v := new(map[string][]CommentInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -533,7 +533,7 @@ func (s *ChangesService) getCommentInfoResponse(u string) (*CommentInfo, *Respon
 	}
 
 	v := new(CommentInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -549,7 +549,7 @@ func (s *ChangesService) getCommentInfoMapSliceResponse(u string) (*map[string][
 	}
 
 	v := new(map[string][]CommentInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -575,7 +575,7 @@ func (s *ChangesService) CreateChange(input *ChangeInfo) (*ChangeInfo, *Response
 	}
 
 	v := new(ChangeInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -596,7 +596,7 @@ func (s *ChangesService) SetTopic(changeID string, input *TopicInput) (*string, 
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -634,7 +634,7 @@ func (s *ChangesService) PublishDraftChange(changeID string) (*Response, error) 
 	if err != nil {
 		return nil, err
 	}
-	return s.client.Do(req, nil)
+	return s.client.Do(req, nil, nil)
 }
 
 // IndexChange adds or updates the change in the secondary index.
@@ -647,7 +647,7 @@ func (s *ChangesService) IndexChange(changeID string) (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.client.Do(req, nil)
+	return s.client.Do(req, nil, nil)
 }
 
 // FixChange performs consistency checks on the change as with GET /check, and additionally fixes any problems that can be fixed automatically.
@@ -666,7 +666,7 @@ func (s *ChangesService) FixChange(changeID string, input *FixInput) (*ChangeInf
 	}
 
 	v := new(ChangeInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}

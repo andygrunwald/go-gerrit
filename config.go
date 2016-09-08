@@ -267,7 +267,7 @@ func (s *ConfigService) GetServerInfo() (*ServerInfo, *Response, error) {
 	}
 
 	v := new(ServerInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -297,7 +297,7 @@ func (s *ConfigService) ListCaches(opt *ListCachesOptions) (*map[string]CacheInf
 	}
 
 	v := new(map[string]CacheInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -321,7 +321,7 @@ func (s *ConfigService) GetCache(cacheName string) (*CacheInfo, *Response, error
 	}
 
 	v := new(CacheInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -347,7 +347,7 @@ func (s *ConfigService) GetSummary(opt *SummaryOptions) (*SummaryInfo, *Response
 	}
 
 	v := new(SummaryInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -369,7 +369,7 @@ func (s *ConfigService) ListCapabilities() (*map[string]ConfigCapabilityInfo, *R
 	}
 
 	v := new(map[string]ConfigCapabilityInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -400,7 +400,7 @@ func (s *ConfigService) ListTasks() (*[]TaskInfo, *Response, error) {
 	}
 
 	v := new([]TaskInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -427,7 +427,7 @@ func (s *ConfigService) GetTask(taskID string) (*TaskInfo, *Response, error) {
 	}
 
 	v := new(TaskInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -447,7 +447,7 @@ func (s *ConfigService) GetTopMenus() (*[]TopMenuEntryInfo, *Response, error) {
 	}
 
 	v := new([]TopMenuEntryInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -470,7 +470,7 @@ func (s *ConfigService) ConfirmEmail(input *EmailConfirmationInput) (*Response, 
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.client.Do(req, nil, input)
 }
 
 // CacheOperations executes a cache operation that is specified in the request body in a CacheOperationInput entity.
@@ -484,7 +484,7 @@ func (s *ConfigService) CacheOperations(input *CacheOperationInput) (*Response, 
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.client.Do(req, nil, input)
 }
 
 // FlushCache flushes a cache.
@@ -503,7 +503,7 @@ func (s *ConfigService) FlushCache(cacheName string, input *CacheOperationInput)
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.client.Do(req, nil, input)
 }
 
 // DeleteTask kills a task from the background work queue that the Gerrit daemon is currently performing, or will perform in the near future.

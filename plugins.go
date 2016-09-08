@@ -53,7 +53,7 @@ func (s *PluginsService) ListPlugins(opt *PluginOptions) (*map[string]PluginInfo
 	}
 
 	v := new(map[string]PluginInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -122,7 +122,7 @@ func (s *PluginsService) requestWithPluginInfoResponse(method, u string, input i
 	}
 
 	v := new(PluginInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}

@@ -35,7 +35,7 @@ func (s *ChangesService) ListReviewers(changeID string) (*[]ReviewerInfo, *Respo
 	}
 
 	v := new([]ReviewerInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -61,7 +61,7 @@ func (s *ChangesService) SuggestReviewers(changeID string, opt *QueryOptions) (*
 	}
 
 	v := new([]SuggestedReviewerInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -81,7 +81,7 @@ func (s *ChangesService) GetReviewer(changeID, accountID string) (*ReviewerInfo,
 	}
 
 	v := new(ReviewerInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -107,7 +107,7 @@ func (s *ChangesService) AddReviewer(changeID string, input *ReviewerInput) (*Ad
 	}
 
 	v := new(AddReviewerResult)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}

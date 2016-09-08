@@ -37,7 +37,7 @@ func (s *GroupsService) ListGroupMembers(groupID string, opt *ListGroupMembersOp
 	}
 
 	v := new([]AccountInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -57,7 +57,7 @@ func (s *GroupsService) GetGroupMember(groupID, accountID string) (*AccountInfo,
 	}
 
 	v := new(AccountInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -77,7 +77,7 @@ func (s *GroupsService) AddGroupMember(groupID, accountID string) (*AccountInfo,
 	}
 
 	v := new(AccountInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -101,7 +101,7 @@ func (s *GroupsService) AddGroupMembers(groupID string, input *MembersInput) (*[
 	}
 
 	v := new([]AccountInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, input)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -129,5 +129,5 @@ func (s *GroupsService) DeleteGroupMembers(groupID string, input *MembersInput) 
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.client.Do(req, nil, input)
 }

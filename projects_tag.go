@@ -30,7 +30,7 @@ func (s *ProjectsService) ListTags(projectName string, opt *ProjectBaseOptions) 
 	}
 
 	v := new([]TagInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -50,7 +50,7 @@ func (s *ProjectsService) GetTag(projectName, tagName string) (*TagInfo, *Respon
 	}
 
 	v := new(TagInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}

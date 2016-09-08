@@ -18,7 +18,7 @@ func (s *ProjectsService) GetCommit(projectName, commitID string) (*CommitInfo, 
 	}
 
 	v := new(CommitInfo)
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, v, nil)
 	if err != nil {
 		return nil, resp, err
 	}
