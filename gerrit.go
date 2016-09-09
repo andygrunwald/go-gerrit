@@ -170,8 +170,9 @@ func (c *Client) buildURLForRequest(urlStr string) (string, error) {
 		urlStr = urlStr[1:]
 	}
 
-	// If we are authenticated, lets apply the a/ prefix
-	if c.Authentication.HasAuth() == true {
+	// If we are authenticated, lets apply the a/ prefix but only if it's
+	// not already applied.
+	if c.Authentication.HasAuth() == true && !strings.HasPrefix(urlStr, "a/") {
 		urlStr = "a/" + urlStr
 	}
 
@@ -206,11 +207,7 @@ func (c *Client) Do(req *http.Request, v interface{}, body interface{}) (*Respon
 			return nil, err
 		}
 
-		// Use the original url but strip /a.  This will be
-		// automatically added in NewRequest.
-		uri := strings.TrimLeft(req.URL.RequestURI(), "/a")
-
-		authRequest, err := c.NewRequest(req.Method, uri, body)
+		authRequest, err := c.NewRequest(req.Method, req.URL.RequestURI(), body)
 		if err != nil {
 			return nil, err
 		}
