@@ -214,11 +214,6 @@ func (c *Client) Do(req *http.Request, v interface{}, body interface{}) (*Respon
 
 		// Duplicate the original headers then establish the newly
 		// created Authorization header.
-		// TODO - Need to figure out the header.  Still getting
-		// 401 Unauthorized (which is better than before which was
-		// a straight error).
-		authRequest.Header = req.Header
-		authRequest.Header.Del("WWW-Authenticate")
 		authRequest.Header.Set("Authorization", digestAuthHeader)
 
 		resp, err = c.client.Do(authRequest)
