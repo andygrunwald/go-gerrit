@@ -254,7 +254,7 @@ func (c *Client) addAuthentication(req *http.Request) error {
 			return err
 		}
 
-		// WARHING: Don't use c.NewRequest here unless you like
+		// WARNING: Don't use c.NewRequest here unless you like
 		// infinite recursion.
 		digestRequest, err := http.NewRequest(req.Method, uri, nil)
 		digestRequest.Header.Set("Accept", "*/*")
@@ -268,6 +268,13 @@ func (c *Client) addAuthentication(req *http.Request) error {
 			return err
 
 		}
+
+		// When the function exits discard the rest of the
+		// body and close it.  This should cause go to
+		// reuse the connection.
+		defer io.Copy(ioutil.Discard, response.Body)
+		defer response.Body.Close()
+
 		if response.StatusCode == http.StatusUnauthorized {
 			authorization, err := c.Authentication.digestAuthHeader(response)
 
