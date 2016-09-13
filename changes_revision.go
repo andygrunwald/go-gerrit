@@ -122,7 +122,7 @@ func (s *ChangesService) GetDiff(changeID, revisionID, fileID string, opt *DiffO
 	}
 
 	v := new(DiffInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -143,7 +143,7 @@ func (s *ChangesService) GetRelatedChanges(changeID, revisionID string) (*Relate
 	}
 
 	v := new(RelatedChangesInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -187,7 +187,7 @@ func (s *ChangesService) GetRevisionActions(changeID, revisionID string) (*map[s
 	}
 
 	v := new(map[string]ActionInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -212,7 +212,7 @@ func (s *ChangesService) GetCommit(changeID, revisionID string, opt *CommitOptio
 	}
 
 	v := new(CommitInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -250,7 +250,7 @@ func (s *ChangesService) GetMergeable(changeID, revisionID string, opt *Mergable
 	}
 
 	v := new(MergeableInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -295,7 +295,7 @@ func (s *ChangesService) ListFiles(changeID, revisionID string) (*map[string]Fil
 	}
 
 	v := new(map[string]FileInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -331,7 +331,7 @@ func (s *ChangesService) ListFilesReviewed(changeID, revisionID string) (*[]File
 	}
 
 	v := new([]FileInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -352,7 +352,7 @@ func (s *ChangesService) SetReview(changeID, revisionID string, input *ReviewInp
 	}
 
 	v := new(ReviewInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -371,7 +371,7 @@ func (s *ChangesService) PublishDraftRevision(changeID, revisionID string) (*Res
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // DeleteDraftRevision deletes a draft revision.
@@ -406,7 +406,7 @@ func (s *ChangesService) GetPatch(changeID, revisionID string, opt *PatchOptions
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -429,7 +429,7 @@ func (s *ChangesService) TestSubmitType(changeID, revisionID string, input *Rule
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -454,7 +454,7 @@ func (s *ChangesService) TestSubmitRule(changeID, revisionID string, input *Rule
 	}
 
 	v := new([]SubmitRecord)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -477,7 +477,7 @@ func (s *ChangesService) CreateDraft(changeID, revisionID string, input *Comment
 	}
 
 	v := new(CommentInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -500,7 +500,7 @@ func (s *ChangesService) UpdateDraft(changeID, revisionID, draftID string, input
 	}
 
 	v := new(CommentInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -539,7 +539,7 @@ func (s *ChangesService) GetContent(changeID, revisionID, fileID string) (*strin
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -562,7 +562,7 @@ func (s *ChangesService) GetContentType(changeID, revisionID, fileID string) (*R
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // SetReviewed marks a file of a revision as reviewed by the calling user.
@@ -578,7 +578,7 @@ func (s *ChangesService) SetReviewed(changeID, revisionID, fileID string) (*Resp
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // CherryPickRevision cherry picks a revision to a destination branch.
@@ -596,7 +596,7 @@ func (s *ChangesService) CherryPickRevision(changeID, revisionID string, input *
 	}
 
 	v := new(ChangeInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}

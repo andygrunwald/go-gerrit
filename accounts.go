@@ -226,7 +226,7 @@ func (s *AccountsService) GetAccount(account string) (*AccountInfo, *Response, e
 	}
 
 	v := new(AccountInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -246,7 +246,7 @@ func (s *AccountsService) GetAccountDetails(accountID string) (*AccountDetailInf
 	}
 
 	v := new(AccountDetailInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -290,7 +290,7 @@ func (s *AccountsService) ListAccountEmails(accountID string) (*[]EmailInfo, *Re
 	}
 
 	v := new([]EmailInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -310,7 +310,7 @@ func (s *AccountsService) GetAccountEmail(accountID, emailID string) (*EmailInfo
 	}
 
 	v := new(EmailInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -330,7 +330,7 @@ func (s *AccountsService) ListSSHKeys(accountID string) (*[]SSHKeyInfo, *Respons
 	}
 
 	v := new([]SSHKeyInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -350,7 +350,7 @@ func (s *AccountsService) GetSSHKey(accountID, sshKeyID string) (*SSHKeyInfo, *R
 	}
 
 	v := new(SSHKeyInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -370,7 +370,7 @@ func (s *AccountsService) ListGPGKeys(accountID string) (*map[string]GpgKeyInfo,
 	}
 
 	v := new(map[string]GpgKeyInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -390,7 +390,7 @@ func (s *AccountsService) GetGPGKey(accountID, gpgKeyID string) (*GpgKeyInfo, *R
 	}
 
 	v := new(GpgKeyInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -417,7 +417,7 @@ func (s *AccountsService) ListAccountCapabilities(accountID string, opt *Capabil
 	}
 
 	v := new(AccountCapabilityInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -437,7 +437,7 @@ func (s *AccountsService) ListGroups(accountID string) (*[]GroupInfo, *Response,
 	}
 
 	v := new([]GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -457,7 +457,7 @@ func (s *AccountsService) GetUserPreferences(accountID string) (*PreferencesInfo
 	}
 
 	v := new(PreferencesInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -477,7 +477,7 @@ func (s *AccountsService) GetDiffPreferences(accountID string) (*DiffPreferences
 	}
 
 	v := new(DiffPreferencesInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -498,7 +498,7 @@ func (s *AccountsService) GetStarredChanges(accountID string) (*[]ChangeInfo, *R
 	}
 
 	v := new([]ChangeInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -525,7 +525,7 @@ func (s *AccountsService) SuggestAccount(opt *QueryOptions) (*[]AccountInfo, *Re
 	}
 
 	v := new([]AccountInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -546,7 +546,7 @@ func (s *AccountsService) CreateAccount(username string, input *AccountInput) (*
 	}
 
 	v := new(AccountInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -574,7 +574,7 @@ func (s *AccountsService) SetAccountName(accountID string, input *AccountNameInp
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -648,7 +648,7 @@ func (s *AccountsService) SetUsername(accountID string, input *UsernameInput) (*
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -679,7 +679,7 @@ func (s *AccountsService) SetActive(accountID string) (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // SetHTTPPassword sets/Generates the HTTP password of an account.
@@ -698,7 +698,7 @@ func (s *AccountsService) SetHTTPPassword(accountID string, input *HTTPPasswordI
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -724,7 +724,7 @@ func (s *AccountsService) CreateAccountEmail(accountID, emailID string, input *E
 	}
 
 	v := new(EmailInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -744,7 +744,7 @@ func (s *AccountsService) SetPreferredEmail(accountID, emailID string) (*Respons
 	if err != nil {
 		return nil, err
 	}
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // GetAvatarChangeURL retrieves the URL where the user can change the avatar image.
@@ -771,7 +771,7 @@ func (s *AccountsService) AddGPGKeys(accountID string, input *GpgKeysInput) (*ma
 	}
 
 	v := new(map[string]GpgKeyInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -805,7 +805,7 @@ func (s *AccountsService) SetUserPreferences(accountID string, input *Preference
 	}
 
 	v := new(PreferencesInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -828,7 +828,7 @@ func (s *AccountsService) SetDiffPreferences(accountID string, input *DiffPrefer
 	}
 
 	v := new(DiffPreferencesInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -848,7 +848,7 @@ func (s *AccountsService) StarChange(accountID, changeID string) (*Response, err
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // UnstarChange nstar a change.

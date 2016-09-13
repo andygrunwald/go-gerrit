@@ -60,7 +60,7 @@ func (s *ProjectsService) ListBranches(projectName string, opt *BranchOptions) (
 	}
 
 	v := new([]BranchInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -80,7 +80,7 @@ func (s *ProjectsService) GetBranch(projectName, branchID string) (*BranchInfo, 
 	}
 
 	v := new(BranchInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -101,7 +101,7 @@ func (s *ProjectsService) GetReflog(projectName, branchID string) (*[]ReflogEntr
 	}
 
 	v := new([]ReflogEntryInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -122,7 +122,7 @@ func (s *ProjectsService) CreateBranch(projectName, branchID string, input *Bran
 	}
 
 	v := new(BranchInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}

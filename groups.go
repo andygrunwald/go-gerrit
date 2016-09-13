@@ -101,7 +101,7 @@ func (s *GroupsService) ListGroups(opt *ListGroupsOptions) (*map[string]GroupInf
 	}
 
 	v := new(map[string]GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -133,7 +133,7 @@ func (s *GroupsService) getGroupInfoResponse(u string) (*GroupInfo, *Response, e
 	}
 
 	v := new(GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -169,7 +169,7 @@ func (s *GroupsService) GetGroupOptions(groupID string) (*GroupOptionsInfo, *Res
 	}
 
 	v := new(GroupOptionsInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -189,7 +189,7 @@ func (s *GroupsService) GetGroupOwner(groupID string) (*GroupInfo, *Response, er
 	}
 
 	v := new(GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -210,7 +210,7 @@ func (s *GroupsService) GetAuditLog(groupID string) (*[]GroupAuditEventInfo, *Re
 	}
 
 	v := new([]GroupAuditEventInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -234,7 +234,7 @@ func (s *GroupsService) CreateGroup(groupID string, input *GroupInput) (*GroupIn
 	}
 
 	v := new(GroupInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -263,7 +263,7 @@ func (s *GroupsService) RenameGroup(groupID, name string) (*string, *Response, e
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -292,7 +292,7 @@ func (s *GroupsService) SetGroupDescription(groupID, description string) (*strin
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -323,7 +323,7 @@ func (s *GroupsService) SetGroupOptions(groupID string, input *GroupOptionsInput
 	}
 
 	v := new(GroupOptionsInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -350,7 +350,7 @@ func (s *GroupsService) SetGroupOwner(groupID, owner string) (*GroupInfo, *Respo
 	}
 
 	v := new(GroupInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}

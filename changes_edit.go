@@ -49,7 +49,7 @@ func (s *ChangesService) GetChangeEditDetails(changeID string, opt *ChangeEditDe
 	}
 
 	v := new(EditInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -70,7 +70,7 @@ func (s *ChangesService) RetrieveMetaDataOfAFileFromChangeEdit(changeID, filePat
 	}
 
 	v := new(EditFileInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -102,7 +102,7 @@ func (s *ChangesService) ChangeFileContentInChangeEdit(changeID, filePath string
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // ChangeCommitMessageInChangeEdit modify commit message.
@@ -120,7 +120,7 @@ func (s *ChangesService) ChangeCommitMessageInChangeEdit(changeID string, input 
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // DeleteFileInChangeEdit deletes a file from a change edit.
@@ -158,7 +158,7 @@ func (s *ChangesService) PublishChangeEdit(changeID string) (*Response, error) {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // RebaseChangeEdit rebases change edit on top of latest patch set.
@@ -175,7 +175,7 @@ func (s *ChangesService) RebaseChangeEdit(changeID string) (*Response, error) {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 // RetrieveFileContentFromChangeEdit retrieves content of a file from a change edit.
@@ -197,7 +197,7 @@ func (s *ChangesService) RetrieveFileContentFromChangeEdit(changeID, filePath st
 	}
 
 	v := new(string)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -220,7 +220,7 @@ func (s *ChangesService) RetrieveFileContentTypeFromChangeEdit(changeID, filePat
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, nil)
+	return s.client.Do(req, nil)
 }
 
 /*

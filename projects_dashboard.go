@@ -44,7 +44,7 @@ func (s *ProjectsService) ListDashboards(projectName string) (*[]DashboardInfo, 
 	}
 
 	v := new([]DashboardInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -64,7 +64,7 @@ func (s *ProjectsService) GetDashboard(projectName, dashboardName string) (*Dash
 	}
 
 	v := new(DashboardInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -87,7 +87,7 @@ func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *D
 	}
 
 	v := new(DashboardInfo)
-	resp, err := s.client.Do(req, v, input)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}

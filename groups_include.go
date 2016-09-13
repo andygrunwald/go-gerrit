@@ -17,7 +17,7 @@ func (s *GroupsService) ListIncludedGroups(groupID string) (*[]GroupInfo, *Respo
 	}
 
 	v := new([]GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -37,7 +37,7 @@ func (s *GroupsService) GetIncludedGroup(groupID, includeGroupID string) (*Group
 	}
 
 	v := new(GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -61,7 +61,7 @@ func (s *GroupsService) IncludeGroup(groupID, includeGroupID string) (*GroupInfo
 	}
 
 	v := new(GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -85,7 +85,7 @@ func (s *GroupsService) IncludeGroups(groupID string, input *GroupsInput) (*[]Gr
 	}
 
 	v := new([]GroupInfo)
-	resp, err := s.client.Do(req, v, nil)
+	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -113,5 +113,5 @@ func (s *GroupsService) DeleteIncludedGroups(groupID string, input *GroupsInput)
 		return nil, err
 	}
 
-	return s.client.Do(req, nil, input)
+	return s.client.Do(req, nil)
 }
