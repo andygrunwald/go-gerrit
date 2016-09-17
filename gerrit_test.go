@@ -2,7 +2,6 @@ package gerrit_test
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -136,25 +135,6 @@ func TestNewRequest(t *testing.T) {
 	body, _ := ioutil.ReadAll(req.Body)
 	if got, want := string(body), outBody; got != want {
 		t.Errorf("NewRequest Body is %v, want %v", got, want)
-	}
-}
-
-func TestNewRequest_InvalidJSON(t *testing.T) {
-	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
-	if err != nil {
-		t.Errorf("An error occured. Expected nil. Got %+v.", err)
-	}
-
-	type T struct {
-		A map[int]interface{}
-	}
-	_, err = c.NewRequest("GET", "/", &T{})
-
-	if err == nil {
-		t.Error("Expected error to be returned.")
-	}
-	if err, ok := err.(*json.UnsupportedTypeError); !ok {
-		t.Errorf("Expected a JSON error; got %#v.", err)
 	}
 }
 
