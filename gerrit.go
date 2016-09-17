@@ -172,8 +172,9 @@ func (c *Client) buildURLForRequest(urlStr string) (string, error) {
 		urlStr = urlStr[1:]
 	}
 
-	// If we are authenticated, lets apply the a/ prefix
-	if c.Authentication.HasAuth() == true {
+	// If we are authenticated, lets apply the a/ prefix but only if it has
+	// not already been applied.
+	if c.Authentication.HasAuth() == true && !strings.HasPrefix(urlStr, "a/") {
 		urlStr = "a/" + urlStr
 	}
 
