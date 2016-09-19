@@ -51,7 +51,7 @@ func (s *AuthenticationService) SetDigestAuth(username, password string) {
 // returns 401 Unauthorized and authType was set to authTypeDigest. The
 // resulting string is used to set the Authorization header before retrying
 // the request.
-func (s *AuthenticationService) digestAuthHeader(response *http.Response) (string, error) {
+func (s *AuthenticationService) digestAuthHeader(method string, response *http.Response) (string, error) {
 	authenticateHeader := response.Header.Get("WWW-Authenticate")
 	if authenticateHeader == "" {
 		return "", fmt.Errorf("WWW-Authenticate header is missing")
@@ -112,7 +112,7 @@ func (s *AuthenticationService) digestAuthHeader(response *http.Response) (strin
 
 	// A2
 	h = md5.New()
-	A2 := fmt.Sprintf("GET:%s", uriHeader)
+	A2 := fmt.Sprintf("%s:%s", method, uriHeader)
 	io.WriteString(h, A2)
 	HA2 := fmt.Sprintf("%x", h.Sum(nil))
 
