@@ -112,7 +112,7 @@ func (s *AuthenticationService) digestAuthHeader(response *http.Response) (strin
 
 	// A2
 	h = md5.New()
-	A2 := fmt.Sprintf("GET:%s", uriHeader)
+	A2 := fmt.Sprintf("%s:%s", response.Request.Method, uriHeader)
 	io.WriteString(h, A2)
 	HA2 := fmt.Sprintf("%x", h.Sum(nil))
 
