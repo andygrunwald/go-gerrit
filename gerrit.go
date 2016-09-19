@@ -277,7 +277,7 @@ func (c *Client) addAuthentication(req *http.Request) error {
 		defer response.Body.Close()
 
 		if response.StatusCode == http.StatusUnauthorized {
-			authorization, err := c.Authentication.digestAuthHeader(req.Method, response)
+			authorization, err := c.Authentication.digestAuthHeader(response)
 
 			if err != nil {
 				return err
