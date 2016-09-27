@@ -1,7 +1,9 @@
 package gerrit
 
 import (
+	"errors"
 	"fmt"
+	"io/ioutil"
 )
 
 // ChangesService contains Change related REST endpoints
@@ -674,11 +676,28 @@ func (s *ChangesService) FixChange(changeID string, input *FixInput) (*ChangeInf
 	return v, resp, err
 }
 
+func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/submit", changeID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+
+	resp, err := s.client.Do(req, v)
+	if 409 == resp.StatusCode {
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = errors.New(string(body[:]))
+	}
+	return v, resp, err
+}
+
 /*
 Missing Change Endpoints
 	Abandon Change
 	Restore Change
 	Rebase Change
 	Revert Change
-	Submit Change
 */
