@@ -510,7 +510,7 @@ func (s *AccountsService) GetStarredChanges(accountID string) (*[]ChangeInfo, *R
 // If result limit is not passed, then the default 10 is used.
 // Returns a list of matching AccountInfo entities.
 //
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-starred-changes
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#query-account
 func (s *AccountsService) SuggestAccount(opt *QueryOptions) (*[]AccountInfo, *Response, error) {
 	u := "accounts/"
 
