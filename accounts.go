@@ -562,7 +562,7 @@ func (s *AccountsService) CreateAccount(username string, input *AccountInput) (*
 // Some realms may not allow to modify the account name.
 // In this case the request is rejected with “405 Method Not Allowed”.
 //
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#create-account
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#set-account-name
 func (s *AccountsService) SetAccountName(accountID string, input *AccountNameInput) (*string, *Response, error) {
 	u := fmt.Sprintf("accounts/%s/name", accountID)
 
