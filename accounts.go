@@ -13,7 +13,7 @@ type AccountsService struct {
 
 // AccountInfo entity contains information about an account.
 type AccountInfo struct {
-	AccountID int    `json:"_account_id"`
+	AccountID int    `json:"_account_id,omitempty"`
 	Name      string `json:"name,omitempty"`
 	Email     string `json:"email,omitempty"`
 	Username  string `json:"username,omitempty"`
