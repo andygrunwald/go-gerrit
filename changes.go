@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 )
 
 // ChangesService contains Change related REST endpoints
@@ -687,7 +688,7 @@ func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*Cha
 	v := new(ChangeInfo)
 
 	resp, err := s.client.Do(req, v)
-	if 409 == resp.StatusCode {
+	if resp.StatusCode == http.StatusConflict {
 		body, _ := ioutil.ReadAll(resp.Body)
 		err = errors.New(string(body[:]))
 	}
