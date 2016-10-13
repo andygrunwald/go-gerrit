@@ -11,6 +11,8 @@ first. For more complete details see
 
 * Minor fix to SubmitChange to use the `http.StatusConflict` constant
   instead of a hard coded value when comparing response codes.
+* Updated AccountInfo.AccountID to be omitted of empty (such as when 
+  used in ApprovalInfo).
 
 ### 0.1.0
 
