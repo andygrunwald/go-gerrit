@@ -341,6 +341,14 @@ func CheckResponse(r *http.Response) error {
 	return err
 }
 
+// queryParameterReplacements are values in a url, specifically the query
+// portion of the url, which should not be escaped before being sent to
+// Gerrit. Note, Gerrit itself does not escape these values when using the
+// search box so we shouldn't escape them either.
+var queryParameterReplacements = map[string]string{
+	"+": "GOGERRIT_URL_PLACEHOLDER_PLUS",
+	":": "GOGERRIT_URL_PLACEHOLDER_COLON"}
+
 // addOptions adds the parameters in opt as URL query parameters to s.
 // opt must be a struct whose fields may contain "url" tags.
 func addOptions(s string, opt interface{}) (string, error) {
@@ -359,7 +367,37 @@ func addOptions(s string, opt interface{}) (string, error) {
 		return s, err
 	}
 
-	u.RawQuery = qs.Encode()
+	// If the url contained one or more query parameters (q) then we need
+	// to do some escaping on these values before Encode() is called.  By
+	// doing so we're ensuring that : and + don't get encoded which means
+	// they'll be passed along to Gerrit as raw ascii. Without this Gerrit
+	// could return 400 Bad Request depending on the query parameters. For
+	// more complete information see this issue on GitHub:
+	//   https://github.com/andygrunwald/go-gerrit/issues/18
+	_, hasQuery := qs["q"]
+	if hasQuery {
+		values := []string{}
+		for _, value := range qs["q"] {
+			for key, replacement := range queryParameterReplacements {
+				value = strings.Replace(value, key, replacement, -1)
+			}
+			values = append(values, value)
+		}
+
+		qs.Del("q")
+		for _, value := range values {
+			qs.Add("q", value)
+		}
+	}
+	encoded := qs.Encode()
+
+	if hasQuery {
+		for key, replacement := range queryParameterReplacements {
+			encoded = strings.Replace(encoded, replacement, key, -1)
+		}
+	}
+
+	u.RawQuery = encoded
 	return u.String(), nil
 }
 
