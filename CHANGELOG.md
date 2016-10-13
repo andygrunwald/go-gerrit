@@ -13,6 +13,10 @@ first. For more complete details see
   instead of a hard coded value when comparing response codes.
 * Updated AccountInfo.AccountID to be omitted of empty (such as when 
   used in ApprovalInfo).
+* + and : in url parameters for queries are no longer escaped. This was
+  causing `400 Bad Request` to be returned when the + symbol was
+  included as part of the query. To match behavior with Gerrit's search
+  handling, the : symbol was also excluded.
 
 ### 0.1.0
 
