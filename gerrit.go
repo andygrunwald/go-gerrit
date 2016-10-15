@@ -56,6 +56,15 @@ var (
 	// ErrNoInstanceGiven is returned by NewClient in the event the
 	// gerritURL argument was blank.
 	ErrNoInstanceGiven = errors.New("No Gerrit instance given.")
+
+	// ErrUserProvidedWithoutPassword is returned by NewClientFromURL
+	// if a user name is provided without a password.
+	ErrUserProvidedWithoutPassword = errors.New("A username was provided without a password.")
+
+	// ErrAuthenticationFailed is returned by NewClientFromURL in the event the provided
+	// credentials didn't allow us to query account information using digest, basic or cookie
+	// auth.
+	ErrAuthenticationFailed = errors.New("Failed to authenticate using the provided credentials.")
 )
 
 // NewClient returns a new Gerrit API client. The gerritURL argument has to be the
@@ -90,6 +99,70 @@ func NewClient(endpoint string, httpClient *http.Client) (*Client, error) {
 	c.EventsLog = &EventsLogService{client: c}
 
 	return c, nil
+}
+
+// NewClientFromURL is a wrapper for NewClient with two notable differences:
+//   * The url may contain credentials, http://admin:secret@localhost:8081/ for
+//     example. These credentials may either be a user name and password or
+//     name and value as in the case of cookie based authentication.
+//   * If the url contains credentials then this function will attempt to validate
+//     the credentials before returning the client. An error will be returned if the
+//     credentials cannot be validated.
+// The process of validating the credentials is relatively simple and only requires that
+// the provided user have permission to GET /a/accounts/self. Internally NewClientFromURL
+// calls each of the Set*Auth functions followed by GetAccount("self"). The first call to
+// GetAccount("self") which succeeds will return a *Client.
+func NewClientFromURL(httpURL string, httpClient *http.Client) (*Client, error) {
+	baseURL, err := url.Parse(httpURL)
+	if err != nil {
+		return nil, err
+	}
+
+	// Neither username or password were provided so fall back
+	// on the original behavior.
+	if baseURL.User == nil {
+		return NewClient(httpURL, httpClient)
+	}
+
+	username := baseURL.User.Username()
+	password, haspassword := baseURL.User.Password()
+
+	// Catches cases like http://user@localhost:8081/ where no password
+	// was at all. If a blank password is required
+	if !haspassword {
+		return nil, ErrUserProvidedWithoutPassword
+	}
+
+	// Reconstruct the url but without the username and password.
+	parsedURL := fmt.Sprintf(
+		"%s://%s%s", baseURL.Scheme, baseURL.Host, baseURL.RequestURI())
+	client, err := NewClient(parsedURL, httpClient)
+	if err != nil {
+		return nil, err
+	}
+
+	// Digest auth (first since that's the default auth type)
+	client.Authentication.SetDigestAuth(username, password)
+	_, response, err := client.Accounts.GetAccount("self")
+	if err == nil && response.StatusCode == http.StatusOK {
+		return client, nil
+	}
+
+	// Basic auth
+	client.Authentication.SetBasicAuth(username, password)
+	_, response, err = client.Accounts.GetAccount("self")
+	if err == nil && response.StatusCode == http.StatusOK {
+		return client, nil
+	}
+
+	// Cookie auth
+	client.Authentication.SetCookieAuth(username, password)
+	_, response, err = client.Accounts.GetAccount("self")
+	if err == nil && response.StatusCode == http.StatusOK {
+		return client, nil
+	}
+
+	return nil, ErrAuthenticationFailed
 }
 
 // NewRequest creates an API request.
