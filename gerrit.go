@@ -101,6 +101,19 @@ func NewClient(endpoint string, httpClient *http.Client) (*Client, error) {
 	return c, nil
 }
 
+// attemptAuth is used by NewClientFromURL to make a request to /a/accounts/self and check
+// the results. The return value (bool, error) where bool indicates if auth was successful.
+func attemptAuth(client *Client) (bool, error) {
+	_, response, err := client.Accounts.GetAccount("self")
+	if err == ErrWWWAuthenticateHeaderMissing || err == ErrWWWAuthenticateHeaderNotDigest {
+		return false, nil
+	}
+	if err != nil && response.StatusCode != http.StatusUnauthorized {
+		return false, err
+	}
+	return response.StatusCode == http.StatusOK, nil
+}
+
 // NewClientFromURL is a wrapper for NewClient with two notable differences:
 //   * The url may contain credentials, http://admin:secret@localhost:8081/ for
 //     example. These credentials may either be a user name and password or
@@ -143,23 +156,20 @@ func NewClientFromURL(httpURL string, httpClient *http.Client) (*Client, error) 
 
 	// Digest auth (first since that's the default auth type)
 	client.Authentication.SetDigestAuth(username, password)
-	_, response, err := client.Accounts.GetAccount("self")
-	if err == nil && response.StatusCode == http.StatusOK {
-		return client, nil
+	if success, err := attemptAuth(client); success || err != nil {
+		return client, err
 	}
 
 	// Basic auth
 	client.Authentication.SetBasicAuth(username, password)
-	_, response, err = client.Accounts.GetAccount("self")
-	if err == nil && response.StatusCode == http.StatusOK {
-		return client, nil
+	if success, err := attemptAuth(client); success || err != nil {
+		return client, err
 	}
 
 	// Cookie auth
 	client.Authentication.SetCookieAuth(username, password)
-	_, response, err = client.Accounts.GetAccount("self")
-	if err == nil && response.StatusCode == http.StatusOK {
-		return client, nil
+	if success, err := attemptAuth(client); success || err != nil {
+		return client, err
 	}
 
 	return nil, ErrAuthenticationFailed
