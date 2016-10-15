@@ -172,7 +172,10 @@ func NewClientFromURL(httpURL string, httpClient *http.Client) (*Client, error) 
 		return client, err
 	}
 
-	return nil, ErrAuthenticationFailed
+	// Reset auth in case the consumer needs to do something special.
+	client.Authentication.ResetAuth()
+
+	return client, ErrAuthenticationFailed
 }
 
 // NewRequest creates an API request.
