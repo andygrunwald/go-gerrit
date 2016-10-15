@@ -16,6 +16,9 @@ first. For more complete details see
 * Fixed documentation for NewClient and moved fmt.Errorf call from
   inside the function to a `ErrNoInstanceGiven` variable so it's
   easier to compare against.
+* Updated internal function digestAuthHeader to return exported errors
+  (ErrWWWAuthenticateHeader*) rather than calling fmt.Errorf. This makes
+  it easier to test against externally and also fixes a lint issue too.
 
 ### 0.1.0
 
