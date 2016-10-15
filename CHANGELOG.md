@@ -13,6 +13,9 @@ first. For more complete details see
   instead of a hard coded value when comparing response codes.
 * Updated AccountInfo.AccountID to be omitted of empty (such as when 
   used in ApprovalInfo).
+* Fixed documentation for NewClient and moved fmt.Errorf call from
+  inside the function to a `ErrNoInstanceGiven` variable so it's
+  easier to compare against.
 
 ### 0.1.0
 

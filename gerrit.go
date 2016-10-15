@@ -3,6 +3,7 @@ package gerrit
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -51,18 +52,25 @@ type Response struct {
 	*http.Response
 }
 
-// NewClient returns a new Gerrit API client.
-// gerritInstance has to be the HTTP endpoint of the Gerrit instance.
-// If a nil httpClient is provided, http.DefaultClient will be used.
-func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
+var (
+	// ErrNoInstanceGiven is returned by NewClient in the event the
+	// gerritURL argument was blank.
+	ErrNoInstanceGiven = errors.New("No Gerrit instance given.")
+)
+
+// NewClient returns a new Gerrit API client. The gerritURL argument has to be the
+// HTTP endpoint of the Gerrit instance, http://localhost:8080/ for example. If a nil
+// httpClient is provided, http.DefaultClient will be used.
+func NewClient(endpoint string, httpClient *http.Client) (*Client, error) {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
 
-	if len(gerritURL) == 0 {
-		return nil, fmt.Errorf("No Gerrit instance given.")
+	if len(endpoint) == 0 {
+		return nil, ErrNoInstanceGiven
 	}
-	baseURL, err := url.Parse(gerritURL)
+
+	baseURL, err := url.Parse(endpoint)
 	if err != nil {
 		return nil, err
 	}
