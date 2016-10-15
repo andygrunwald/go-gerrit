@@ -288,3 +288,10 @@ func TestRemoveMagicPrefixLineDoesNothingWithoutPrefix(t *testing.T) {
 		}
 	}
 }
+
+func TestErrNoInstanceGiven(t *testing.T) {
+	_, err := gerrit.NewClient("", nil)
+	if err != gerrit.ErrNoInstanceGiven {
+		t.Error("Expected `ErrNoInstanceGiven`")
+	}
+}

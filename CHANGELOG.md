@@ -17,6 +17,12 @@ first. For more complete details see
   causing `400 Bad Request` to be returned when the + symbol was
   included as part of the query. To match behavior with Gerrit's search
   handling, the : symbol was also excluded.
+* Fixed documentation for NewClient and moved fmt.Errorf call from
+  inside the function to a `ErrNoInstanceGiven` variable so it's
+  easier to compare against.
+* Updated internal function digestAuthHeader to return exported errors
+  (ErrWWWAuthenticateHeader*) rather than calling fmt.Errorf. This makes
+  it easier to test against externally and also fixes a lint issue too.
 
 ### 0.1.0
 

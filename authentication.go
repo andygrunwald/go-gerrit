@@ -4,10 +4,22 @@ import (
 	"crypto/md5"
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+)
+
+var (
+	// Returned by digestAuthHeader when the WWW-Authenticate header is missing
+	ErrWWWAuthenticateHeaderMissing = errors.New("WWW-Authenticate header is missing")
+
+	// Returned by digestAuthHeader when the WWW-Authenticate invalid
+	ErrWWWAuthenticateHeaderInvalid = errors.New("WWW-Authenticate header is invalid")
+
+	// Returned by digestAuthHeader when the WWW-Authenticate header is not 'Digest'
+	ErrWWWAuthenticateHeaderNotDigest = errors.New("WWW-Authenticate header type is not Digest")
 )
 
 const (
@@ -54,16 +66,16 @@ func (s *AuthenticationService) SetDigestAuth(username, password string) {
 func (s *AuthenticationService) digestAuthHeader(response *http.Response) (string, error) {
 	authenticateHeader := response.Header.Get("WWW-Authenticate")
 	if authenticateHeader == "" {
-		return "", fmt.Errorf("WWW-Authenticate header is missing")
+		return "", ErrWWWAuthenticateHeaderMissing
 	}
 
 	split := strings.SplitN(authenticateHeader, " ", 2)
 	if len(split) != 2 {
-		return "", fmt.Errorf("WWW-Authenticate header is invalid")
+		return "", ErrWWWAuthenticateHeaderInvalid
 	}
 
 	if split[0] != "Digest" {
-		return "", fmt.Errorf("WWW-Authenticate header type is not Digest")
+		return "", ErrWWWAuthenticateHeaderNotDigest
 	}
 
 	// Iterate over all the fields from the WWW-Authenticate header
