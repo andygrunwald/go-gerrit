@@ -116,6 +116,42 @@ func TestNewClient_Services(t *testing.T) {
 	}
 }
 
+func TestNewClient_TestErrNoInstanceGiven(t *testing.T) {
+	_, err := gerrit.NewClient("", nil)
+	if err != gerrit.ErrNoInstanceGiven {
+		t.Error("Expected `ErrNoInstanceGiven`")
+	}
+}
+
+func TestNewClientFromURL_NoCredentials(t *testing.T) {
+	client, err := gerrit.NewClientFromURL("http://localhost/", nil)
+	if err != nil {
+		t.Errorf("Unexpected error: %s", err.Error())
+	}
+	if client.Authentication.HasAuth() {
+		t.Error("Expected HasAuth() to return false")
+	}
+}
+
+func TestNewClientFromURL_UsernameWithoutPassword(t *testing.T) {
+	_, err := gerrit.NewClientFromURL("http://foo@localhost/", nil)
+	if err != gerrit.ErrUserProvidedWithoutPassword {
+		t.Error("Expected ErrUserProvidedWithoutPassword")
+	}
+}
+
+func TestNewClientFromURL_AuthenticationFailed(t *testing.T) {
+	setup()
+	defer teardown()
+
+	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
+	_, err := gerrit.NewClientFromURL(serverURL, nil)
+
+	if err != gerrit.ErrAuthenticationFailed {
+		t.Error("Expected ErrAuthenticationFailed")
+	}
+}
+
 func TestNewRequest(t *testing.T) {
 	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
 	if err != nil {
@@ -289,9 +325,3 @@ func TestRemoveMagicPrefixLineDoesNothingWithoutPrefix(t *testing.T) {
 	}
 }
 
-func TestErrNoInstanceGiven(t *testing.T) {
-	_, err := gerrit.NewClient("", nil)
-	if err != gerrit.ErrNoInstanceGiven {
-		t.Error("Expected `ErrNoInstanceGiven`")
-	}
-}
