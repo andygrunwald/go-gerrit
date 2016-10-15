@@ -10,7 +10,9 @@ import (
 	"reflect"
 	"testing"
 
+	"encoding/json"
 	"github.com/andygrunwald/go-gerrit"
+	"strings"
 )
 
 const (
@@ -45,6 +47,32 @@ func setup() {
 // teardown closes the test HTTP server.
 func teardown() {
 	testServer.Close()
+}
+
+// makedigestheader takes the incoming request and produces a string
+// which can be used for the WWW-Authenticate header.
+func makedigestheader(request *http.Request) string {
+	return fmt.Sprintf(
+		`Digest realm="Gerrit Code Review", domain="http://%s/", qop="auth", nonce="fakevaluefortesting"`,
+		request.Host)
+}
+
+// writeresponse writes the requested value to the provided response writer and sets
+// the http code
+func writeresponse(t *testing.T, writer http.ResponseWriter, value interface{}, code int) {
+	writer.WriteHeader(code)
+
+	unmarshalled, err := json.Marshal(value)
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	data := []byte(`)]}'` + "\n" + string(unmarshalled))
+	if _, err := writer.Write(data); err != nil {
+		t.Error(err.Error())
+		return
+	}
 }
 
 func testMethod(t *testing.T, r *http.Request, want string) {
@@ -143,12 +171,55 @@ func TestNewClientFromURL_UsernameWithoutPassword(t *testing.T) {
 func TestNewClientFromURL_AuthenticationFailed(t *testing.T) {
 	setup()
 	defer teardown()
+	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
+		// return StatusUnauthorized for every request.
+		writeresponse(t, w, nil, http.StatusUnauthorized)
+	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
 	_, err := gerrit.NewClientFromURL(serverURL, nil)
-
 	if err != gerrit.ErrAuthenticationFailed {
-		t.Error("Expected ErrAuthenticationFailed")
+		t.Error(err)
+	}
+}
+
+func TestNewClientFromURL_DigestAuth(t *testing.T) {
+	setup()
+	defer teardown()
+	account := gerrit.AccountInfo{
+		AccountID: 100000,
+		Name:      "test",
+		Email:     "test@localhost",
+		Username:  "test"}
+	hits := 0
+	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		switch hits {
+		case 1:
+			w.Header().Set("WWW-Authenticate", makedigestheader(r))
+			writeresponse(t, w, nil, http.StatusUnauthorized)
+		case 2:
+			// go-gerrit should set Authorization in response to a `WWW-Authenticate` header
+			auth := r.Header.Get("Authorization")
+			if len(auth) == 0 {
+				t.Error("Missing Authorization header")
+			}
+			if !strings.Contains(auth, `username="admin"`) {
+				t.Error(`Missing username="admin"`)
+			}
+			writeresponse(t, w, account, http.StatusOK)
+		case 3:
+			t.Error("Did not expect another request")
+		}
+	})
+
+	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
+	client, err := gerrit.NewClientFromURL(serverURL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	if !client.Authentication.HasDigestAuth() {
+		t.Error("Expected HasDigestAuth() == true")
 	}
 }
 
@@ -324,4 +395,3 @@ func TestRemoveMagicPrefixLineDoesNothingWithoutPrefix(t *testing.T) {
 		}
 	}
 }
-
