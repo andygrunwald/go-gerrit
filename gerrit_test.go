@@ -2,17 +2,17 @@ package gerrit_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"strings"
 	"testing"
 
-	"encoding/json"
 	"github.com/andygrunwald/go-gerrit"
-	"strings"
 )
 
 const (
@@ -173,7 +173,6 @@ func TestNewClientFromURL_AuthenticationFailed(t *testing.T) {
 	defer teardown()
 
 	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
-		// return StatusUnauthorized for every request.
 		writeresponse(t, w, nil, http.StatusUnauthorized)
 	})
 

@@ -101,17 +101,21 @@ func NewClient(endpoint string, httpClient *http.Client) (*Client, error) {
 	return c, nil
 }
 
-// attemptAuth is used by NewClientFromURL to make a request to /a/accounts/self and check
-// the results. The return value (bool, error) where bool indicates if auth was successful.
-func attemptAuth(client *Client) (bool, error) {
+// checkAuth is used by NewClientFromURL to check if the current credentials are
+// valid. If the response is 401 Unauthorized then the error will be discarded.
+func checkAuth(client *Client) (bool, error) {
 	_, response, err := client.Accounts.GetAccount("self")
-	if err == ErrWWWAuthenticateHeaderMissing || err == ErrWWWAuthenticateHeaderNotDigest {
+	switch err {
+	case ErrWWWAuthenticateHeaderMissing:
 		return false, nil
+	case ErrWWWAuthenticateHeaderNotDigest:
+		return false, nil
+	default:
+		if err != nil && response.StatusCode == http.StatusUnauthorized {
+			err = nil
+		}
+		return response.StatusCode == http.StatusOK, err
 	}
-	if err != nil && response.StatusCode != http.StatusUnauthorized {
-		return false, err
-	}
-	return response.StatusCode == http.StatusOK, nil
 }
 
 // NewClientFromURL is a wrapper for NewClient with two notable differences:
@@ -156,19 +160,19 @@ func NewClientFromURL(httpURL string, httpClient *http.Client) (*Client, error) 
 
 	// Digest auth (first since that's the default auth type)
 	client.Authentication.SetDigestAuth(username, password)
-	if success, err := attemptAuth(client); success || err != nil {
+	if success, err := checkAuth(client); success || err != nil {
 		return client, err
 	}
 
 	// Basic auth
 	client.Authentication.SetBasicAuth(username, password)
-	if success, err := attemptAuth(client); success || err != nil {
+	if success, err := checkAuth(client); success || err != nil {
 		return client, err
 	}
 
 	// Cookie auth
 	client.Authentication.SetCookieAuth(username, password)
-	if success, err := attemptAuth(client); success || err != nil {
+	if success, err := checkAuth(client); success || err != nil {
 		return client, err
 	}
 
