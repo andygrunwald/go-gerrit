@@ -263,6 +263,45 @@ func TestNewClientFromURL_BasicAuth(t *testing.T) {
 	}
 }
 
+func TestNewClientFromURL_CookieAuth(t *testing.T) {
+	setup()
+	defer teardown()
+
+	account := gerrit.AccountInfo{
+		AccountID: 100000,
+		Name:      "test",
+		Email:     "test@localhost",
+		Username:  "test"}
+	hits := 0
+
+	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		switch hits {
+		case 1:
+			writeresponse(t, w, nil, http.StatusUnauthorized)
+		case 2:
+			writeresponse(t, w, nil, http.StatusUnauthorized)
+		case 3:
+			if r.Header.Get("Cookie") != "admin=secret" {
+				t.Error("Expected cookie to equal 'admin=secret")
+			}
+
+			writeresponse(t, w, account, http.StatusOK)
+		case 4:
+			t.Error("Did not expect another request")
+		}
+	})
+
+	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
+	client, err := gerrit.NewClientFromURL(serverURL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	if !client.Authentication.HasCookieAuth() {
+		t.Error("Expected HasCookieAuth() == true")
+	}
+}
+
 func TestNewRequest(t *testing.T) {
 	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
 	if err != nil {
