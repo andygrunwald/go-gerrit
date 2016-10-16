@@ -171,27 +171,33 @@ func TestNewClientFromURL_UsernameWithoutPassword(t *testing.T) {
 func TestNewClientFromURL_AuthenticationFailed(t *testing.T) {
 	setup()
 	defer teardown()
+
 	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
 		// return StatusUnauthorized for every request.
 		writeresponse(t, w, nil, http.StatusUnauthorized)
 	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	_, err := gerrit.NewClientFromURL(serverURL, nil)
+	client, err := gerrit.NewClientFromURL(serverURL, nil)
 	if err != gerrit.ErrAuthenticationFailed {
 		t.Error(err)
+	}
+	if client.Authentication.HasAuth() {
+		t.Error("Expected HasAuth() == false")
 	}
 }
 
 func TestNewClientFromURL_DigestAuth(t *testing.T) {
 	setup()
 	defer teardown()
+
 	account := gerrit.AccountInfo{
 		AccountID: 100000,
 		Name:      "test",
 		Email:     "test@localhost",
 		Username:  "test"}
 	hits := 0
+
 	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
 		hits++
 		switch hits {
@@ -200,11 +206,7 @@ func TestNewClientFromURL_DigestAuth(t *testing.T) {
 			writeresponse(t, w, nil, http.StatusUnauthorized)
 		case 2:
 			// go-gerrit should set Authorization in response to a `WWW-Authenticate` header
-			auth := r.Header.Get("Authorization")
-			if len(auth) == 0 {
-				t.Error("Missing Authorization header")
-			}
-			if !strings.Contains(auth, `username="admin"`) {
+			if !strings.Contains(r.Header.Get("Authorization"), `username="admin"`) {
 				t.Error(`Missing username="admin"`)
 			}
 			writeresponse(t, w, account, http.StatusOK)
@@ -220,6 +222,44 @@ func TestNewClientFromURL_DigestAuth(t *testing.T) {
 	}
 	if !client.Authentication.HasDigestAuth() {
 		t.Error("Expected HasDigestAuth() == true")
+	}
+}
+
+func TestNewClientFromURL_BasicAuth(t *testing.T) {
+	setup()
+	defer teardown()
+
+	account := gerrit.AccountInfo{
+		AccountID: 100000,
+		Name:      "test",
+		Email:     "test@localhost",
+		Username:  "test"}
+	hits := 0
+
+	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		switch hits {
+		case 1:
+			writeresponse(t, w, nil, http.StatusUnauthorized)
+		case 2:
+			// The second request should be a basic auth request if the first request, which is for
+			// digest based auth, fails.
+			if !strings.HasPrefix(r.Header.Get("Authorization"), "Basic ") {
+				t.Error("Missing 'Basic ' prefix")
+			}
+			writeresponse(t, w, account, http.StatusOK)
+		case 3:
+			t.Error("Did not expect another request")
+		}
+	})
+
+	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
+	client, err := gerrit.NewClientFromURL(serverURL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	if !client.Authentication.HasBasicAuth() {
+		t.Error("Expected HasBasicAuth() == true")
 	}
 }
 
