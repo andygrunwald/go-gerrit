@@ -151,8 +151,8 @@ func TestNewClient_TestErrNoInstanceGiven(t *testing.T) {
 	}
 }
 
-func TestNewClientFromURL_NoCredentials(t *testing.T) {
-	client, err := gerrit.NewClientFromURL("http://localhost/", nil)
+func TestNewClient_NoCredentials(t *testing.T) {
+	client, err := gerrit.NewClient("http://localhost/", nil)
 	if err != nil {
 		t.Errorf("Unexpected error: %s", err.Error())
 	}
@@ -161,14 +161,14 @@ func TestNewClientFromURL_NoCredentials(t *testing.T) {
 	}
 }
 
-func TestNewClientFromURL_UsernameWithoutPassword(t *testing.T) {
-	_, err := gerrit.NewClientFromURL("http://foo@localhost/", nil)
+func TestNewClient_UsernameWithoutPassword(t *testing.T) {
+	_, err := gerrit.NewClient("http://foo@localhost/", nil)
 	if err != gerrit.ErrUserProvidedWithoutPassword {
 		t.Error("Expected ErrUserProvidedWithoutPassword")
 	}
 }
 
-func TestNewClientFromURL_AuthenticationFailed(t *testing.T) {
+func TestNewClient_AuthenticationFailed(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -177,7 +177,7 @@ func TestNewClientFromURL_AuthenticationFailed(t *testing.T) {
 	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClientFromURL(serverURL, nil)
+	client, err := gerrit.NewClient(serverURL, nil)
 	if err != gerrit.ErrAuthenticationFailed {
 		t.Error(err)
 	}
@@ -186,7 +186,7 @@ func TestNewClientFromURL_AuthenticationFailed(t *testing.T) {
 	}
 }
 
-func TestNewClientFromURL_DigestAuth(t *testing.T) {
+func TestNewClient_DigestAuth(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -215,7 +215,7 @@ func TestNewClientFromURL_DigestAuth(t *testing.T) {
 	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClientFromURL(serverURL, nil)
+	client, err := gerrit.NewClient(serverURL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -224,7 +224,7 @@ func TestNewClientFromURL_DigestAuth(t *testing.T) {
 	}
 }
 
-func TestNewClientFromURL_BasicAuth(t *testing.T) {
+func TestNewClient_BasicAuth(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -253,7 +253,7 @@ func TestNewClientFromURL_BasicAuth(t *testing.T) {
 	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClientFromURL(serverURL, nil)
+	client, err := gerrit.NewClient(serverURL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -262,7 +262,7 @@ func TestNewClientFromURL_BasicAuth(t *testing.T) {
 	}
 }
 
-func TestNewClientFromURL_CookieAuth(t *testing.T) {
+func TestNewClient_CookieAuth(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -292,7 +292,7 @@ func TestNewClientFromURL_CookieAuth(t *testing.T) {
 	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClientFromURL(serverURL, nil)
+	client, err := gerrit.NewClient(serverURL, nil)
 	if err != nil {
 		t.Error(err)
 	}
