@@ -19,6 +19,7 @@ first. For more complete details see
 * Updated internal function digestAuthHeader to return exported errors
   (ErrWWWAuthenticateHeader*) rather than calling fmt.Errorf. This makes
   it easier to test against externally and also fixes a lint issue too.
+* Updated NewClient function to handle credentials in the url.
 
 ### 0.1.0
 
