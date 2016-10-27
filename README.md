@@ -3,7 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/andygrunwald/go-gerrit?status.svg)](https://godoc.org/github.com/andygrunwald/go-gerrit)
 [![Build Status](https://travis-ci.org/andygrunwald/go-gerrit.svg?branch=master)](https://travis-ci.org/andygrunwald/go-gerrit)
 [![Go Report Card](https://goreportcard.com/badge/github.com/andygrunwald/go-gerrit)](https://goreportcard.com/report/github.com/andygrunwald/go-gerrit)
-[![Coverage Status](https://coveralls.io/repos/andygrunwald/go-gerrit/badge.svg?branch=master&service=github)](https://coveralls.io/github/andygrunwald/go-gerrit?branch=master)
+[![codecov](https://codecov.io/gh/andygrunwald/go-gerrit/branch/master/graph/badge.svg)](https://codecov.io/gh/andygrunwald/go-gerrit)
 
 go-gerrit is a [Go(lang)](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
 
@@ -257,4 +257,3 @@ popular and the structures that the REST API uses could also be used by `gerrit 
 ## License
 
 This project is released under the terms of the [MIT license](http://en.wikipedia.org/wiki/MIT_License).
-
