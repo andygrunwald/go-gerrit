@@ -251,6 +251,7 @@ type ChangeInfo struct {
 	Status             string                  `json:"status"`
 	Created            string                  `json:"created"`
 	Updated            string                  `json:"updated"`
+	Submitted          string                  `json:"submitted,omitempty"`
 	Starred            bool                    `json:"starred,omitempty"`
 	Reviewed           bool                    `json:"reviewed,omitempty"`
 	Mergeable          bool                    `json:"mergeable,omitempty"`
