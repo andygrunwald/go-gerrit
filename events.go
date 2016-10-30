@@ -41,6 +41,7 @@ type RefUpdate struct {
 type EventInfo struct {
 	Type           string        `json:"type"`
 	Change         ChangeInfo    `json:"change,omitempty"`
+	ChangeKey      ChangeInfo    `json:"changeKey,omitempty"`
 	PatchSet       PatchSet      `json:"patchSet,omitempty"`
 	EventCreatedOn int           `json:"eventCreatedOn,omitempty"`
 	Reason         string        `json:"reason,omitempty"`
@@ -56,7 +57,7 @@ type EventInfo struct {
 	Removed        []string      `json:"removed,omitempty"`
 	Hashtags       []string      `json:"hashtags,omitempty"`
 	RefUpdate      RefUpdate     `json:"refUpdate,omitempty"`
-	Project        string        `json:"project,omitempty"`
+	Project        ProjectInfo   `json:"project,omitempty"`
 	Reviewer       AccountInfo   `json:"reviewer,omitempty"`
 	OldTopic       string        `json:"oldTopic,omitempty"`
 	Changer        AccountInfo   `json:"changer,omitempty"`
