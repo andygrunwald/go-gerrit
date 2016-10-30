@@ -157,6 +157,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInf
 				if !options.IgnoreUnmarshalErrors {
 					return info, response, failures, err
 				}
+				continue
 			}
 			info = append(info, event)
 		}
