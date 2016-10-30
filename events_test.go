@@ -12,6 +12,11 @@ var (
 	fakeEvents = []byte(`
 	{"submitter":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"newRev":"0000000000000000000000000000000000000000","patchSet":{"number":"1","revision":"0000000000000000000000000000000000000000","parents":["0000000000000000000000000000000000000000"],"ref":"refs/changes/1/1/1","uploader":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"createdOn":1470000000,"author":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"isDraft":false,"kind":"TRIVIAL_REBASE","sizeInsertions":10,"sizeDeletions":0},"change":{"project":"test","branch":"master","id":"Iffffffffffffffffffffffffffffffffffffffff","number":"1","subject":"subject","owner":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"url":"https://localhost/1","commitMessage":"commitMessage\n\nline2\n\nChange-Id: Iffffffffffffffffffffffffffffffffffffffff\n","status":"MERGED"},"type":"change-merged","eventCreatedOn":1470000000}
 	{"author":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"comment":"Patch Set 1:\n\n(2 comments)\n\nSome comment","patchSet":{"number":"1","revision":"0000000000000000000000000000000000000000","parents":["0000000000000000000000000000000000000000"],"ref":"refs/changes/1/1/1","uploader":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"createdOn":1470000000,"author":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"isDraft":false,"kind":"REWORK","sizeInsertions":4,"sizeDeletions":-2},"change":{"project":"test","branch":"master","id":"Iffffffffffffffffffffffffffffffffffffffff","number":"1","subject":"subject","owner":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"url":"https://localhost/1","commitMessage":"commitMessage\n\nChange-Id: Iffffffffffffffffffffffffffffffffffffffff\n","status":"NEW"},"type":"comment-added","eventCreatedOn":1470000000}`)
+
+	fakeEventsWithError = []byte(`
+	{"submitter":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"newRev":"0000000000000000000000000000000000000000","patchSet":{"number":"1","revision":"0000000000000000000000000000000000000000","parents":["0000000000000000000000000000000000000000"],"ref":"refs/changes/1/1/1","uploader":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"createdOn":1470000000,"author":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"isDraft":false,"kind":"TRIVIAL_REBASE","sizeInsertions":10,"sizeDeletions":0},"change":{"project":"test","branch":"master","id":"Iffffffffffffffffffffffffffffffffffffffff","number":"1","subject":"subject","owner":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"url":"https://localhost/1","commitMessage":"commitMessage\n\nline2\n\nChange-Id: Iffffffffffffffffffffffffffffffffffffffff\n","status":"MERGED"},"type":"change-merged","eventCreatedOn":1470000000}
+	{"author":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"comment":"Patch Set 1:\n\n(2 comments)\n\nSome comment","patchSet":{"number":"1","revision":"0000000000000000000000000000000000000000","parents":["0000000000000000000000000000000000000000"],"ref":"refs/changes/1/1/1","uploader":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"createdOn":1470000000,"author":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"isDraft":false,"kind":"REWORK","sizeInsertions":4,"sizeDeletions":-2},"change":{"project":"test","branch":"master","id":"Iffffffffffffffffffffffffffffffffffffffff","number":"1","subject":"subject","owner":{"name":"Foo Bar","email":"fbar@example.com","username":"fbar"},"url":"https://localhost/1","commitMessage":"commitMessage\n\nChange-Id: Iffffffffffffffffffffffffffffffffffffffff\n","status":"NEW"},"type":"comment-added","eventCreatedOn":1470000000}
+	{"author":1}`)
 )
 
 func TestEventsLogService_GetEvents_NoDateRange(t *testing.T) {
@@ -23,17 +28,17 @@ func TestEventsLogService_GetEvents_NoDateRange(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{}
-	events, _, err := testClient.EventsLog.GetEvents(options)
+	events, _, _, err := testClient.EventsLog.GetEvents(options)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if len(*events) != 2 {
+	if len(events) != 2 {
 		t.Error("Expected 2 events")
 	}
 
 	// Basic test
-	for i, event := range *events {
+	for i, event := range events {
 		switch i {
 		case 0:
 			if event.Type != "change-merged" {
@@ -71,7 +76,7 @@ func TestEventsLogService_GetEvents_DateRangeFromAndTo(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{From: from, To: to}
-	_, _, err := testClient.EventsLog.GetEvents(options)
+	_, _, _, err := testClient.EventsLog.GetEvents(options)
 	if err != nil {
 		t.Error(err)
 	}
@@ -100,7 +105,7 @@ func TestEventsLogService_GetEvents_DateRangeFromOnly(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{From: from}
-	_, _, err := testClient.EventsLog.GetEvents(options)
+	_, _, _, err := testClient.EventsLog.GetEvents(options)
 	if err != nil {
 		t.Error(err)
 	}
@@ -128,8 +133,29 @@ func TestEventsLogService_GetEvents_DateRangeToOnly(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{To: to}
-	_, _, err := testClient.EventsLog.GetEvents(options)
+	_, _, _, err := testClient.EventsLog.GetEvents(options)
 	if err != nil {
 		t.Error(err)
+	}
+}
+
+func TestEventsLogService_GetEvents_UnmarshalError(t *testing.T) {
+	setup()
+	defer teardown()
+
+	testMux.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		writer.Write(fakeEventsWithError)
+	})
+
+	options := &gerrit.EventsLogOptions{IgnoreUnmarshalErrors: true}
+	events, _, failures, err := testClient.EventsLog.GetEvents(options)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(failures) != 1 {
+		t.Error("Expected 1 failures")
+	}
+	if len(events) != 2 {
+		t.Error(len(events))
 	}
 }
