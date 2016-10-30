@@ -74,6 +74,14 @@ type EventsLogService struct {
 type EventsLogOptions struct {
 	From time.Time
 	To   time.Time
+
+	// IgnoreUnmarshalErrors will cause GetEvents to ignore any errors
+	// that come up when calling json.Unmarshal. This can be useful in
+	// cases where the events-log plugin was not kept up to date with
+	// the Gerrit version for some reason. In these cases the events-log
+	// plugin will return data structs that don't match the EventInfo
+	// struct which in turn causes issues for json.Unmarshal.
+	IgnoreUnmarshalErrors bool
 }
 
 // getURL returns the url that should be used in the request.  This will vary
@@ -137,7 +145,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) (*[]EventIn
 		if len(line) > 0 {
 			event := EventInfo{}
 			err := json.Unmarshal(line, &event)
-			if err != nil {
+			if err != nil && !options.IgnoreUnmarshalErrors {
 				return nil, nil, err
 			}
 			*eventInfo = append(*eventInfo, event)
