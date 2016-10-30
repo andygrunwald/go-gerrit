@@ -111,18 +111,27 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 }
 
 // GetEvents returns a list of events for the given input options.  Use of this
-// function an authenticated user.
+// function requires an authenticated user and for the events-log plugin to be
+// installed. This function returns the unmarshalled EventInfo structs, response,
+// failed lines and errors. Marshaling errors will cause this function to return
+// before processing is complete unless you set EventsLogOptions.IgnoreUnmarshalErrors
+// to true. This can be useful in cases where the events-log plugin got out of sync
+// with the Gerrit version which in turn produced events which can't be transformed
+// unmarshalled into EventInfo.
 //
 // Gerrit API docs: https://<yourserver>/plugins/events-log/Documentation/rest-api-events.html
-func (events *EventsLogService) GetEvents(options *EventsLogOptions) (*[]EventInfo, *Response, error) {
+func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInfo, *Response, [][]byte, error) {
+	info := []EventInfo{}
+	failures := [][]byte{}
 	requestURL, err := events.getURL(options)
+
 	if err != nil {
-		return nil, nil, err
+		return info, nil, failures, err
 	}
 
 	request, err := events.client.NewRequest("GET", requestURL, nil)
 	if err != nil {
-		return nil, nil, err
+		return info, nil, failures, err
 	}
 
 	// Perform the request but do not pass in a structure to unpack
@@ -130,27 +139,27 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) (*[]EventIn
 	// object per line so we need to manually handle the response here.
 	response, err := events.client.Do(request, nil)
 	if err != nil {
-		return nil, nil, err
+		return info, response, failures, err
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
-
 	defer response.Body.Close()
 	if err != nil {
-		return nil, nil, err
+		return info, response, failures, err
 	}
 
-	eventInfo := new([]EventInfo)
 	for _, line := range bytes.Split(body, []byte("\n")) {
 		if len(line) > 0 {
 			event := EventInfo{}
-			err := json.Unmarshal(line, &event)
-			if err != nil && !options.IgnoreUnmarshalErrors {
-				return nil, nil, err
+			if err := json.Unmarshal(line, &event); err != nil {
+				failures = append(failures, line)
+
+				if !options.IgnoreUnmarshalErrors {
+					return info, response, failures, err
+				}
 			}
-			*eventInfo = append(*eventInfo, event)
+			info = append(info, event)
 		}
 	}
-
-	return eventInfo, response, err
+	return info, response, failures, err
 }
