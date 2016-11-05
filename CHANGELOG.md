@@ -7,6 +7,17 @@ first. For more complete details see
 
 ## Versions
 
+### 0.2.0 (not yet released)
+
+**WARNING**: This release includes breaking changes.
+
+* [BREAKING CHANGE] Several bugfixes to GetEvents:
+  * Update EventInfo to handle the changeKey field and apply
+    the proper type for the Project field
+  * Provide a means to ignore marshaling errors
+  * Update GetEvents() to return the failed lines and remove
+    the pointer to the return value because it's unnecessary.
+
 ### 0.1.1
 
 * Minor fix to SubmitChange to use the `http.StatusConflict` constant
