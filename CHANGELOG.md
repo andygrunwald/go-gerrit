@@ -7,7 +7,7 @@ first. For more complete details see
 
 ## Versions
 
-### 0.1.1 (not yet released)
+### 0.1.1
 
 * Minor fix to SubmitChange to use the `http.StatusConflict` constant
   instead of a hard coded value when comparing response codes.
