@@ -7,12 +7,16 @@ first. For more complete details see
 
 ## Versions
 
-### 0.1.1 (not yet released)
+### 0.1.1
 
 * Minor fix to SubmitChange to use the `http.StatusConflict` constant
   instead of a hard coded value when comparing response codes.
 * Updated AccountInfo.AccountID to be omitted of empty (such as when 
   used in ApprovalInfo).
+* + and : in url parameters for queries are no longer escaped. This was
+  causing `400 Bad Request` to be returned when the + symbol was
+  included as part of the query. To match behavior with Gerrit's search
+  handling, the : symbol was also excluded.
 * Fixed documentation for NewClient and moved fmt.Errorf call from
   inside the function to a `ErrNoInstanceGiven` variable so it's
   easier to compare against.
@@ -21,6 +25,8 @@ first. For more complete details see
   it easier to test against externally and also fixes a lint issue too.
 * Updated NewClient function to handle credentials in the url.
 * Added the missing `Submitted` field to `ChangeInfo`.
+* Added the missing `URL` field to `ChangeInfo` which is usually included
+  as part of an event from the events-log plugin.
 
 ### 0.1.0
 
