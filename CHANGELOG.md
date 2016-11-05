@@ -25,6 +25,8 @@ first. For more complete details see
   it easier to test against externally and also fixes a lint issue too.
 * Updated NewClient function to handle credentials in the url.
 * Added the missing `Submitted` field to `ChangeInfo`.
+* Added the missing `URL` field to `ChangeInfo` which is usually included
+  as part of an event from the events-log plugin.
 
 ### 0.1.0
 

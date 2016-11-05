@@ -243,6 +243,7 @@ type DiffIntralineInfo []struct {
 // ChangeInfo entity contains information about a change.
 type ChangeInfo struct {
 	ID                 string                  `json:"id"`
+	URL                string                  `json:"url,omitempty"`
 	Project            string                  `json:"project"`
 	Branch             string                  `json:"branch"`
 	Topic              string                  `json:"topic,omitempty"`
