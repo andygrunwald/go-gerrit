@@ -31,3 +31,30 @@ func ExampleChangesService_QueryChanges() {
 	// Output:
 	// Project: platform/art -> ART: Change return types of field access entrypoints -> https://android-review.googlesource.com/249244
 }
+
+// Prior to fixing #18 this test would fail.
+func ExampleChangesService_QueryChangesWithSymbols() {
+	instance := "https://android-review.googlesource.com/"
+	client, err := gerrit.NewClient(instance, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	opt := &gerrit.QueryChangeOptions{}
+	opt.Query = []string{
+		"change:249244+status:merged",
+	}
+	opt.Limit = 2
+	opt.AdditionalFields = []string{"LABELS"}
+	changes, _, err := client.Changes.QueryChanges(opt)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, change := range *changes {
+		fmt.Printf("Project: %s -> %s -> %s%d\n", change.Project, change.Subject, instance, change.Number)
+	}
+
+	// Output:
+	// Project: platform/art -> ART: Change return types of field access entrypoints -> https://android-review.googlesource.com/249244
+}
