@@ -261,7 +261,7 @@ type ChangeInfo struct {
 	Number             int                     `json:"_number"`
 	Owner              AccountInfo             `json:"owner"`
 	Actions            map[string]ActionInfo   `json:"actions,omitempty"`
-	Labels             Labels                  `json:"labels,omitempty"`
+	Labels             map[string]LabelInfo    `json:"labels,omitempty"`
 	PermittedLabels    map[string][]string     `json:"permitted_labels,omitempty"`
 	RemovableReviewers []AccountInfo           `json:"removable_reviewers,omitempty"`
 	Messages           []ChangeMessageInfo     `json:"messages,omitempty"`
@@ -270,12 +270,6 @@ type ChangeInfo struct {
 	MoreChanges        bool                    `json:"_more_changes,omitempty"`
 	Problems           []ProblemInfo           `json:"problems,omitempty"`
 	BaseChange         string                  `json:"base_change,omitempty"`
-}
-
-// Labels entity contains the labels Verified & CodeReview, always corresponding to the current patch set.
-type Labels struct {
-	Verified   LabelInfo `json:"Verified,omitempty"`
-	CodeReview LabelInfo `json:"Code-Review,omitempty"`
 }
 
 // LabelInfo entity contains information about a label on a change, always corresponding to the current patch set.
