@@ -17,6 +17,9 @@ first. For more complete details see
   * Provide a means to ignore marshaling errors
   * Update GetEvents() to return the failed lines and remove
     the pointer to the return value because it's unnecessary.
+* [BREAKING CHANGE] In ec28f77 `ChangeInfo.Labels` has been changed to map
+  to fix #21.
+
 
 ### 0.1.1
 
