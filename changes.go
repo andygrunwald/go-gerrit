@@ -566,7 +566,7 @@ func (s *ChangesService) getCommentInfoMapSliceResponse(u string) (*map[string][
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-change
 func (s *ChangesService) CreateChange(input *ChangeInfo) (*ChangeInfo, *Response, error) {
-	u := "changes"
+	u := "changes/"
 
 	req, err := s.client.NewRequest("POST", u, input)
 	if err != nil {
