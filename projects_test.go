@@ -168,7 +168,7 @@ func TestProjectsService_GetProjectDescription(t *testing.T) {
 }
 
 func ExampleProjectsService_ListProjects() {
-	instance := "http://review.cyanogenmod.org/"
+	instance := "https://chromium-review.googlesource.com/"
 	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
 		panic(err)
@@ -176,7 +176,7 @@ func ExampleProjectsService_ListProjects() {
 
 	opt := &gerrit.ProjectOptions{
 		Description: true,
-		Prefix:      "CyanogenMod/android_device_htc_pyramid",
+		Prefix:      "infra/infra/infra_l",
 	}
 	projects, _, err := client.Projects.ListProjects(opt)
 	if err != nil {
@@ -188,5 +188,5 @@ func ExampleProjectsService_ListProjects() {
 	}
 
 	// Output:
-	// CyanogenMod/android_device_htc_pyramid - State: ACTIVE
+	// infra/infra/infra_libs - State: ACTIVE
 }

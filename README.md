@@ -151,7 +151,7 @@ func main() {
 
 ### Get all public projects
 
-List all projects from [cyanogenmod](http://review.cyanogenmod.org/):
+List all projects from [Chromium](https://chromium-review.googlesource.com/):
 
 ```go
 package main
@@ -162,7 +162,7 @@ import (
 )
 
 func main() {
-	instance := "http://review.cyanogenmod.org/"
+	instance := "https://chromium-review.googlesource.com/"
 	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
 		panic(err)
@@ -176,9 +176,9 @@ func main() {
 		fmt.Printf("%s - State: %s\n", name, p.State)
 	}
 
-	// CyanogenMod/android_external_drm - State: ACTIVE
-	// CyanogenMod/android_external_jhead - State: ACTIVE
-	// CyanogenMod/android_external_libppp - State: ACTIVE
+	// chromiumos/platform/depthcharge - State: ACTIVE
+	// external/github.com/maruel/subcommands - State: ACTIVE
+	// external/junit - State: ACTIVE
 	// ...
 }
 ```
