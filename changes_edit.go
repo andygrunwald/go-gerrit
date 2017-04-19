@@ -153,7 +153,7 @@ func (s *ChangesService) DeleteChangeEdit(changeID, filePath string) (*Response,
 func (s *ChangesService) PublishChangeEdit(changeID, notify string)  (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:publish", changeID)
 
-	req, err := s.client.NewRequest("POST", u, map[string]{
+	req, err := s.client.NewRequest("POST", u, map[string]string{
 		"notify": notify,
 	})
 	if err != nil {
