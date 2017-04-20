@@ -150,10 +150,12 @@ func (s *ChangesService) DeleteChangeEdit(changeID, filePath string) (*Response,
 // As response “204 No Content” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#publish-edit
-func (s *ChangesService) PublishChangeEdit(changeID string) (*Response, error) {
+func (s *ChangesService) PublishChangeEdit(changeID, notify string)  (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:publish", changeID)
 
-	req, err := s.client.NewRequest("POST", u, nil)
+	req, err := s.client.NewRequest("POST", u, map[string]string{
+		"notify": notify,
+	})
 	if err != nil {
 		return nil, err
 	}
