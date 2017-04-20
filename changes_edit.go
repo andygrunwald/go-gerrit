@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"fmt"
+	"net/url"
 )
 
 // EditInfo entity contains information about a change edit.
@@ -94,10 +95,10 @@ func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(changeID string) (s
 // As response “204 No Content” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#put-edit-file
-func (s *ChangesService) ChangeFileContentInChangeEdit(changeID, filePath string) (*Response, error) {
-	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
+func (s *ChangesService) ChangeFileContentInChangeEdit(changeID, filePath, content string) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit/%s", changeID, url.QueryEscape(filePath))
 
-	req, err := s.client.NewRequest("PUT", u, nil)
+	req, err := s.client.NewRawPutRequest(u, content)
 	if err != nil {
 		return nil, err
 	}
