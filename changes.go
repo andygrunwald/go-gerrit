@@ -626,10 +626,12 @@ func (s *ChangesService) DeleteDraftChange(changeID string) (*Response, error) {
 // PublishDraftChange publishes a draft change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#publish-draft-change
-func (s *ChangesService) PublishDraftChange(changeID string) (*Response, error) {
+func (s *ChangesService) PublishDraftChange(changeID, notify string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/publish", changeID)
 
-	req, err := s.client.NewRequest("POST", u, nil)
+	req, err := s.client.NewRequest("POST", u, map[string]string{
+		"notify": notify,
+	})
 	if err != nil {
 		return nil, err
 	}
