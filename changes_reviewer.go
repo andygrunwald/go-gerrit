@@ -101,7 +101,7 @@ func (s *ChangesService) GetReviewer(changeID, accountID string) (*ReviewerInfo,
 func (s *ChangesService) AddReviewer(changeID string, input *ReviewerInput) (*AddReviewerResult, *Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers", changeID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest("POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
