@@ -402,7 +402,7 @@ func (s *ChangesService) GetChange(changeID string, opt *ChangeOptions) (*Change
 // This response will contain all votes for each label and include one combined vote.
 // The combined label vote is calculated in the following order (from highest to lowest): REJECTED > APPROVED > DISLIKED > RECOMMENDED.
 //
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-change
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-change-detail
 func (s *ChangesService) GetChangeDetail(changeID string, opt *ChangeOptions) (*ChangeInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/detail", changeID)
 	return s.getChangeInfoResponse(u, opt)
