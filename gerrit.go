@@ -436,15 +436,13 @@ func (c *Client) DeleteRequest(urlStr string, body interface{}) (*Response, erro
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
 func RemoveMagicPrefixLine(body []byte) []byte {
-	if bytes.HasPrefix(body, []byte(")]}'\n")) {
-		index := bytes.IndexByte(body, '\n')
-		if index > -1 {
-			// +1 to catch the \n as well
-			body = body[(index + 1):]
-		}
+	if bytes.HasPrefix(body, magicPrefix) {
+		return body[5:]
 	}
 	return body
 }
+
+var magicPrefix = []byte(")]}'\n")
 
 // CheckResponse checks the API response for errors, and returns them if present.
 // A response is considered an error if it has a status code outside the 200 range.
