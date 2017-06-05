@@ -12,7 +12,7 @@ import (
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/json.html#patchSet
 type PatchSet struct {
-	Number    string      `json:"number"`
+	Number    Number      `json:"number"`
 	Revision  string      `json:"revision"`
 	Parents   []string    `json:"parents"`
 	Ref       string      `json:"ref"`
