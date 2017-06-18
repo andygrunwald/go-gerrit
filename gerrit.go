@@ -55,16 +55,16 @@ type Response struct {
 var (
 	// ErrNoInstanceGiven is returned by NewClient in the event the
 	// gerritURL argument was blank.
-	ErrNoInstanceGiven = errors.New("No Gerrit instance given.")
+	ErrNoInstanceGiven = errors.New("no Gerrit instance given")
 
 	// ErrUserProvidedWithoutPassword is returned by NewClientFromURL
 	// if a user name is provided without a password.
-	ErrUserProvidedWithoutPassword = errors.New("A username was provided without a password.")
+	ErrUserProvidedWithoutPassword = errors.New("a username was provided without a password")
 
 	// ErrAuthenticationFailed is returned by NewClientFromURL in the event the provided
 	// credentials didn't allow us to query account information using digest, basic or cookie
 	// auth.
-	ErrAuthenticationFailed = errors.New("Failed to authenticate using the provided credentials.")
+	ErrAuthenticationFailed = errors.New("failed to authenticate using the provided credentials")
 )
 
 // NewClient returns a new Gerrit API client. The gerritURL argument has to be the

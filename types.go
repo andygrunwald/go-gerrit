@@ -20,6 +20,7 @@ func (n *Number) Int() (int, error) {
 	return strconv.Atoi(n.String())
 }
 
+// UnmarshalJSON will marshal the provided data into the current *Number struct.
 func (n *Number) UnmarshalJSON(data []byte) error {
 	// `data` is a number represented as a string (ex. "5").
 	var stringNumber string
