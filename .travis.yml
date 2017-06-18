@@ -9,7 +9,7 @@ go:
     - 1.8
 
 before_install:
-    - make deps
+  - make deps
 
 script:
   - make
