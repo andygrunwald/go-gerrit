@@ -151,7 +151,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInf
 	for _, line := range bytes.Split(body, []byte("\n")) {
 		if len(line) > 0 {
 			event := EventInfo{}
-			if err := json.Unmarshal(line, &event); err != nil {
+			if err := json.Unmarshal(line, &event); err != nil { // nolint: vetshadow
 				failures = append(failures, line)
 
 				if !options.IgnoreUnmarshalErrors {
