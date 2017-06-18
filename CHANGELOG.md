@@ -23,6 +23,9 @@ first. For more complete details see
       unnecessary for the request.
     * Fixed CherryPickRevision and IncludeGroups functions which didn't pass
       along the provided input structs into the request.
+* Go 1.5 has been removed from testing on Travis. The linters introduced in 
+  0.4.0 do not support this version, Go 1.5 is lacking security updates and
+  most Linux distros have moved beyond Go 1.5 now.
 
 ### 0.3.0
 
