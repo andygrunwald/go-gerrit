@@ -32,12 +32,21 @@ It is go gettable ...
 $ go get github.com/andygrunwald/go-gerrit
 ```
 
-... (optional) to run unit / example tests:
+... (optional) to run checks and tests:
+
+**Tests Only**
 
 ```sh
 $ cd $GOPATH/src/github.com/andygrunwald/go-gerrit
 $ go test -v
 ```
+
+**Checks, Tests, Linters, etc**
+
+```sh
+$ cd $GOPATH/src/github.com/andygrunwald/go-gerrit
+$ make 
+``` 
 
 ## API / Usage
 
