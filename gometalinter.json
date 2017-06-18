@@ -10,6 +10,15 @@
     "gofmt",
     "goimports",
     "goconst",
-    "errcheck"
+    "errcheck",
+    "interfacer",
+    "gas",
+    "unconvert",
+    "testify",
+    "unparam",
+    "varcheck",
+    "gotype",
+    "ineffassign",
+    "staticcheck"
   ]
 }
