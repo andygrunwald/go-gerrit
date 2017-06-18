@@ -675,6 +675,11 @@ func (s *ChangesService) FixChange(changeID string, input *FixInput) (*ChangeInf
 	return v, resp, err
 }
 
+// SubmitChange submits a change.
+//
+// The request body only needs to include a SubmitInput entity if submitting on behalf of another user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submit-change
 func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*ChangeInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/submit", changeID)
 
