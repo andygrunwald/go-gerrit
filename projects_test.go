@@ -118,7 +118,9 @@ func TestProjectsService_CreateProject(t *testing.T) {
 		testMethod(t, r, "PUT")
 
 		v := new(gerrit.ProjectInput)
-		json.NewDecoder(r.Body).Decode(v)
+		if err := json.NewDecoder(r.Body).Decode(v); err != nil {
+			t.Error(err)
+		}
 
 		if !reflect.DeepEqual(v, input) {
 			t.Errorf("Request body = %+v, want %+v", v, input)

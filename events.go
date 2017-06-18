@@ -143,7 +143,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInf
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
-	defer response.Body.Close()
+	defer response.Body.Close() // nolint: errcheck
 	if err != nil {
 		return info, response, failures, err
 	}

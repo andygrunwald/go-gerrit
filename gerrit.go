@@ -333,9 +333,11 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	}
 
 	if v != nil {
-		defer resp.Body.Close()
+		defer resp.Body.Close() // nolint: errcheck
 		if w, ok := v.(io.Writer); ok {
-			io.Copy(w, resp.Body)
+			if _, err := io.Copy(w, resp.Body); err != nil { // nolint: vetshadow
+				return nil, err
+			}
 		} else {
 			var body []byte
 			body, err = ioutil.ReadAll(resp.Body)
@@ -397,8 +399,8 @@ func (c *Client) addAuthentication(req *http.Request) error {
 		// When the function exits discard the rest of the
 		// body and close it.  This should cause go to
 		// reuse the connection.
-		defer io.Copy(ioutil.Discard, response.Body)
-		defer response.Body.Close()
+		defer io.Copy(ioutil.Discard, response.Body) // nolint: errcheck
+		defer response.Body.Close()                  // nolint: errcheck
 
 		if response.StatusCode == http.StatusUnauthorized {
 			authorization, err := c.Authentication.digestAuthHeader(response)

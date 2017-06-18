@@ -93,7 +93,9 @@ func testFormValues(t *testing.T, r *http.Request, values testValues) {
 		want.Add(k, v)
 	}
 
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		t.Error(err)
+	}
 	if got := r.Form; !reflect.DeepEqual(got, want) {
 		t.Errorf("Request parameters: %v, want %v", got, want)
 	}
@@ -395,9 +397,14 @@ func TestDo(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"A":"a"}`)
 	})
 
-	req, _ := testClient.NewRequest("GET", "/", nil)
+	req, err := testClient.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Error(err)
+	}
 	body := new(foo)
-	testClient.Do(req, body)
+	if _, err := testClient.Do(req, body); err != nil {
+		t.Error(err)
+	}
 
 	want := &foo{"a"}
 	if !reflect.DeepEqual(body, want) {
@@ -417,10 +424,15 @@ func TestDo_ioWriter(t *testing.T) {
 		fmt.Fprint(w, content)
 	})
 
-	req, _ := testClient.NewRequest("GET", "/", nil)
+	req, err := testClient.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Error(err)
+	}
 	var buf []byte
 	actual := bytes.NewBuffer(buf)
-	testClient.Do(req, actual)
+	if _, err := testClient.Do(req, actual); err != nil {
+		t.Error(err)
+	}
 
 	expected := []byte(content)
 	if !reflect.DeepEqual(actual.Bytes(), expected) {
