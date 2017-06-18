@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	// Returned by digestAuthHeader when the WWW-Authenticate header is missing
+	// ErrWWWAuthenticateHeaderMissing is returned by digestAuthHeader when the WWW-Authenticate header is missing
 	ErrWWWAuthenticateHeaderMissing = errors.New("WWW-Authenticate header is missing")
 
-	// Returned by digestAuthHeader when the WWW-Authenticate invalid
+	// ErrWWWAuthenticateHeaderInvalid is returned by digestAuthHeader when the WWW-Authenticate invalid
 	ErrWWWAuthenticateHeaderInvalid = errors.New("WWW-Authenticate header is invalid")
 
-	// Returned by digestAuthHeader when the WWW-Authenticate header is not 'Digest'
+	// ErrWWWAuthenticateHeaderNotDigest is returned by digestAuthHeader when the WWW-Authenticate header is not 'Digest'
 	ErrWWWAuthenticateHeaderNotDigest = errors.New("WWW-Authenticate header type is not Digest")
 )
 
