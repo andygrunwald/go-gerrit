@@ -79,7 +79,7 @@ func (s *GroupsService) IncludeGroup(groupID, includeGroupID string) (*GroupInfo
 func (s *GroupsService) IncludeGroups(groupID string, input *GroupsInput) (*[]GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/groups", groupID)
 
-	req, err := s.client.NewRequest("POST", u, nil)
+	req, err := s.client.NewRequest("POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}

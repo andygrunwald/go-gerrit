@@ -590,7 +590,7 @@ func (s *ChangesService) SetReviewed(changeID, revisionID, fileID string) (*Resp
 func (s *ChangesService) CherryPickRevision(changeID, revisionID string, input *CherryPickInput) (*ChangeInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/revisions/%s/cherrypick", changeID, revisionID)
 
-	req, err := s.client.NewRequest("POST", u, nil)
+	req, err := s.client.NewRequest("POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
