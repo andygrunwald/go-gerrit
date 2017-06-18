@@ -324,24 +324,24 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestNewRawPutRequest(t *testing.T) {
-        c, err := gerrit.NewClient(testGerritInstanceURL, nil)
-        if err != nil {
-                t.Errorf("An error occured. Expected nil. Got %+v.", err)
-        }
+	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
+	if err != nil {
+		t.Errorf("An error occured. Expected nil. Got %+v.", err)
+	}
 
-        inURL, outURL := "/foo", testGerritInstanceURL+"foo"
-        req, _ := c.NewRawPutRequest(inURL, "test raw PUT contents")
+	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
+	req, _ := c.NewRawPutRequest(inURL, "test raw PUT contents")
 
-        // Test that relative URL was expanded
-        if got, want := req.URL.String(), outURL; got != want {
-                t.Errorf("NewRequest(%q) URL is %v, want %v", inURL, got, want)
-        }
+	// Test that relative URL was expanded
+	if got, want := req.URL.String(), outURL; got != want {
+		t.Errorf("NewRequest(%q) URL is %v, want %v", inURL, got, want)
+	}
 
-        // Test that body was JSON encoded
-        body, _ := ioutil.ReadAll(req.Body)
-        if got, want := string(body), "test raw PUT contents"; got != want {
-                t.Errorf("NewRequest Body is %v, want %v", got, want)
-        }
+	// Test that body was JSON encoded
+	body, _ := ioutil.ReadAll(req.Body)
+	if got, want := string(body), "test raw PUT contents"; got != want {
+		t.Errorf("NewRequest Body is %v, want %v", got, want)
+	}
 }
 
 func testURLParseError(t *testing.T, err error) {

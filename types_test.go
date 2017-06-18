@@ -3,6 +3,7 @@ package gerrit_test
 import (
 	"encoding/json"
 	"testing"
+
 	"github.com/andygrunwald/go-gerrit"
 )
 

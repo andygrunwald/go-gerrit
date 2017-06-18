@@ -6,7 +6,6 @@ import (
 	"strconv"
 )
 
-
 // Number is a string representing a number. This type is only used in cases
 // where the API being queried may return an inconsistent result.
 type Number string
@@ -39,4 +38,3 @@ func (n *Number) UnmarshalJSON(data []byte) error {
 	}
 	return errors.New("Cannot convert data to number")
 }
-
