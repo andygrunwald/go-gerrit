@@ -5,7 +5,7 @@ PACKAGE_DIRS = $(shell go list -f '{{ .Dir }}' ./...)
 check: test vet lint
 
 test:
-	go test -v ./...
+	go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 vet:
 	go vet $(PACKAGES) || (go clean $(PACKAGES); go vet $(PACKAGES))
