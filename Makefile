@@ -11,10 +11,16 @@ vet:
 	go vet $(PACKAGES) || (go clean $(PACKAGES); go vet $(PACKAGES))
 
 lint:
-	[ -f $(GOPATH)/bin/gometalinter ] || go get -u github.com/alecthomas/gometalinter
 	gometalinter --config gometalinter.json ./...
 
 fmt:
-	[ -f $(GOPATH)/bin/goimports ] || go get golang.org/x/tools/cmd/goimports
 	go fmt $(PACKAGES)
 	goimports -w $(PACKAGE_DIRS)
+
+deps:
+	go get -t -v ./...
+	go get github.com/axw/gocov/gocov
+	go get golang.org/x/tools/cmd/cover
+	[ -f $(GOPATH)/bin/gometalinter ] || go get -u github.com/alecthomas/gometalinter
+	[ -f $(GOPATH)/bin/goimports ] || go get golang.org/x/tools/cmd/goimports
+	gometalinter --install

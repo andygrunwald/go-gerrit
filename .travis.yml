@@ -9,9 +9,7 @@ go:
     - 1.8
 
 before_install:
-    - go get github.com/axw/gocov/gocov
-    - if ! go get code.google.com/p/go.tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
-    - go get -t -v ./...
+    - make deps
 
 script:
   - make
