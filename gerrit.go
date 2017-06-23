@@ -55,16 +55,16 @@ type Response struct {
 var (
 	// ErrNoInstanceGiven is returned by NewClient in the event the
 	// gerritURL argument was blank.
-	ErrNoInstanceGiven = errors.New("No Gerrit instance given.")
+	ErrNoInstanceGiven = errors.New("no Gerrit instance given")
 
 	// ErrUserProvidedWithoutPassword is returned by NewClientFromURL
 	// if a user name is provided without a password.
-	ErrUserProvidedWithoutPassword = errors.New("A username was provided without a password.")
+	ErrUserProvidedWithoutPassword = errors.New("a username was provided without a password")
 
 	// ErrAuthenticationFailed is returned by NewClientFromURL in the event the provided
 	// credentials didn't allow us to query account information using digest, basic or cookie
 	// auth.
-	ErrAuthenticationFailed = errors.New("Failed to authenticate using the provided credentials.")
+	ErrAuthenticationFailed = errors.New("failed to authenticate using the provided credentials")
 )
 
 // NewClient returns a new Gerrit API client. The gerritURL argument has to be the
@@ -190,7 +190,7 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	var buf io.ReadWriter
 	if body != nil {
 		buf = new(bytes.Buffer)
-		err := json.NewEncoder(buf).Encode(body)
+		err = json.NewEncoder(buf).Encode(body)
 		if err != nil {
 			return nil, err
 		}
@@ -221,33 +221,33 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 // NewRawPutRequest creates a raw PUT request and makes no attempt to encode
 // or marshal the body. Just passes it straight through.
 func (c *Client) NewRawPutRequest(urlStr string, body string) (*http.Request, error) {
-        // Build URL for request
-        u, err := c.buildURLForRequest(urlStr)
-        if err != nil {
-                return nil, err
-        }
+	// Build URL for request
+	u, err := c.buildURLForRequest(urlStr)
+	if err != nil {
+		return nil, err
+	}
 
-        buf := bytes.NewBuffer([]byte(body))
-        req, err := http.NewRequest("PUT", u, buf)
-        if err != nil {
-                return nil, err
-        }
+	buf := bytes.NewBuffer([]byte(body))
+	req, err := http.NewRequest("PUT", u, buf)
+	if err != nil {
+		return nil, err
+	}
 
-        // Apply Authentication
-        if err := c.addAuthentication(req); err != nil {
-                return nil, err
-        }
+	// Apply Authentication
+	if err := c.addAuthentication(req); err != nil {
+		return nil, err
+	}
 
-        // Request compact JSON
-        // See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
-        req.Header.Add("Accept", "application/json")
-        req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	// Request compact JSON
+	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-        // TODO: Add gzip encoding
-        // Accept-Encoding request header is set to gzip
-        // See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+	// TODO: Add gzip encoding
+	// Accept-Encoding request header is set to gzip
+	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
 
-        return req, nil
+	return req, nil
 }
 
 // Call is a combine function for Client.NewRequest and Client.Do.
@@ -333,9 +333,11 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	}
 
 	if v != nil {
-		defer resp.Body.Close()
+		defer resp.Body.Close() // nolint: errcheck
 		if w, ok := v.(io.Writer); ok {
-			io.Copy(w, resp.Body)
+			if _, err := io.Copy(w, resp.Body); err != nil { // nolint: vetshadow
+				return nil, err
+			}
 		} else {
 			var body []byte
 			body, err = ioutil.ReadAll(resp.Body)
@@ -397,8 +399,8 @@ func (c *Client) addAuthentication(req *http.Request) error {
 		// When the function exits discard the rest of the
 		// body and close it.  This should cause go to
 		// reuse the connection.
-		defer io.Copy(ioutil.Discard, response.Body)
-		defer response.Body.Close()
+		defer io.Copy(ioutil.Discard, response.Body) // nolint: errcheck
+		defer response.Body.Close()                  // nolint: errcheck
 
 		if response.StatusCode == http.StatusUnauthorized {
 			authorization, err := c.Authentication.digestAuthHeader(response)

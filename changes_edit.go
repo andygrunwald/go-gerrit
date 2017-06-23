@@ -140,8 +140,8 @@ func (s *ChangesService) DeleteFileInChangeEdit(changeID, filePath string) (*Res
 //
 // As response “204 No Content” is returned.
 //
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-edit-file
-func (s *ChangesService) DeleteChangeEdit(changeID, filePath string) (*Response, error) {
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-edit
+func (s *ChangesService) DeleteChangeEdit(changeID string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit", changeID)
 	return s.client.DeleteRequest(u, nil)
 }
@@ -151,7 +151,7 @@ func (s *ChangesService) DeleteChangeEdit(changeID, filePath string) (*Response,
 // As response “204 No Content” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#publish-edit
-func (s *ChangesService) PublishChangeEdit(changeID, notify string)  (*Response, error) {
+func (s *ChangesService) PublishChangeEdit(changeID, notify string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:publish", changeID)
 
 	req, err := s.client.NewRequest("POST", u, map[string]string{
@@ -160,7 +160,6 @@ func (s *ChangesService) PublishChangeEdit(changeID, notify string)  (*Response,
 	if err != nil {
 		return nil, err
 	}
-
 	return s.client.Do(req, nil)
 }
 

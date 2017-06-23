@@ -143,7 +143,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInf
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
-	defer response.Body.Close()
+	defer response.Body.Close() // nolint: errcheck
 	if err != nil {
 		return info, response, failures, err
 	}
@@ -151,7 +151,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInf
 	for _, line := range bytes.Split(body, []byte("\n")) {
 		if len(line) > 0 {
 			event := EventInfo{}
-			if err := json.Unmarshal(line, &event); err != nil {
+			if err := json.Unmarshal(line, &event); err != nil { // nolint: vetshadow
 				failures = append(failures, line)
 
 				if !options.IgnoreUnmarshalErrors {

@@ -3,18 +3,15 @@ language: go
 sudo: false
 
 go:
-    - 1.5
     - 1.6
     - 1.7
     - 1.8
 
 before_install:
-    - go get github.com/axw/gocov/gocov
-    - if ! go get code.google.com/p/go.tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
-    - go get -t -v ./...
+  - make deps
 
 script:
-  - go test -race -coverprofile=coverage.txt -covermode=atomic
+  - make
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

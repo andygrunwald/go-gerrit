@@ -9,6 +9,24 @@ first. For more complete details see
 
 ### latest (not yet released)
 
+### 0.4.0
+
+**WARNING**: This release includes breaking changes.
+
+* [BREAKING CHANGE] - Added gometalinter to the build and fixed problems 
+  discovered by the linters.
+    * Comment and error string fixes.
+    * Numerous lint and styling fixes.
+    * Ensured error values are being properly checked where appropriate.
+    * Addition of missing documentation
+    * Removed filePath parameter from DeleteChangeEdit which was unused and 
+      unnecessary for the request.
+    * Fixed CherryPickRevision and IncludeGroups functions which didn't pass
+      along the provided input structs into the request.
+* Go 1.5 has been removed from testing on Travis. The linters introduced in 
+  0.4.0 do not support this version, Go 1.5 is lacking security updates and
+  most Linux distros have moved beyond Go 1.5 now.
+
 ### 0.3.0
 
 **WARNING**: This release includes breaking changes.

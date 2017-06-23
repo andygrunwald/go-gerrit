@@ -6,7 +6,6 @@ import (
 	"strconv"
 )
 
-
 // Number is a string representing a number. This type is only used in cases
 // where the API being queried may return an inconsistent result.
 type Number string
@@ -21,6 +20,7 @@ func (n *Number) Int() (int, error) {
 	return strconv.Atoi(n.String())
 }
 
+// UnmarshalJSON will marshal the provided data into the current *Number struct.
 func (n *Number) UnmarshalJSON(data []byte) error {
 	// `data` is a number represented as a string (ex. "5").
 	var stringNumber string
@@ -39,4 +39,3 @@ func (n *Number) UnmarshalJSON(data []byte) error {
 	}
 	return errors.New("cannot convert data to number")
 }
-

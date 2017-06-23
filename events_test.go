@@ -24,7 +24,9 @@ func TestEventsLogService_GetEvents_NoDateRange(t *testing.T) {
 	defer teardown()
 
 	testMux.HandleFunc("/plugins/events-log/events/", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Write(fakeEvents)
+		if _, err := writer.Write(fakeEvents); err != nil {
+			t.Error(err)
+		}
 	})
 
 	options := &gerrit.EventsLogOptions{}
@@ -72,7 +74,9 @@ func TestEventsLogService_GetEvents_DateRangeFromAndTo(t *testing.T) {
 			t.Errorf("%s != %s", query.Get("t2"), toFormat)
 		}
 
-		writer.Write(fakeEvents)
+		if _, err := writer.Write(fakeEvents); err != nil {
+			t.Error(err)
+		}
 	})
 
 	options := &gerrit.EventsLogOptions{From: from, To: to}
@@ -101,7 +105,9 @@ func TestEventsLogService_GetEvents_DateRangeFromOnly(t *testing.T) {
 			t.Error("Did not expect t2 to be set")
 		}
 
-		writer.Write(fakeEvents)
+		if _, err := writer.Write(fakeEvents); err != nil {
+			t.Error(err)
+		}
 	})
 
 	options := &gerrit.EventsLogOptions{From: from}
@@ -129,7 +135,9 @@ func TestEventsLogService_GetEvents_DateRangeToOnly(t *testing.T) {
 			t.Error("Did not expect t1 to be set")
 		}
 
-		writer.Write(fakeEvents)
+		if _, err := writer.Write(fakeEvents); err != nil {
+			t.Error(err)
+		}
 	})
 
 	options := &gerrit.EventsLogOptions{To: to}
@@ -144,7 +152,9 @@ func TestEventsLogService_GetEvents_UnmarshalError(t *testing.T) {
 	defer teardown()
 
 	testMux.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Write(fakeEventsWithError)
+		if _, err := writer.Write(fakeEventsWithError); err != nil {
+			t.Error(err)
+		}
 	})
 
 	options := &gerrit.EventsLogOptions{IgnoreUnmarshalErrors: true}

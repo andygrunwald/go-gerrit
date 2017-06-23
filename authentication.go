@@ -1,7 +1,7 @@
 package gerrit
 
 import (
-	"crypto/md5"
+	"crypto/md5" // nolint: gas
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	// Returned by digestAuthHeader when the WWW-Authenticate header is missing
+	// ErrWWWAuthenticateHeaderMissing is returned by digestAuthHeader when the WWW-Authenticate header is missing
 	ErrWWWAuthenticateHeaderMissing = errors.New("WWW-Authenticate header is missing")
 
-	// Returned by digestAuthHeader when the WWW-Authenticate invalid
+	// ErrWWWAuthenticateHeaderInvalid is returned by digestAuthHeader when the WWW-Authenticate invalid
 	ErrWWWAuthenticateHeaderInvalid = errors.New("WWW-Authenticate header is invalid")
 
-	// Returned by digestAuthHeader when the WWW-Authenticate header is not 'Digest'
+	// ErrWWWAuthenticateHeaderNotDigest is returned by digestAuthHeader when the WWW-Authenticate header is not 'Digest'
 	ErrWWWAuthenticateHeaderNotDigest = errors.New("WWW-Authenticate header type is not Digest")
 )
 
@@ -117,15 +117,19 @@ func (s *AuthenticationService) digestAuthHeader(response *http.Response) (strin
 	uriHeader := authenticate["uri"]
 
 	// A1
-	h := md5.New()
+	h := md5.New() // nolint: gas
 	A1 := fmt.Sprintf("%s:%s:%s", s.name, realmHeader, s.secret)
-	io.WriteString(h, A1)
+	if _, err := io.WriteString(h, A1); err != nil {
+		return "", err
+	}
 	HA1 := fmt.Sprintf("%x", h.Sum(nil))
 
 	// A2
-	h = md5.New()
+	h = md5.New() // nolint: gas
 	A2 := fmt.Sprintf("%s:%s", response.Request.Method, uriHeader)
-	io.WriteString(h, A2)
+	if _, err := io.WriteString(h, A2); err != nil {
+		return "", err
+	}
 	HA2 := fmt.Sprintf("%x", h.Sum(nil))
 
 	k := make([]byte, 12)
@@ -137,8 +141,10 @@ func (s *AuthenticationService) digestAuthHeader(response *http.Response) (strin
 		bytes += n
 	}
 	cnonce := base64.StdEncoding.EncodeToString(k)
-	digest := md5.New()
-	digest.Write([]byte(strings.Join([]string{HA1, nonceHeader, "00000001", cnonce, qopHeader, HA2}, ":")))
+	digest := md5.New() // nolint: gas
+	if _, err := digest.Write([]byte(strings.Join([]string{HA1, nonceHeader, "00000001", cnonce, qopHeader, HA2}, ":"))); err != nil {
+		return "", err
+	}
 	responseField := fmt.Sprintf("%x", digest.Sum(nil))
 
 	return fmt.Sprintf(
