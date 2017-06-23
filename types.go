@@ -37,6 +37,6 @@ func (n *Number) UnmarshalJSON(data []byte) error {
 		*n = Number(strconv.Itoa(number))
 		return nil
 	}
-	return errors.New("Cannot convert data to number")
+	return errors.New("cannot convert data to number")
 }
 
