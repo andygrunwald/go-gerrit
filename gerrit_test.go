@@ -81,7 +81,7 @@ func testMethod(t *testing.T, r *http.Request, want string) {
 	}
 }
 
-func testRequestURL(t *testing.T, r *http.Request, want string) {
+func testRequestURL(t *testing.T, r *http.Request, want string) { // nolint: unparam
 	if got := r.URL.String(); got != want {
 		t.Errorf("Request URL: %v, want %v", got, want)
 	}
@@ -338,7 +338,6 @@ func TestNewClient_BasicAuth_PasswordWithSlashes(t *testing.T) {
 		t.Error("Expected HasAuth() == true")
 	}
 }
-
 
 func TestNewClient_CookieAuth(t *testing.T) {
 	setup()
