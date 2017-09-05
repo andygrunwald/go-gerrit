@@ -81,7 +81,7 @@ func testMethod(t *testing.T, r *http.Request, want string) {
 	}
 }
 
-func testRequestURL(t *testing.T, r *http.Request, want string) {
+func testRequestURL(t *testing.T, r *http.Request, want string) { // nolint: unparam
 	if got := r.URL.String(); got != want {
 		t.Errorf("Request URL: %v, want %v", got, want)
 	}
@@ -261,6 +261,81 @@ func TestNewClient_BasicAuth(t *testing.T) {
 	}
 	if !client.Authentication.HasBasicAuth() {
 		t.Error("Expected HasBasicAuth() == true")
+	}
+}
+
+func TestNewClient_ReParseURL(t *testing.T) {
+	urls := map[string][]string{
+		"http://admin:ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg@127.0.0.1:5000/": {
+			"http://127.0.0.1:5000/", "admin", "ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg",
+		},
+		"http://admin:ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg@127.0.0.1:5000/foo": {
+			"http://127.0.0.1:5000/foo", "admin", "ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg",
+		},
+		"http://admin:ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg@127.0.0.1:5000": {
+			"http://127.0.0.1:5000", "admin", "ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg",
+		},
+		"https://admin:foo/bar@localhost:5": {
+			"https://localhost:5", "admin", "foo/bar",
+		},
+	}
+	for input, expectations := range urls {
+		submatches := gerrit.ReParseURL.FindAllStringSubmatch(input, -1)
+		submatch := submatches[0]
+		username := submatch[2]
+		password := submatch[3]
+		endpoint := fmt.Sprintf(
+			"%s://%s:%s%s", submatch[1], submatch[4], submatch[5], submatch[6])
+		if endpoint != expectations[0] {
+			t.Errorf("%s != %s", expectations[0], endpoint)
+		}
+		if username != expectations[1] {
+			t.Errorf("%s != %s", expectations[1], username)
+		}
+		if password != expectations[2] {
+			t.Errorf("%s != %s", expectations[2], password)
+		}
+
+	}
+}
+
+func TestNewClient_BasicAuth_PasswordWithSlashes(t *testing.T) {
+	setup()
+	defer teardown()
+
+	account := gerrit.AccountInfo{
+		AccountID: 100000,
+		Name:      "test",
+		Email:     "test@localhost",
+		Username:  "test"}
+	hits := 0
+
+	testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		switch hits {
+		case 1:
+			writeresponse(t, w, nil, http.StatusUnauthorized)
+		case 2:
+			// The second request should be a basic auth request if the first request, which is for
+			// digest based auth, fails.
+			if !strings.HasPrefix(r.Header.Get("Authorization"), "Basic ") {
+				t.Error("Missing 'Basic ' prefix")
+			}
+			writeresponse(t, w, account, http.StatusOK)
+		case 3:
+			t.Error("Did not expect another request")
+		}
+	})
+
+	serverURL := fmt.Sprintf(
+		"http://admin:ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg@%s",
+		testServer.Listener.Addr().String())
+	client, err := gerrit.NewClient(serverURL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	if !client.Authentication.HasAuth() {
+		t.Error("Expected HasAuth() == true")
 	}
 }
 

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/google/go-querystring/query"
@@ -65,6 +66,12 @@ var (
 	// credentials didn't allow us to query account information using digest, basic or cookie
 	// auth.
 	ErrAuthenticationFailed = errors.New("failed to authenticate using the provided credentials")
+
+	// ReParseURL is used to parse the url provided to NewClient(). This
+	// regular expression contains five groups which capture the scheme,
+	// username, password, hostname and port. If we parse the url with this
+	// regular expression
+	ReParseURL = regexp.MustCompile(`^(http|https)://(.+):(.+)@(.+):(\d+)(.*)$`)
 )
 
 // NewClient returns a new Gerrit API client. The gerritURL argument has to be the
@@ -87,16 +94,35 @@ func NewClient(endpoint string, httpClient *http.Client) (*Client, error) {
 		return nil, ErrNoInstanceGiven
 	}
 
+	hasAuth := false
+	username := ""
+	password := ""
+
+	// Depending on the contents of the username and password the default
+	// url.Parse may not work. The below is an example URL that
+	// would end up being parsed incorrectly with url.Parse:
+	//   http://admin:ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg@localhost:38607
+	// So instead of depending on url.Parse we'll try using a regular expression
+	// first to match a specific pattern. If that ends up working we modify
+	// the incoming endpoint to remove the username and password so the rest
+	// of this function will run as expected.
+	submatches := ReParseURL.FindAllStringSubmatch(endpoint, -1)
+	if len(submatches) > 0 && len(submatches[0]) > 5 {
+		submatch := submatches[0]
+		username = submatch[2]
+		password = submatch[3]
+		endpoint = fmt.Sprintf(
+			"%s://%s:%s%s", submatch[1], submatch[4], submatch[5], submatch[6])
+		hasAuth = true
+	}
+
 	baseURL, err := url.Parse(endpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	// Username and/or password provided as part of the url.
-
-	hasAuth := false
-	username := ""
-	password := ""
+	// Note, if we retrieved the URL and password using the regular
+	// expression above then the below code will do nothing.
 	if baseURL.User != nil {
 		username = baseURL.User.Username()
 		parsedPassword, haspassword := baseURL.User.Password()

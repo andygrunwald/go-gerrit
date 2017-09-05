@@ -26,6 +26,11 @@ first. For more complete details see
 * Go 1.5 has been removed from testing on Travis. The linters introduced in 
   0.4.0 do not support this version, Go 1.5 is lacking security updates and
   most Linux distros have moved beyond Go 1.5 now.
+* Add Go 1.9 to the Travis matrix.
+* Fixed an issue where urls containing certain characters in the credentials
+  could cause NewClient() to use an invalid url. Something like `/`, which
+  Gerrit could use for generated passwords, for example would break url.Parse's
+  expectations.
 
 ### 0.3.0
 
