@@ -7,7 +7,7 @@ first. For more complete details see
 
 ## Versions
 
-### 0.4.0
+### 0.5.0
 
 **WARNING**: This release includes breaking changes.
 
