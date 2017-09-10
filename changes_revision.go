@@ -343,7 +343,7 @@ func (s *ChangesService) ListFilesReviewed(changeID, revisionID string) (*[]File
 // The review must be provided in the request body as a ReviewInput entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#set-review
-func (s *ChangesService) SetReview(changeID, revisionID string, input *ReviewInput) (*ReviewInfo, *Response, error) {
+func (s *ChangesService) SetReview(changeID, revisionID string, input *ReviewInput) (*ReviewResult, *Response, error) {
 	u := fmt.Sprintf("changes/%s/revisions/%s/review", changeID, revisionID)
 
 	req, err := s.client.NewRequest("POST", u, input)
@@ -351,7 +351,7 @@ func (s *ChangesService) SetReview(changeID, revisionID string, input *ReviewInp
 		return nil, nil, err
 	}
 
-	v := new(ReviewInfo)
+	v := new(ReviewResult)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
