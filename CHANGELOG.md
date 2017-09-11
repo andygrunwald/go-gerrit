@@ -7,7 +7,12 @@ first. For more complete details see
 
 ## Versions
 
-### latest (not yet released)
+### 0.5.0
+
+**WARNING**: This release includes breaking changes.
+
+* [BREAKING CHANGE] The SetReview function was returning the wrong
+  entity type. (#40)
 
 ### 0.4.0
 

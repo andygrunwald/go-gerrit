@@ -18,7 +18,9 @@ type SuggestedReviewerInfo struct {
 
 // AddReviewerResult entity describes the result of adding a reviewer to a change.
 type AddReviewerResult struct {
+	Input     string         `json:"input,omitempty"`
 	Reviewers []ReviewerInfo `json:"reviewers,omitempty"`
+	CCS       []ReviewerInfo `json:"ccs,omitempty"`
 	Error     string         `json:"error,omitempty"`
 	Confirm   bool           `json:"confirm,omitempty"`
 }

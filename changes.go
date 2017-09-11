@@ -149,6 +149,14 @@ type ReviewInfo struct {
 	Labels map[string]int `json:"labels"`
 }
 
+// ReviewResult entity contains information regarding the updates that were
+// made to a review.
+type ReviewResult struct {
+	ReviewInfo
+	Reviewers map[string]AddReviewerResult `json:"reviewers,omitempty"`
+	Ready     bool                         `json:"ready,omitempty"`
+}
+
 // TopicInput entity contains information for setting a topic.
 type TopicInput struct {
 	Topic string `json:"topic,omitempty"`
