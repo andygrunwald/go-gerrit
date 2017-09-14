@@ -113,7 +113,7 @@ func TestChangesService_SubmitChange_Conflict(t *testing.T) {
 	}
 	_, response, _ := client.Changes.SubmitChange("123", nil)
 	if response.StatusCode != http.StatusConflict {
-		t.Error()
+		t.Error("Expected 409 code")
 	}
 }
 
@@ -151,7 +151,7 @@ func TestChangesService_AbandonChange_Conflict(t *testing.T) {
 	}
 	_, response, _ := client.Changes.AbandonChange("123", nil)
 	if response.StatusCode != http.StatusConflict {
-		t.Error()
+		t.Error("Expected 409 code")
 	}
 }
 
@@ -189,7 +189,7 @@ func TestChangesService_RebaseChange_Conflict(t *testing.T) {
 	}
 	_, response, _ := client.Changes.RebaseChange("123", nil)
 	if response.StatusCode != http.StatusConflict {
-		t.Error()
+		t.Error("Expected 409 code")
 	}
 }
 
@@ -227,7 +227,7 @@ func TestChangesService_RestoreChange_Conflict(t *testing.T) {
 	}
 	_, response, _ := client.Changes.RestoreChange("123", nil)
 	if response.StatusCode != http.StatusConflict {
-		t.Error()
+		t.Error("Expected 409 code")
 	}
 }
 
@@ -265,6 +265,6 @@ func TestChangesService_RevertChange_Conflict(t *testing.T) {
 	}
 	_, response, _ := client.Changes.RevertChange("123", nil)
 	if response.StatusCode != http.StatusConflict {
-		t.Error()
+		t.Error("Expected 409 code")
 	}
 }
