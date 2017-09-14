@@ -31,9 +31,17 @@ type GitPersonInfo struct {
 	TZ    int    `json:"tz"`
 }
 
+// NotifyInfo entity contains detailed information about who should be
+// notified about an update
+type NotifyInfo struct {
+	Accounts []AccountInfo `json:"accounts"`
+}
+
 // AbandonInput entity contains information for abandoning a change.
 type AbandonInput struct {
-	Message string `json:"message,omitempty"`
+	Message       string       `json:"message,omitempty"`
+	Notify        string       `json:"notify"`
+	NotifyDetails []NotifyInfo `json:"notify_details"`
 }
 
 // ApprovalInfo entity contains information about an approval from a user for a label on a change.
@@ -706,9 +714,29 @@ func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*Cha
 	return v, resp, err
 }
 
+// AbandonChange abandons a change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#abandon-change
+func (s *ChangesService) AbandonChange(changeID string, input *AbandonInput) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/abandon", changeID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+
+	resp, err := s.client.Do(req, v)
+	if resp.StatusCode == http.StatusConflict {
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = errors.New(string(body[:]))
+	}
+	return v, resp, err
+}
+
 /*
 Missing Change Endpoints
-	Abandon Change
 	Restore Change
 	Rebase Change
 	Revert Change
