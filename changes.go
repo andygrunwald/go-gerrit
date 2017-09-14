@@ -716,6 +716,9 @@ func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*Cha
 
 // AbandonChange abandons a change.
 //
+// The request body does not need to include a AbandonInput entity if no review
+// comment is added.
+//
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#abandon-change
 func (s *ChangesService) AbandonChange(changeID string, input *AbandonInput) (*ChangeInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/abandon", changeID)
@@ -735,9 +738,32 @@ func (s *ChangesService) AbandonChange(changeID string, input *AbandonInput) (*C
 	return v, resp, err
 }
 
+// RebaseChange rebases a change.
+//
+// Optionally, the parent revision can be changed to another patch set through
+// the RebaseInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#rebase-change
+func (s *ChangesService) RebaseChange(changeID string, input *RebaseInput) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/rebase", changeID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+
+	resp, err := s.client.Do(req, v)
+	if resp.StatusCode == http.StatusConflict {
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = errors.New(string(body[:]))
+	}
+	return v, resp, err
+}
+
 /*
 Missing Change Endpoints
 	Restore Change
-	Rebase Change
 	Revert Change
 */
