@@ -786,8 +786,27 @@ func (s *ChangesService) RestoreChange(changeID string, input *RestoreInput) (*C
 	return v, resp, err
 }
 
+// RevertChange reverts a change.
+//
+// The request body does not need to include a RevertInput entity if no
+// review comment is added.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#revert-change
+func (s *ChangesService) RevertChange(changeID string, input *RevertInput) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revert", changeID)
 
-/*
-Missing Change Endpoints
-	Revert Change
-*/
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+
+	resp, err := s.client.Do(req, v)
+	if resp.StatusCode == http.StatusConflict {
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = errors.New(string(body[:]))
+	}
+	return v, resp, err
+}
+

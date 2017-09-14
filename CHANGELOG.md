@@ -9,7 +9,8 @@ first. For more complete details see
 
 ### 0.5.1
 
-* Added the `AbandonChange`, `RebaseChange` and `RestoreChange` functions.
+* Added the `AbandonChange`, `RebaseChange`, `RestoreChange` and 
+  `RevertChange` functions.
 
 ### 0.5.0
 
