@@ -691,27 +691,31 @@ func (s *ChangesService) FixChange(changeID string, input *FixInput) (*ChangeInf
 	return v, resp, err
 }
 
-// SubmitChange submits a change.
-//
-// The request body only needs to include a SubmitInput entity if submitting on behalf of another user.
-//
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submit-change
-func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*ChangeInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/submit", changeID)
-
+// change is an internal function to consolidate code used by SubmitChange,
+// AbandonChange and other similar functions.
+func (s *ChangesService) change(tail string, changeID string, input interface{}) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/%s", changeID, tail)
 	req, err := s.client.NewRequest("POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	v := new(ChangeInfo)
-
 	resp, err := s.client.Do(req, v)
 	if resp.StatusCode == http.StatusConflict {
 		body, _ := ioutil.ReadAll(resp.Body)
 		err = errors.New(string(body[:]))
 	}
 	return v, resp, err
+}
+
+// SubmitChange submits a change.
+//
+// The request body only needs to include a SubmitInput entity if submitting on behalf of another user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submit-change
+func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*ChangeInfo, *Response, error) {
+	return s.change("submit", changeID, input)
 }
 
 // AbandonChange abandons a change.
@@ -721,21 +725,7 @@ func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*Cha
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#abandon-change
 func (s *ChangesService) AbandonChange(changeID string, input *AbandonInput) (*ChangeInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/abandon", changeID)
-
-	req, err := s.client.NewRequest("POST", u, input)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(ChangeInfo)
-
-	resp, err := s.client.Do(req, v)
-	if resp.StatusCode == http.StatusConflict {
-		body, _ := ioutil.ReadAll(resp.Body)
-		err = errors.New(string(body[:]))
-	}
-	return v, resp, err
+	return s.change("abandon", changeID, input)
 }
 
 // RebaseChange rebases a change.
@@ -745,21 +735,7 @@ func (s *ChangesService) AbandonChange(changeID string, input *AbandonInput) (*C
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#rebase-change
 func (s *ChangesService) RebaseChange(changeID string, input *RebaseInput) (*ChangeInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/rebase", changeID)
-
-	req, err := s.client.NewRequest("POST", u, input)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(ChangeInfo)
-
-	resp, err := s.client.Do(req, v)
-	if resp.StatusCode == http.StatusConflict {
-		body, _ := ioutil.ReadAll(resp.Body)
-		err = errors.New(string(body[:]))
-	}
-	return v, resp, err
+	return s.change("rebase", changeID, input)
 }
 
 // RestoreChange restores a change.
@@ -769,21 +745,7 @@ func (s *ChangesService) RebaseChange(changeID string, input *RebaseInput) (*Cha
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#restore-change
 func (s *ChangesService) RestoreChange(changeID string, input *RestoreInput) (*ChangeInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/restore", changeID)
-
-	req, err := s.client.NewRequest("POST", u, input)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(ChangeInfo)
-
-	resp, err := s.client.Do(req, v)
-	if resp.StatusCode == http.StatusConflict {
-		body, _ := ioutil.ReadAll(resp.Body)
-		err = errors.New(string(body[:]))
-	}
-	return v, resp, err
+	return s.change("restore", changeID, input)
 }
 
 // RevertChange reverts a change.
@@ -793,19 +755,5 @@ func (s *ChangesService) RestoreChange(changeID string, input *RestoreInput) (*C
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#revert-change
 func (s *ChangesService) RevertChange(changeID string, input *RevertInput) (*ChangeInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/revert", changeID)
-
-	req, err := s.client.NewRequest("POST", u, input)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(ChangeInfo)
-
-	resp, err := s.client.Do(req, v)
-	if resp.StatusCode == http.StatusConflict {
-		body, _ := ioutil.ReadAll(resp.Body)
-		err = errors.New(string(body[:]))
-	}
-	return v, resp, err
+	return s.change("revert", changeID, input)
 }
