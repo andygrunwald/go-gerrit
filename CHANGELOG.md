@@ -7,6 +7,11 @@ first. For more complete details see
 
 ## Versions
 
+### 0.5.1
+
+* Added the `AbandonChange`, `RebaseChange`, `RestoreChange` and 
+  `RevertChange` functions.
+
 ### 0.5.0
 
 **WARNING**: This release includes breaking changes.

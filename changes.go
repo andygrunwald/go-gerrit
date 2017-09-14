@@ -31,9 +31,17 @@ type GitPersonInfo struct {
 	TZ    int    `json:"tz"`
 }
 
+// NotifyInfo entity contains detailed information about who should be
+// notified about an update
+type NotifyInfo struct {
+	Accounts []AccountInfo `json:"accounts"`
+}
+
 // AbandonInput entity contains information for abandoning a change.
 type AbandonInput struct {
-	Message string `json:"message,omitempty"`
+	Message       string       `json:"message,omitempty"`
+	Notify        string       `json:"notify"`
+	NotifyDetails []NotifyInfo `json:"notify_details"`
 }
 
 // ApprovalInfo entity contains information about an approval from a user for a label on a change.
@@ -683,21 +691,16 @@ func (s *ChangesService) FixChange(changeID string, input *FixInput) (*ChangeInf
 	return v, resp, err
 }
 
-// SubmitChange submits a change.
-//
-// The request body only needs to include a SubmitInput entity if submitting on behalf of another user.
-//
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submit-change
-func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*ChangeInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/submit", changeID)
-
+// change is an internal function to consolidate code used by SubmitChange,
+// AbandonChange and other similar functions.
+func (s *ChangesService) change(tail string, changeID string, input interface{}) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/%s", changeID, tail)
 	req, err := s.client.NewRequest("POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	v := new(ChangeInfo)
-
 	resp, err := s.client.Do(req, v)
 	if resp.StatusCode == http.StatusConflict {
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -706,10 +709,51 @@ func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*Cha
 	return v, resp, err
 }
 
-/*
-Missing Change Endpoints
-	Abandon Change
-	Restore Change
-	Rebase Change
-	Revert Change
-*/
+// SubmitChange submits a change.
+//
+// The request body only needs to include a SubmitInput entity if submitting on behalf of another user.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submit-change
+func (s *ChangesService) SubmitChange(changeID string, input *SubmitInput) (*ChangeInfo, *Response, error) {
+	return s.change("submit", changeID, input)
+}
+
+// AbandonChange abandons a change.
+//
+// The request body does not need to include a AbandonInput entity if no review
+// comment is added.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#abandon-change
+func (s *ChangesService) AbandonChange(changeID string, input *AbandonInput) (*ChangeInfo, *Response, error) {
+	return s.change("abandon", changeID, input)
+}
+
+// RebaseChange rebases a change.
+//
+// Optionally, the parent revision can be changed to another patch set through
+// the RebaseInput entity.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#rebase-change
+func (s *ChangesService) RebaseChange(changeID string, input *RebaseInput) (*ChangeInfo, *Response, error) {
+	return s.change("rebase", changeID, input)
+}
+
+// RestoreChange restores a change.
+//
+// The request body does not need to include a RestoreInput entity if no review
+// comment is added.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#restore-change
+func (s *ChangesService) RestoreChange(changeID string, input *RestoreInput) (*ChangeInfo, *Response, error) {
+	return s.change("restore", changeID, input)
+}
+
+// RevertChange reverts a change.
+//
+// The request body does not need to include a RevertInput entity if no
+// review comment is added.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#revert-change
+func (s *ChangesService) RevertChange(changeID string, input *RevertInput) (*ChangeInfo, *Response, error) {
+	return s.change("revert", changeID, input)
+}
