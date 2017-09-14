@@ -762,8 +762,32 @@ func (s *ChangesService) RebaseChange(changeID string, input *RebaseInput) (*Cha
 	return v, resp, err
 }
 
+// RestoreChange restores a change.
+//
+// The request body does not need to include a RestoreInput entity if no review
+// comment is added.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#restore-change
+func (s *ChangesService) RestoreChange(changeID string, input *RestoreInput) (*ChangeInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/restore", changeID)
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+
+	resp, err := s.client.Do(req, v)
+	if resp.StatusCode == http.StatusConflict {
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = errors.New(string(body[:]))
+	}
+	return v, resp, err
+}
+
+
 /*
 Missing Change Endpoints
-	Restore Change
 	Revert Change
 */
