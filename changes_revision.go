@@ -103,6 +103,9 @@ type PatchOptions struct {
 
 	// Query parameter download (e.g. /changes/.../patch?download) will suggest the browser save the patch as commitsha1.diff.base64, for later processing by command line tools.
 	Download bool `url:"download,omitempty"`
+
+	// If the path parameter is set, the returned content is a diff of the single file that the path refers to.
+	Path string `url:"path,omitempty"`
 }
 
 // GetDiff gets the diff of a file from a certain revision.
