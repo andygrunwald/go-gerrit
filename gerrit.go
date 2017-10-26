@@ -195,6 +195,12 @@ func checkAuth(client *Client) (bool, error) {
 	case ErrWWWAuthenticateHeaderNotDigest:
 		return false, nil
 	default:
+		// Response could be nil if the connection outright failed
+		// or some other error occurred before we got a response.
+		if response == nil && err != nil {
+			return false, err
+		}
+
 		if err != nil && response.StatusCode == http.StatusUnauthorized {
 			err = nil
 		}
