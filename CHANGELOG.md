@@ -7,6 +7,10 @@ first. For more complete details see
 
 ## Versions
 
+### 0.5.2 (unreleased)
+
+* Fix panic in checkAuth() if Gerrit is down #42
+
 ### 0.5.1
 
 * Added the `AbandonChange`, `RebaseChange`, `RestoreChange` and 
