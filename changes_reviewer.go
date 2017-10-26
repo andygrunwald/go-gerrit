@@ -124,3 +124,21 @@ func (s *ChangesService) DeleteReviewer(changeID, accountID string) (*Response, 
 	u := fmt.Sprintf("changes/%s/reviewers/%s", changeID, accountID)
 	return s.client.DeleteRequest(u, nil)
 }
+
+// ListVotes lists the votes for a specific reviewer of the change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-votes
+func (s *ChangesService) ListVotes(changeID string, accountID string) (map[string]int, *Response, error) {
+	u := fmt.Sprintf("changes/%s/reviewers/%s/votes/", changeID, accountID)
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var v map[string]int
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+	return v, resp, err
+}
