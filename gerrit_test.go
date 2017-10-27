@@ -581,3 +581,16 @@ func TestRemoveMagicPrefixLineDoesNothingWithoutPrefix(t *testing.T) {
 		}
 	}
 }
+
+func TestNewClientFailsOnDeadConnection(t *testing.T) {
+	setup()
+	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
+	teardown() // Closes the server
+	_, err := gerrit.NewClient(serverURL, nil)
+	if err == nil {
+		t.Fatal("Expected err to not be nil")
+	}
+	if !strings.Contains(err.Error(), "connection refused") {
+		t.Fatalf("Unexpected error. 'connected refused' not found in %s", err.Error())
+	}
+}
