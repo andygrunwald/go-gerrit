@@ -35,11 +35,11 @@ func TestChangesService_ListReviewers(t *testing.T) {
 	}
 
 	if len(*data) != 1 {
-		t.Error()
+		t.Error("Length of data !=1 ")
 	}
 
 	if (*data)[0].AccountID != 1 {
-		t.Error()
+		t.Error("AccountID != 1")
 	}
 }
 
@@ -61,11 +61,11 @@ func TestChangesService_SuggestReviewers(t *testing.T) {
 	}
 
 	if len(*data) != 1 {
-		t.Error()
+		t.Error("Length of data !=1 ")
 	}
 
 	if (*data)[0].Account.AccountID != 1 {
-		t.Error()
+		t.Error("AccountID != 1")
 	}
 }
 
@@ -86,7 +86,7 @@ func TestChangesService_GetReviewer(t *testing.T) {
 		t.Error(err)
 	}
 	if data.AccountID != 1 {
-		t.Error()
+		t.Error("AccountID != 1")
 	}
 }
 
@@ -97,7 +97,7 @@ func TestChangesService_AddReviewer(t *testing.T) {
 			t.Errorf("%s != %s", r.URL.Path, expected)
 		}
 		if r.Method != "POST" {
-			t.Error()
+			t.Error("Method != POST")
 		}
 
 		fmt.Fprint(w, `{"confirm": true}`)
@@ -110,7 +110,7 @@ func TestChangesService_AddReviewer(t *testing.T) {
 		t.Error(err)
 	}
 	if !data.Confirm {
-		t.Error()
+		t.Error("Confirm != true")
 	}
 }
 
@@ -121,7 +121,7 @@ func TestChangesService_DeleteReviewer(t *testing.T) {
 			t.Errorf("%s != %s", r.URL.Path, expected)
 		}
 		if r.Method != "DELETE" {
-			t.Error()
+			t.Error("Method != DELETE")
 		}
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -150,10 +150,10 @@ func TestChangesService_ListVotes(t *testing.T) {
 		t.Error(err)
 	}
 	if votes["Code-Review"] != 2 {
-		t.Error()
+		t.Error("Code-Review != 2")
 	}
 	if votes["Verified"] != 1 {
-		t.Error()
+		t.Error("Verified != 1")
 	}
 }
 
@@ -165,7 +165,7 @@ func TestChangesService_DeleteVote(t *testing.T) {
 		}
 
 		if r.Method != "DELETE" {
-			t.Error()
+			t.Error("Method != DELETE")
 		}
 		w.WriteHeader(http.StatusOK)
 	}))
