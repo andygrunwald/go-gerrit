@@ -25,6 +25,15 @@ type AddReviewerResult struct {
 	Confirm   bool           `json:"confirm,omitempty"`
 }
 
+// DeleteVoteInput  entity contains options for the deletion of a vote.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-vote-input
+type DeleteVoteInput struct {
+	Label         string                `json:"label,omitempty"`
+	Notify        string                `json:"notify,omitempty"`
+	NotifyDetails map[string]NotifyInfo `json:"notify_details"`
+}
+
 // ListReviewers lists the reviewers of a change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-reviewers
@@ -123,4 +132,32 @@ func (s *ChangesService) AddReviewer(changeID string, input *ReviewerInput) (*Ad
 func (s *ChangesService) DeleteReviewer(changeID, accountID string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers/%s", changeID, accountID)
 	return s.client.DeleteRequest(u, nil)
+}
+
+// ListVotes lists the votes for a specific reviewer of the change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-votes
+func (s *ChangesService) ListVotes(changeID string, accountID string) (map[string]int, *Response, error) {
+	u := fmt.Sprintf("changes/%s/reviewers/%s/votes/", changeID, accountID)
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var v map[string]int
+	resp, err := s.client.Do(req, &v)
+	if err != nil {
+		return nil, resp, err
+	}
+	return v, resp, err
+}
+
+// DeleteVote deletes a single vote from a change. Note, that even when the
+// last vote of a reviewer is removed the reviewer itself is still listed on
+// the change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-vote
+func (s *ChangesService) DeleteVote(changeID string, accountID string, label string, input *DeleteVoteInput) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/reviewers/%s/votes/%s", changeID, accountID, label)
+	return s.client.DeleteRequest(u, input)
 }
