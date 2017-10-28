@@ -145,7 +145,7 @@ func (s *ChangesService) ListVotes(changeID string, accountID string) (map[strin
 	}
 
 	var v map[string]int
-	resp, err := s.client.Do(req, v)
+	resp, err := s.client.Do(req, &v)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -158,6 +158,6 @@ func (s *ChangesService) ListVotes(changeID string, accountID string) (map[strin
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-vote
 func (s *ChangesService) DeleteVote(changeID string, accountID string, label string, input *DeleteVoteInput) (*Response, error) {
-	u := fmt.Sprintf("changes/%s/reviewers/%s/%s", changeID, accountID, label)
+	u := fmt.Sprintf("changes/%s/reviewers/%s/votes/%s", changeID, accountID, label)
 	return s.client.DeleteRequest(u, input)
 }
