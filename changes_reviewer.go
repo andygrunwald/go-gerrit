@@ -25,7 +25,7 @@ type AddReviewerResult struct {
 	Confirm   bool           `json:"confirm,omitempty"`
 }
 
-// DeleteVoteInput  entity contains options for the deletion of a vote.
+// DeleteVoteInput entity contains options for the deletion of a vote.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-vote-input
 type DeleteVoteInput struct {
