@@ -7,7 +7,9 @@ first. For more complete details see
 
 ## Versions
 
-### 0.5.2 (unreleased)
+### Latest
+
+### 0.5.2
 
 * Fix panic in checkAuth() if Gerrit is down #42
 
