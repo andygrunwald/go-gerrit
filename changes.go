@@ -229,9 +229,9 @@ type RelatedChangeAndCommitInfo struct {
 
 // DiffContent entity contains information about the content differences in a file.
 type DiffContent struct {
-	A      string            `json:"a,omitempty"`
-	B      string            `json:"b,omitempty"`
-	AB     string            `json:"ab,omitempty"`
+	A      []string          `json:"a,omitempty"`
+	B      []string          `json:"b,omitempty"`
+	AB     []string          `json:"ab,omitempty"`
 	EditA  DiffIntralineInfo `json:"edit_a,omitempty"`
 	EditB  DiffIntralineInfo `json:"edit_b,omitempty"`
 	Skip   int               `json:"skip,omitempty"`
@@ -251,10 +251,7 @@ type CommentInput struct {
 }
 
 // DiffIntralineInfo entity contains information about intraline edits in a file.
-type DiffIntralineInfo []struct {
-	SkipLength int
-	MarkLength int
-}
+type DiffIntralineInfo [][2]int
 
 // ChangeInfo entity contains information about a change.
 type ChangeInfo struct {
