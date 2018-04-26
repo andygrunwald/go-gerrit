@@ -28,6 +28,8 @@ type FileInfo struct {
 	OldPath       string `json:"old_path,omitempty"`
 	LinesInserted int    `json:"lines_inserted,omitempty"`
 	LinesDeleted  int    `json:"lines_deleted,omitempty"`
+	SizeDelta     int    `json:"size_delta"`
+	Size          int    `json:"size"`
 }
 
 // ActionInfo entity describes a REST API call the client can make to manipulate a resource.
