@@ -36,7 +36,7 @@ func ExampleChangesService_QueryChanges() {
 }
 
 // Prior to fixing #18 this test would fail.
-func ExampleChangesService_QueryChangesWithSymbols() { // nolint: vet
+func ExampleChangesService_QueryChanges_withSymbols() {
 	instance := "https://android-review.googlesource.com/"
 	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
