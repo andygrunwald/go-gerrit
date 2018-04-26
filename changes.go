@@ -69,6 +69,7 @@ type ChangeMessageInfo struct {
 	Author         AccountInfo `json:"author,omitempty"`
 	Date           string      `json:"date"`
 	Message        string      `json:"message"`
+	Tag            string      `json:"tag,omitempty"`
 	RevisionNumber int         `json:"_revision_number,omitempty"`
 }
 
