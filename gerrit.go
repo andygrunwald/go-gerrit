@@ -455,6 +455,11 @@ func (c *Client) DeleteRequest(urlStr string, body interface{}) (*Response, erro
 	return c.Do(req, nil)
 }
 
+// BaseURL returns the client's Gerrit instance HTTP endpoint.
+func (c *Client) BaseURL() url.URL {
+	return *c.baseURL
+}
+
 // RemoveMagicPrefixLine removes the "magic prefix line" of Gerris JSON
 // response if present. The JSON response body starts with a magic prefix line
 // that must be stripped before feeding the rest of the response body to a JSON
