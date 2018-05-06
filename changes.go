@@ -25,10 +25,10 @@ type WebLinkInfo struct {
 
 // GitPersonInfo entity contains information about the author/committer of a commit.
 type GitPersonInfo struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Date  string `json:"date"`
-	TZ    int    `json:"tz"`
+	Name  string    `json:"name"`
+	Email string    `json:"email"`
+	Date  Timestamp `json:"date"`
+	TZ    int       `json:"tz"`
 }
 
 // NotifyInfo entity contains detailed information about who should be
@@ -67,7 +67,7 @@ type ChangeEditMessageInput struct {
 type ChangeMessageInfo struct {
 	ID             string      `json:"id"`
 	Author         AccountInfo `json:"author,omitempty"`
-	Date           string      `json:"date"`
+	Date           Timestamp   `json:"date"`
 	Message        string      `json:"message"`
 	Tag            string      `json:"tag,omitempty"`
 	RevisionNumber int         `json:"_revision_number,omitempty"`
@@ -247,7 +247,7 @@ type CommentInput struct {
 	Line      int           `json:"line,omitempty"`
 	Range     *CommentRange `json:"range,omitempty"`
 	InReplyTo string        `json:"in_reply_to,omitempty"`
-	Updated   string        `json:"updated,omitempty"`
+	Updated   *Timestamp    `json:"updated,omitempty"`
 	Message   string        `json:"message,omitempty"`
 }
 
@@ -274,9 +274,9 @@ type ChangeInfo struct {
 	ChangeID           string                  `json:"change_id"`
 	Subject            string                  `json:"subject"`
 	Status             string                  `json:"status"`
-	Created            string                  `json:"created"`
-	Updated            string                  `json:"updated"`
-	Submitted          string                  `json:"submitted,omitempty"`
+	Created            Timestamp               `json:"created"`
+	Updated            Timestamp               `json:"updated"`
+	Submitted          *Timestamp              `json:"submitted,omitempty"`
 	Starred            bool                    `json:"starred,omitempty"`
 	Reviewed           bool                    `json:"reviewed,omitempty"`
 	Mergeable          bool                    `json:"mergeable,omitempty"`
@@ -318,7 +318,7 @@ type LabelInfo struct {
 type RevisionInfo struct {
 	Draft             bool                  `json:"draft,omitempty"`
 	Number            int                   `json:"_number"`
-	Created           string                `json:"created"`
+	Created           Timestamp             `json:"created"`
 	Uploader          AccountInfo           `json:"uploader"`
 	Ref               string                `json:"ref"`
 	Fetch             map[string]FetchInfo  `json:"fetch"`
@@ -339,7 +339,7 @@ type CommentInfo struct {
 	Range     CommentRange `json:"range,omitempty"`
 	InReplyTo string       `json:"in_reply_to,omitempty"`
 	Message   string       `json:"message,omitempty"`
-	Updated   string       `json:"updated"`
+	Updated   Timestamp    `json:"updated"`
 	Author    AccountInfo  `json:"author,omitempty"`
 }
 

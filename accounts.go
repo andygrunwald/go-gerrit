@@ -94,7 +94,7 @@ type AccountInput struct {
 // AccountDetailInfo entity contains detailed information about an account.
 type AccountDetailInfo struct {
 	AccountInfo
-	RegisteredOn string `json:"registered_on"`
+	RegisteredOn Timestamp `json:"registered_on"`
 }
 
 // AccountNameInput entity contains information for setting a name for an account.
