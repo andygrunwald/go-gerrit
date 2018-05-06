@@ -22,18 +22,17 @@ import (
 
 // A Client manages communication with the Gerrit API.
 type Client struct {
-	// HTTP client used to communicate with the API.
+	// client is the HTTP client used to communicate with the API.
 	client *http.Client
 
 	// Base URL for API requests.
 	// BaseURL should always be specified with a trailing slash.
 	baseURL *url.URL
 
-	// Gerrit service for authentication
+	// Gerrit service for authentication.
 	Authentication *AuthenticationService
 
-	// Services used for talking to different parts of the standard
-	// Gerrit API.
+	// Services used for talking to different parts of the standard Gerrit API.
 	Access   *AccessService
 	Accounts *AccountsService
 	Changes  *ChangesService
@@ -42,8 +41,7 @@ type Client struct {
 	Plugins  *PluginsService
 	Projects *ProjectsService
 
-	// Additional services used for talking to non-standard Gerrit
-	// APIs.
+	// Additional services used for talking to non-standard Gerrit APIs.
 	EventsLog *EventsLogService
 }
 
@@ -58,11 +56,11 @@ var (
 	// gerritURL argument was blank.
 	ErrNoInstanceGiven = errors.New("no Gerrit instance given")
 
-	// ErrUserProvidedWithoutPassword is returned by NewClientFromURL
+	// ErrUserProvidedWithoutPassword is returned by NewClient
 	// if a user name is provided without a password.
 	ErrUserProvidedWithoutPassword = errors.New("a username was provided without a password")
 
-	// ErrAuthenticationFailed is returned by NewClientFromURL in the event the provided
+	// ErrAuthenticationFailed is returned by NewClient in the event the provided
 	// credentials didn't allow us to query account information using digest, basic or cookie
 	// auth.
 	ErrAuthenticationFailed = errors.New("failed to authenticate using the provided credentials")
@@ -82,7 +80,7 @@ var (
 // example. These credentials may either be a user name and password or
 // name and value as in the case of cookie based authentication. If the url contains
 // credentials then this function will attempt to validate the credentials before
-// returning the client. `ErrAuthenticationFailed` will be returned if the credentials
+// returning the client. ErrAuthenticationFailed will be returned if the credentials
 // cannot be validated. The process of validating the credentials is relatively simple and
 // only requires that the provided user have permission to GET /a/accounts/self.
 func NewClient(endpoint string, httpClient *http.Client) (*Client, error) {
@@ -185,7 +183,7 @@ func NewClient(endpoint string, httpClient *http.Client) (*Client, error) {
 	return c, nil
 }
 
-// checkAuth is used by NewClientFromURL to check if the current credentials are
+// checkAuth is used by NewClient to check if the current credentials are
 // valid. If the response is 401 Unauthorized then the error will be discarded.
 func checkAuth(client *Client) (bool, error) {
 	_, response, err := client.Accounts.GetAccount("self")

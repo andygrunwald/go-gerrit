@@ -382,7 +382,7 @@ type ChangeOptions struct {
 	AdditionalFields []string `url:"o,omitempty"`
 }
 
-// QueryChanges visible to the caller.
+// QueryChanges lists changes visible to the caller.
 // The query string must be provided by the q parameter.
 // The n parameter can be used to limit the returned results.
 //
