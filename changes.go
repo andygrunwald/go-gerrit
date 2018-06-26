@@ -266,34 +266,35 @@ type DiffIntralineInfo [][2]int
 
 // ChangeInfo entity contains information about a change.
 type ChangeInfo struct {
-	ID                 string                  `json:"id"`
-	URL                string                  `json:"url,omitempty"`
-	Project            string                  `json:"project"`
-	Branch             string                  `json:"branch"`
-	Topic              string                  `json:"topic,omitempty"`
-	ChangeID           string                  `json:"change_id"`
-	Subject            string                  `json:"subject"`
-	Status             string                  `json:"status"`
-	Created            Timestamp               `json:"created"`
-	Updated            Timestamp               `json:"updated"`
-	Submitted          *Timestamp              `json:"submitted,omitempty"`
-	Starred            bool                    `json:"starred,omitempty"`
-	Reviewed           bool                    `json:"reviewed,omitempty"`
-	Mergeable          bool                    `json:"mergeable,omitempty"`
-	Insertions         int                     `json:"insertions"`
-	Deletions          int                     `json:"deletions"`
-	Number             int                     `json:"_number"`
-	Owner              AccountInfo             `json:"owner"`
-	Actions            map[string]ActionInfo   `json:"actions,omitempty"`
-	Labels             map[string]LabelInfo    `json:"labels,omitempty"`
-	PermittedLabels    map[string][]string     `json:"permitted_labels,omitempty"`
-	RemovableReviewers []AccountInfo           `json:"removable_reviewers,omitempty"`
-	Messages           []ChangeMessageInfo     `json:"messages,omitempty"`
-	CurrentRevision    string                  `json:"current_revision,omitempty"`
-	Revisions          map[string]RevisionInfo `json:"revisions,omitempty"`
-	MoreChanges        bool                    `json:"_more_changes,omitempty"`
-	Problems           []ProblemInfo           `json:"problems,omitempty"`
-	BaseChange         string                  `json:"base_change,omitempty"`
+	ID                 string                   `json:"id"`
+	URL                string                   `json:"url,omitempty"`
+	Project            string                   `json:"project"`
+	Branch             string                   `json:"branch"`
+	Topic              string                   `json:"topic,omitempty"`
+	ChangeID           string                   `json:"change_id"`
+	Subject            string                   `json:"subject"`
+	Status             string                   `json:"status"`
+	Created            Timestamp                `json:"created"`
+	Updated            Timestamp                `json:"updated"`
+	Submitted          *Timestamp               `json:"submitted,omitempty"`
+	Starred            bool                     `json:"starred,omitempty"`
+	Reviewed           bool                     `json:"reviewed,omitempty"`
+	Mergeable          bool                     `json:"mergeable,omitempty"`
+	Insertions         int                      `json:"insertions"`
+	Deletions          int                      `json:"deletions"`
+	Number             int                      `json:"_number"`
+	Owner              AccountInfo              `json:"owner"`
+	Actions            map[string]ActionInfo    `json:"actions,omitempty"`
+	Labels             map[string]LabelInfo     `json:"labels,omitempty"`
+	PermittedLabels    map[string][]string      `json:"permitted_labels,omitempty"`
+	RemovableReviewers []AccountInfo            `json:"removable_reviewers,omitempty"`
+	Reviewers          map[string][]AccountInfo `json:"reviewers,omitempty"`
+	Messages           []ChangeMessageInfo      `json:"messages,omitempty"`
+	CurrentRevision    string                   `json:"current_revision,omitempty"`
+	Revisions          map[string]RevisionInfo  `json:"revisions,omitempty"`
+	MoreChanges        bool                     `json:"_more_changes,omitempty"`
+	Problems           []ProblemInfo            `json:"problems,omitempty"`
+	BaseChange         string                   `json:"base_change,omitempty"`
 }
 
 // LabelInfo entity contains information about a label on a change, always corresponding to the current patch set.
