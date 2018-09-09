@@ -780,8 +780,15 @@ func (s *ChangesService) change(tail string, changeID string, input interface{})
 
 	v := new(ChangeInfo)
 	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return v, resp, err
+	}
 	if resp.StatusCode == http.StatusConflict {
-		body, _ := ioutil.ReadAll(resp.Body)
+		var body []byte
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return v, resp, err
+		}
 		err = errors.New(string(body[:]))
 	}
 	return v, resp, err
