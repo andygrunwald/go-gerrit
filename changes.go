@@ -781,17 +781,16 @@ func (s *ChangesService) change(tail string, changeID string, input interface{})
 	v := new(ChangeInfo)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
-		return v, resp, err
+		return nil, resp, err
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var body []byte
-		body, err = ioutil.ReadAll(resp.Body)
+		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return v, resp, err
 		}
-		err = errors.New(string(body[:]))
+		return v, resp, errors.New(string(body[:]))
 	}
-	return v, resp, err
+	return v, resp, nil
 }
 
 // SubmitChange submits a change.
