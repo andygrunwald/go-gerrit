@@ -192,3 +192,75 @@ func ExampleProjectsService_ListProjects() {
 	// Output:
 	// infra/infra/infra_libs - State: ACTIVE
 }
+
+func TestProjectsService_GetBranch(t *testing.T) {
+	setup()
+	defer teardown()
+
+	existBranches := map[string]*gerrit.BranchInfo{
+		"branch": {
+			Ref:       "123",
+			Revision:  "abcd1234",
+			CanDelete: true,
+		},
+		"branch/foo": {
+			Ref:       "456",
+			Revision:  "deadbeef",
+			CanDelete: false,
+		},
+	}
+
+	testMux.HandleFunc("/projects/go/branches/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+
+		branchName := r.URL.Path[len("/projects/go/branches/"):]
+
+		branchInfo, ok := existBranches[branchName]
+		if !ok {
+			http.Error(w, branchName, http.StatusBadRequest)
+		}
+
+		branchInfoRaw, err := json.Marshal(&branchInfo)
+		if err != nil {
+			http.Error(w, branchName, http.StatusBadRequest)
+		}
+
+		fmt.Fprint(w, `)]}'`+"\n"+string(branchInfoRaw))
+	})
+
+	var tests = []struct {
+		name     string
+		branch   string
+		expected *gerrit.BranchInfo
+	}{
+		{
+			name:   "branch without slash",
+			branch: "branch",
+			expected: &gerrit.BranchInfo{
+				Ref:       "123",
+				Revision:  "abcd1234",
+				CanDelete: true,
+			},
+		},
+		{
+			name:   "branch with slash",
+			branch: "branch/foo",
+			expected: &gerrit.BranchInfo{
+				Ref:       "456",
+				Revision:  "deadbeef",
+				CanDelete: false,
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		branchInfo, _, err := testClient.Projects.GetBranch("go", tc.branch)
+		if err != nil {
+			t.Errorf("tc %s: Projects.GetProject returned error: %v", tc.name, err)
+		}
+
+		if !reflect.DeepEqual(branchInfo, tc.expected) {
+			t.Errorf("tc %s: Projects.GetBranch returned %+v, want %+v", tc.name, branchInfo, tc.expected)
+		}
+	}
+}
