@@ -340,6 +340,7 @@ type ChangeInfo struct {
 	Project            string                   `json:"project"`
 	Branch             string                   `json:"branch"`
 	Topic              string                   `json:"topic,omitempty"`
+	Hashtags           []string                 `json:"hashtags,omitempty"`
 	ChangeID           string                   `json:"change_id"`
 	Subject            string                   `json:"subject"`
 	Status             string                   `json:"status"`
