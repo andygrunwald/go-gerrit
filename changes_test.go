@@ -35,6 +35,32 @@ func ExampleChangesService_QueryChanges() {
 	// Project: platform/art -> ART: Change return types of field access entrypoints -> https://android-review.googlesource.com/249244
 }
 
+func ExampleChangesService_QueryChanges_WithSubmittable() {
+	instance := "https://android-review.googlesource.com/"
+	client, err := gerrit.NewClient(instance, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	opt := &gerrit.QueryChangeOptions{}
+	opt.Query = []string{
+		"change:249244",
+	}
+	opt.AdditionalFields = []string{"SUBMITTABLE"}
+
+	changes, _, err := client.Changes.QueryChanges(opt)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, change := range *changes {
+		fmt.Printf("Project: %s -> %s -> %s%d, Ready to submit: %t\n", change.Project, change.Subject, instance, change.Number, change.Submittable)
+	}
+
+	// Output:
+	// Project: platform/art -> ART: Change return types of field access entrypoints -> https://android-review.googlesource.com/249244, Ready to submit: false
+}
+
 // Prior to fixing #18 this test would fail.
 func ExampleChangesService_QueryChanges_withSymbols() {
 	instance := "https://android-review.googlesource.com/"

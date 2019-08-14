@@ -365,6 +365,7 @@ type ChangeInfo struct {
 	MoreChanges        bool                     `json:"_more_changes,omitempty"`
 	Problems           []ProblemInfo            `json:"problems,omitempty"`
 	BaseChange         string                   `json:"base_change,omitempty"`
+	Submittable        bool                     `json:"submittable,omitempty"`
 }
 
 // LabelInfo entity contains information about a label on a change, always corresponding to the current patch set.
