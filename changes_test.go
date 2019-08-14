@@ -35,7 +35,7 @@ func ExampleChangesService_QueryChanges() {
 	// Project: platform/art -> ART: Change return types of field access entrypoints -> https://android-review.googlesource.com/249244
 }
 
-func ExampleChangesService_QueryChanges_WithSubmittable() {
+func ExampleChangesService_QueryChanges_withSubmittable() {
 	instance := "https://android-review.googlesource.com/"
 	client, err := gerrit.NewClient(instance, nil)
 	if err != nil {
