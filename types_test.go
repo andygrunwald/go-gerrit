@@ -16,7 +16,7 @@ func TestTimestamp(t *testing.T) {
 	"created": "2018-05-04 17:24:39.000000000",
 	"updated": "0001-01-01 00:00:00.000000000",
 	"submitted": "2018-05-04 18:01:10.000000000",
-	"_number": 111517
+	"number": 111517
 }
 `
 	type ChangeInfo struct {
@@ -25,7 +25,7 @@ func TestTimestamp(t *testing.T) {
 		Updated   gerrit.Timestamp  `json:"updated"`
 		Submitted *gerrit.Timestamp `json:"submitted,omitempty"`
 		Omitted   *gerrit.Timestamp `json:"omitted,omitempty"`
-		Number    int               `json:"_number"`
+		Number    int               `json:"number"`
 	}
 	ci := ChangeInfo{
 		Subject:   "net/http: write status code in Redirect when Content-Type header set",

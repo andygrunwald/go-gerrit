@@ -361,7 +361,7 @@ type ChangeInfo struct {
 	Mergeable          bool                     `json:"mergeable,omitempty"`
 	Insertions         int                      `json:"insertions"`
 	Deletions          int                      `json:"deletions"`
-	Number             int                      `json:"_number"`
+	Number             int                      `json:"number"`
 	Owner              AccountInfo              `json:"owner"`
 	Actions            map[string]ActionInfo    `json:"actions,omitempty"`
 	Labels             map[string]LabelInfo     `json:"labels,omitempty"`
