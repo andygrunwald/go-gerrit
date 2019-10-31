@@ -36,13 +36,13 @@ type AccessCheckInfo struct {
 // CheckAccessOptions is options for check access
 type CheckAccessOptions struct {
 	// The account for which to check access. Mandatory.
-	Account string `json:"account"`
+	Account string `url:"account,omitempty"`
 
 	// The ref permission for which to check access. If not specified, read access to at least branch is checked.
-	Permission string `json:"perm"`
+	Permission string `url:"perm,omitempty"`
 
 	// The branch for which to check access. This must be given if perm is specified.
-	Ref string `json:"ref"`
+	Ref string `url:"ref,omitempty"`
 }
 
 // ListAccessRights lists the access rights for a single project
