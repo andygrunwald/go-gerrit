@@ -101,6 +101,17 @@ func testFormValues(t *testing.T, r *http.Request, values testValues) {
 	}
 }
 
+func testQueryValues(t *testing.T, r *http.Request, values testValues) {
+	want := url.Values{}
+	for k, v := range values {
+		want.Add(k, v)
+	}
+
+	if got := r.URL.Query(); !reflect.DeepEqual(got, want) {
+		t.Errorf("Request parameters: %v, want %v", got, want)
+	}
+}
+
 func TestNewClient_NoGerritInstance(t *testing.T) {
 	mockData := []string{"", "://not-existing"}
 	for _, data := range mockData {
