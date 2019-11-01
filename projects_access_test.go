@@ -3,9 +3,10 @@ package gerrit_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/andygrunwald/go-gerrit"
 	"net/http"
 	"testing"
+
+	"github.com/andygrunwald/go-gerrit"
 )
 
 func TestProjectsService_ListAccessRights(t *testing.T) {
