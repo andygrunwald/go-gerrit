@@ -51,6 +51,13 @@ type ApprovalInfo struct {
 	Date  string `json:"date,omitempty"`
 }
 
+// CommitMessageInput entity contains information for changing the commit message of a change.
+type CommitMessageInput struct {
+	Message       string       `json:"message,omitempty"`
+	Notify        string       `json:"notify,omitempty"`
+	NotifyDetails []NotifyInfo `json:"notify_details"`
+}
+
 // ChangeEditInput entity contains information for restoring a path within change edit.
 type ChangeEditInput struct {
 	RestorePath string `json:"restore_path,omitempty"`
@@ -686,6 +693,23 @@ func (s *ChangesService) CreateChange(input *ChangeInfo) (*ChangeInfo, *Response
 	}
 
 	return v, resp, err
+}
+
+// SetCommitMessage creates a new patch set with a new commit message.
+// The new commit message must be provided in the request body inside a CommitMessageInput entity.
+// If a Change-Id footer is specified, it must match the current Change-Id footer.
+// If the Change-Id footer is absent, the current Change-Id is added to the message.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#set-message
+func (s *ChangesService) SetCommitMessage(changeID string, input *CommitMessageInput) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/message", changeID)
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
 }
 
 // SetTopic sets the topic of a change.
