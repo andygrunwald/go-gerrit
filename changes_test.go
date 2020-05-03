@@ -294,3 +294,52 @@ func TestChangesService_RevertChange_Conflict(t *testing.T) {
 		t.Error("Expected 409 code")
 	}
 }
+
+func TestChangesService_SetCommitMessage(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/changes/123/message" {
+			t.Errorf("%s != /changes/123/message", r.URL.Path)
+		}
+		if r.Method != "PUT" {
+			t.Error("Method != PUT")
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer ts.Close()
+
+	client, err := gerrit.NewClient(ts.URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	cm := &gerrit.CommitMessageInput{Message: "New commit message"}
+	_, err = client.Changes.SetCommitMessage("123", cm)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestChangesService_SetCommitMessage_NotFound(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/changes/123/message" {
+			t.Errorf("%s != /changes/123/message", r.URL.Path)
+		}
+		if r.Method != "PUT" {
+			t.Error("Method != PUT")
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer ts.Close()
+
+	client, err := gerrit.NewClient(ts.URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	cm := &gerrit.CommitMessageInput{Message: "New commit message"}
+	resp, err := client.Changes.SetCommitMessage("123", cm)
+	if err == nil {
+		t.Error("Expected error, instead nil")
+	}
+	if resp.StatusCode != http.StatusNotFound {
+		t.Error("Expected 404 code")
+	}
+}
