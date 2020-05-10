@@ -391,7 +391,7 @@ type ChangeOptions struct {
 func (s *ChangesService) QueryChanges(opt *QueryChangeOptions) (*[]ChangeInfo, *Response, error) {
 	u := "changes/"
 
-	if (opt.Skip == opt.Start) || (opt.Skip == 0) || (opt.Start == 0) {
+	if !(opt.Skip == opt.Start) || (opt.Skip == 0) || (opt.Start == 0) {
 		return nil, nil, errors.New("the query parameters `skip` (`S`) and `start` are conflicting")
 	}
 
