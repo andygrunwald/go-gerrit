@@ -193,7 +193,7 @@ type ProjectOptions struct {
 	Regex string `url:"r,omitempty"`
 
 	// Skip the given number of projects from the beginning of the list.
-	Skip string `url:"S,omitempty"`
+	Start string `url:"start,omitempty"`
 
 	// Limit the results to those projects that match the specified substring.
 	Substring string `url:"m,omitempty"`
