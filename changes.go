@@ -268,6 +268,13 @@ type CommentInput struct {
 	Message   string        `json:"message,omitempty"`
 }
 
+// MoveInput entity contains information for moving a change.
+type MoveInput struct {
+	DestinationBranch string `json:"destination_branch"`
+	Message           string `json:"message,omitempty"`
+	KeepAllLabels     bool   `json:"keep_all_labels"`
+}
+
 // RobotCommentInput entity contains information for creating an inline robot comment.
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#robot-comment-input
 type RobotCommentInput struct {
@@ -876,4 +883,15 @@ func (s *ChangesService) RestoreChange(changeID string, input *RestoreInput) (*C
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#revert-change
 func (s *ChangesService) RevertChange(changeID string, input *RevertInput) (*ChangeInfo, *Response, error) {
 	return s.change("revert", changeID, input)
+}
+
+// MoveChange moves a change.
+//
+// The destination branch must be provided in the request body inside a MoveInput entity.
+// Only veto votes that are blocking the change from submission are moved to the destination
+// branch by default.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#move-change
+func (s *ChangesService) MoveChange(changeID string, input *MoveInput) (*ChangeInfo, *Response, error) {
+	return s.change("move", changeID, input)
 }
