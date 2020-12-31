@@ -24,7 +24,7 @@ go-gerrit is a [Go](https://golang.org/) client library for accessing the [Gerri
 ## Installation
 
 go-gerrit follows the [Go Release Policy](https://golang.org/doc/devel/release.html#policy).
-This means, we support the current + two previous Go version releases.
+This means, we support the current + previous Go version releases.
 
 It is go gettable ...
 
