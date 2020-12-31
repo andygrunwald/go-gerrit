@@ -1,23 +1,23 @@
 # go-gerrit
 
-[![GoDoc](https://godoc.org/github.com/andygrunwald/go-gerrit?status.svg)](https://godoc.org/github.com/andygrunwald/go-gerrit)
+[![GoDoc](https://godoc.org/github.com/andygrunwald/go-gerrit?status.svg)](https://pkg.go.dev/github.com/andygrunwald/go-gerrit)
 [![Go Report Card](https://goreportcard.com/badge/github.com/andygrunwald/go-gerrit)](https://goreportcard.com/report/github.com/andygrunwald/go-gerrit)
 
-go-gerrit is a [Go(lang)](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
+go-gerrit is a [Go](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
 
-![go-gerrit - Go(lang) client/library for Gerrit Code Review](./img/logo.png "go-gerrit - Go(lang) client/library for Gerrit Code Review")
+![go-gerrit - Go client/library for Gerrit Code Review](./img/logo.png "go-gerrit - Go client/library for Gerrit Code Review")
 
 ## Features
 
-* [Authentication](https://godoc.org/github.com/andygrunwald/go-gerrit#AuthenticationService) (HTTP Basic, HTTP Digest, HTTP Cookie)
+* [Authentication](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AuthenticationService) (HTTP Basic, HTTP Digest, HTTP Cookie)
 * Every API Endpoint like Gerrit
-	* [/access/](https://godoc.org/github.com/andygrunwald/go-gerrit#AccessService)
-	* [/accounts/](https://godoc.org/github.com/andygrunwald/go-gerrit#AccountsService)
-	* [/changes/](https://godoc.org/github.com/andygrunwald/go-gerrit#ChangesService)
-	* [/config/](https://godoc.org/github.com/andygrunwald/go-gerrit#ConfigService)
-	* [/groups/](https://godoc.org/github.com/andygrunwald/go-gerrit#GroupsService)
-	* [/plugins/](https://godoc.org/github.com/andygrunwald/go-gerrit#PluginsService)
-	* [/projects/](https://godoc.org/github.com/andygrunwald/go-gerrit#ProjectsService)
+	* [/access/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AccessService)
+	* [/accounts/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AccountsService)
+	* [/changes/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ChangesService)
+	* [/config/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ConfigService)
+	* [/groups/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#GroupsService)
+	* [/plugins/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#PluginsService)
+	* [/projects/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ProjectsService)
 * Supports optional plugin APIs such as
 	* events-log - [About](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/about.md), [REST API](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/rest-api-events.md)
 
@@ -36,20 +36,18 @@ $ go get github.com/andygrunwald/go-gerrit
 **Tests Only**
 
 ```sh
-$ cd $GOPATH/src/github.com/andygrunwald/go-gerrit
-$ go test -v
+$ make test
 ```
 
 **Checks, Tests, Linters, etc**
 
 ```sh
-$ cd $GOPATH/src/github.com/andygrunwald/go-gerrit
-$ make
+$ make vet staticcheck
 ```
 
 ## API / Usage
 
-Please have a look at the [GoDoc documentation](https://godoc.org/github.com/andygrunwald/go-gerrit) for a detailed API description.
+Please have a look at the [GoDoc documentation](https://pkg.go.dev/github.com/andygrunwald/go-gerrit) for a detailed API description.
 
 The [Gerrit Code Review - REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html) was the base document.
 
@@ -98,7 +96,7 @@ If you get an `401 Unauthorized`, check your Account Settings and have a look at
 
 #### HTTP Cookie
 
-Some Gerrit instances hosted like the one hosted googlesource.com (e.g. [Go(lang)](https://go-review.googlesource.com/), [Android](https://android-review.googlesource.com/) or [Gerrit](https://gerrit-review.googlesource.com/)) support HTTP Cookie authentication.
+Some Gerrit instances hosted like the one hosted googlesource.com (e.g. [Go](https://go-review.googlesource.com/), [Android](https://android-review.googlesource.com/) or [Gerrit](https://gerrit-review.googlesource.com/)) support HTTP Cookie authentication.
 
 You need the cookie name and the cookie value.
 You can get them by click on "Settings > HTTP Password > Obtain Password" in your Gerrit instance.
@@ -128,7 +126,7 @@ We will be happy to answer them.
 ## Examples
 
 Further a few examples how the API can be used.
-A few more examples are available in the [GoDoc examples section](https://godoc.org/github.com/andygrunwald/go-gerrit#pkg-examples).
+A few more examples are available in the [GoDoc examples section](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#pkg-examples).
 
 ### Get version of Gerrit instance
 
