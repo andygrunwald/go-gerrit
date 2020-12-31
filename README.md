@@ -1,9 +1,7 @@
 # go-gerrit
 
 [![GoDoc](https://godoc.org/github.com/andygrunwald/go-gerrit?status.svg)](https://godoc.org/github.com/andygrunwald/go-gerrit)
-[![Build Status](https://travis-ci.org/andygrunwald/go-gerrit.svg?branch=master)](https://travis-ci.org/andygrunwald/go-gerrit)
 [![Go Report Card](https://goreportcard.com/badge/github.com/andygrunwald/go-gerrit)](https://goreportcard.com/report/github.com/andygrunwald/go-gerrit)
-[![codecov](https://codecov.io/gh/andygrunwald/go-gerrit/branch/master/graph/badge.svg)](https://codecov.io/gh/andygrunwald/go-gerrit)
 
 go-gerrit is a [Go(lang)](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
 
@@ -22,7 +20,6 @@ go-gerrit is a [Go(lang)](https://golang.org/) client library for accessing the 
 	* [/projects/](https://godoc.org/github.com/andygrunwald/go-gerrit#ProjectsService)
 * Supports optional plugin APIs such as
 	* events-log - [About](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/about.md), [REST API](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/rest-api-events.md)
-
 
 ## Installation
 
