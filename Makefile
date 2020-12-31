@@ -1,26 +1,18 @@
-.PHONY: fmt vet lint check test
-PACKAGES = $(shell go list ./...)
-PACKAGE_DIRS = $(shell go list -f '{{ .Dir }}' ./...)
+.DEFAULT_GOAL := help
 
-check: test vet lint
+.PHONY: help
+help: ## Outputs the help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-test:
-	go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+.PHONY: test
+test: ## Runs all unit tests
+	go test -v -race ./...
 
-vet:
-	go vet $(PACKAGES) || (go clean $(PACKAGES); go vet $(PACKAGES))
+.PHONY: vet
+vet: ## Runs go vet
+	go vet ./...
 
-lint:
-	gometalinter --config gometalinter.json ./...
-
-fmt:
-	go fmt $(PACKAGES)
-	goimports -w $(PACKAGE_DIRS)
-
-deps:
-	go get -t -v ./...
-	go get github.com/axw/gocov/gocov
-	go get golang.org/x/tools/cmd/cover
-	[ -f $(GOPATH)/bin/gometalinter ] || go get -u github.com/alecthomas/gometalinter
-	[ -f $(GOPATH)/bin/goimports ] || go get golang.org/x/tools/cmd/goimports
-	gometalinter --install
+.PHONY: staticcheck
+staticcheck: ## Runs static code analyzer staticcheck
+	go get -u honnef.co/go/tools/cmd/staticcheck
+	staticcheck ./...
