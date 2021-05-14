@@ -40,8 +40,8 @@ type NotifyInfo struct {
 // AbandonInput entity contains information for abandoning a change.
 type AbandonInput struct {
 	Message       string       `json:"message,omitempty"`
-	Notify        string       `json:"notify"`
-	NotifyDetails []NotifyInfo `json:"notify_details"`
+	Notify        string       `json:"notify,omitempty"`
+	NotifyDetails []NotifyInfo `json:"notify_details,omitempty"`
 }
 
 // ApprovalInfo entity contains information about an approval from a user for a label on a change.
