@@ -487,7 +487,7 @@ type QueryOptions struct {
 type QueryChangeOptions struct {
 	QueryOptions
 
-	// The S or start query parameter can be supplied to skip a number of changes from the list.
+	// The S or start query parameter can be supplied to skip a number of changes from the list. Only one of the two parameters can be set at a time.
 	Skip  int `url:"S,omitempty"`
 	Start int `url:"start,omitempty"`
 
@@ -513,6 +513,10 @@ type ChangeOptions struct {
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
 func (s *ChangesService) QueryChanges(opt *QueryChangeOptions) (*[]ChangeInfo, *Response, error) {
 	u := "changes/"
+
+	if !(opt.Skip == opt.Start || opt.Skip == 0 || opt.Start == 0) {
+		return nil, nil, fmt.Errorf("the query parameters `skip`/`S`(=%v) and `start` (=%v) are conflicting", opt.Skip, opt.Start)
+	}
 
 	u, err := addOptions(u, opt)
 	if err != nil {
