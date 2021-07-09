@@ -343,6 +343,17 @@ type FixReplacementInfo struct {
 	Replacement string `json:"replacement,omitempty"`
 }
 
+//  AttentionSetInfo entity contains details of users that are in the attention set.
+// https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#attention-set-info
+type AttentionSetInfo struct {
+	// AccountInfo entity.
+	Account AccountInfo `json:"account"`
+	// The timestamp of the last update.
+	LastUpdate Timestamp `json:"last_update"`
+	// The reason of for adding or removing the user.
+	Reason string `json:"reason"`
+}
+
 // DiffIntralineInfo entity contains information about intraline edits in a file.
 //
 // The information consists of a list of <skip length, mark length> pairs,
@@ -358,38 +369,53 @@ type DiffIntralineInfo [][2]int
 
 // ChangeInfo entity contains information about a change.
 type ChangeInfo struct {
-	ID                 string                   `json:"id"`
-	URL                string                   `json:"url,omitempty"`
-	Project            string                   `json:"project"`
-	Branch             string                   `json:"branch"`
-	Topic              string                   `json:"topic,omitempty"`
-	Hashtags           []string                 `json:"hashtags,omitempty"`
-	ChangeID           string                   `json:"change_id"`
-	Subject            string                   `json:"subject"`
-	Status             string                   `json:"status"`
-	Created            Timestamp                `json:"created"`
-	Updated            Timestamp                `json:"updated"`
-	Submitted          *Timestamp               `json:"submitted,omitempty"`
-	Starred            bool                     `json:"starred,omitempty"`
-	Reviewed           bool                     `json:"reviewed,omitempty"`
-	Mergeable          bool                     `json:"mergeable,omitempty"`
-	Insertions         int                      `json:"insertions"`
-	Deletions          int                      `json:"deletions"`
-	Number             int                      `json:"_number"`
-	Owner              AccountInfo              `json:"owner"`
-	Actions            map[string]ActionInfo    `json:"actions,omitempty"`
-	Labels             map[string]LabelInfo     `json:"labels,omitempty"`
-	PermittedLabels    map[string][]string      `json:"permitted_labels,omitempty"`
-	RemovableReviewers []AccountInfo            `json:"removable_reviewers,omitempty"`
-	Reviewers          map[string][]AccountInfo `json:"reviewers,omitempty"`
-	ReviewerUpdates    []ReviewerUpdateInfo     `json:"reviewer_updates,omitempty"`
-	Messages           []ChangeMessageInfo      `json:"messages,omitempty"`
-	CurrentRevision    string                   `json:"current_revision,omitempty"`
-	Revisions          map[string]RevisionInfo  `json:"revisions,omitempty"`
-	MoreChanges        bool                     `json:"_more_changes,omitempty"`
-	Problems           []ProblemInfo            `json:"problems,omitempty"`
-	BaseChange         string                   `json:"base_change,omitempty"`
-	Submittable        bool                     `json:"submittable,omitempty"`
+	ID                     string                      `json:"id"`
+	URL                    string                      `json:"url,omitempty"`
+	Project                string                      `json:"project"`
+	Branch                 string                      `json:"branch"`
+	Topic                  string                      `json:"topic,omitempty"`
+	AttentionSet           map[string]AttentionSetInfo `json:"attention_set,omitempty"`
+	Assignee               AccountInfo                 `json:"assignee,omitempty"`
+	Hashtags               []string                    `json:"hashtags,omitempty"`
+	ChangeID               string                      `json:"change_id"`
+	Subject                string                      `json:"subject"`
+	Status                 string                      `json:"status"`
+	Created                Timestamp                   `json:"created"`
+	Updated                Timestamp                   `json:"updated"`
+	Submitted              *Timestamp                  `json:"submitted,omitempty"`
+	Submitter              AccountInfo                 `json:"submitter,omitempty"`
+	Starred                bool                        `json:"starred,omitempty"`
+	Reviewed               bool                        `json:"reviewed,omitempty"`
+	SubmitType             string                      `json:"submit_type,omitempty"`
+	Mergeable              bool                        `json:"mergeable,omitempty"`
+	Submittable            bool                        `json:"submittable,omitempty"`
+	Insertions             int                         `json:"insertions"`
+	Deletions              int                         `json:"deletions"`
+	TotalCommentCount      int                         `json:"total_comment_count,omitempty"`
+	UnresolvedCommentCount int                         `json:"unresolved_comment_count,omitempty"`
+	Number                 int                         `json:"_number"`
+	Owner                  AccountInfo                 `json:"owner"`
+	Actions                map[string]ActionInfo       `json:"actions,omitempty"`
+	Labels                 map[string]LabelInfo        `json:"labels,omitempty"`
+	PermittedLabels        map[string][]string         `json:"permitted_labels,omitempty"`
+	RemovableReviewers     []AccountInfo               `json:"removable_reviewers,omitempty"`
+	Reviewers              map[string][]AccountInfo    `json:"reviewers,omitempty"`
+	PendingReviewers       map[string][]AccountInfo    `json:"pending_reviewers,omitempty"`
+	ReviewerUpdates        []ReviewerUpdateInfo        `json:"reviewer_updates,omitempty"`
+	Messages               []ChangeMessageInfo         `json:"messages,omitempty"`
+	CurrentRevision        string                      `json:"current_revision,omitempty"`
+	Revisions              map[string]RevisionInfo     `json:"revisions,omitempty"`
+	MoreChanges            bool                        `json:"_more_changes,omitempty"`
+	Problems               []ProblemInfo               `json:"problems,omitempty"`
+	IsPrivate              bool                        `json:"is_private,omitempty"`
+	WorkInProgress         bool                        `json:"work_in_progress,omitempty"`
+	HasReviewStarted       bool                        `json:"has_review_started,omitempty"`
+	RevertOf               int                         `json:"revert_of,omitempty"`
+	SubmissionID           string                      `json:"submission_id,omitempty"`
+	CherryPickOfChange     int                         `json:"cherry_pick_of_change,omitempty"`
+	CherryPickOfPatchSet   int                         `json:"cherry_pick_of_patch_set,omitempty"`
+	ContainsGitConflicts   bool                        `json:"contains_git_conflicts,omitempty"`
+	BaseChange             string                      `json:"base_change,omitempty"`
 }
 
 // LabelInfo entity contains information about a label on a change, always corresponding to the current patch set.
