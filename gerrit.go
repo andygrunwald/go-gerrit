@@ -245,8 +245,7 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
 	req.Header.Add("Accept", "application/json")
 
-	// No need to sed content-type if there is no content
-	// Fix: https://github.com/andygrunwald/go-gerrit/issues/76
+	// No need to send the content type if there is no content
 	if body != nil {
 		req.Header.Add("Content-Type", "application/json")
 	}
