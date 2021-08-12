@@ -24,6 +24,15 @@ type AccountInfo struct {
 		URL    string `json:"url,omitempty"`
 		Height int    `json:"height,omitempty"`
 	} `json:"avatars,omitempty"`
+	MoreAccounts bool `json:"_more_accounts,omitempty"`
+}
+
+// QueryAccountOptions Queries accounts visible to the caller.
+type QueryAccountOptions struct {
+	QueryOptions
+
+	// The S or start query parameter can be supplied to skip a number of changes from the list.
+	Start int `url:"start,omitempty"`
 }
 
 // SSHKeyInfo entity contains information about an SSH key of a user.
@@ -518,7 +527,7 @@ func (s *AccountsService) GetStarredChanges(accountID string) (*[]ChangeInfo, *R
 // Returns a list of matching AccountInfo entities.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#query-account
-func (s *AccountsService) SuggestAccount(opt *QueryOptions) (*[]AccountInfo, *Response, error) {
+func (s *AccountsService) SuggestAccount(opt *QueryAccountOptions) (*[]AccountInfo, *Response, error) {
 	u := "accounts/"
 
 	u, err := addOptions(u, opt)
