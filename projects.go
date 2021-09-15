@@ -35,11 +35,11 @@ type ProjectInput struct {
 	SubmitType                       string                       `json:"submit_type,omitempty"`
 	Branches                         []string                     `json:"branches,omitempty"`
 	Owners                           []string                     `json:"owners,omitempty"`
-	UseContributorAgreements         string                       `json:"use_contributor_agreements"`
-	UseSignedOffBy                   string                       `json:"use_signed_off_by"`
-	CreateNewChangeForAllNotInTarget string                       `json:"create_new_change_for_all_not_in_target"`
-	UseContentMerge                  string                       `json:"use_content_merge"`
-	RequireChangeID                  string                       `json:"require_change_id"`
+	UseContributorAgreements         string                       `json:"use_contributor_agreements,omitempty"`
+	UseSignedOffBy                   string                       `json:"use_signed_off_by,omitempty"`
+	CreateNewChangeForAllNotInTarget string                       `json:"create_new_change_for_all_not_in_target,omitempty"`
+	UseContentMerge                  string                       `json:"use_content_merge,omitempty"`
+	RequireChangeID                  string                       `json:"require_change_id,omitempty"`
 	MaxObjectSizeLimit               string                       `json:"max_object_size_limit,omitempty"`
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
