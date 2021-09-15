@@ -778,10 +778,13 @@ func (s *ChangesService) DeleteTopic(changeID string) (*Response, error) {
 	return s.client.DeleteRequest(u, nil)
 }
 
-// DeleteDraftChange deletes a draft change.
+// DeleteChange deletes a new or abandoned change
 //
-// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-draft-change
-func (s *ChangesService) DeleteDraftChange(changeID string) (*Response, error) {
+// New or abandoned changes can be deleted by their owner if the user is granted the Delete Own Changes
+// permission, otherwise only by administrators.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-change
+func (s *ChangesService) DeleteChange(changeID string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s", changeID)
 	return s.client.DeleteRequest(u, nil)
 }
