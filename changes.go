@@ -376,6 +376,9 @@ type ChangeInput struct {
 	Subject string `json:"subject"`
 	Topic   string `json:"topic,omitempty"`
 	Status  string `json:"status,omitempty"`
+
+	// Attention: Fields are missing.
+	// TODO Add the full list of attributes from https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-input
 }
 
 // ChangeInfo entity contains information about a change.
