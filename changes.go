@@ -368,6 +368,8 @@ type AttentionSetInfo struct {
 type DiffIntralineInfo [][2]int
 
 // ChangeInput entity contains information about creating a new change.
+//
+// Docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-input
 type ChangeInput struct {
 	Project string `json:"project"`
 	Branch  string `json:"branch"`
