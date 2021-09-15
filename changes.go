@@ -367,6 +367,15 @@ type AttentionSetInfo struct {
 // the edits to span newlines.
 type DiffIntralineInfo [][2]int
 
+// ChangeInput entity contains information about creating a new change.
+type ChangeInput struct {
+	Project string `json:"project"`
+	Branch  string `json:"branch"`
+	Subject string `json:"subject"`
+	Topic   string `json:"topic,omitempty"`
+	Status  string `json:"status,omitempty"`
+}
+
 // ChangeInfo entity contains information about a change.
 type ChangeInfo struct {
 	ID                     string                      `json:"id"`
@@ -703,15 +712,38 @@ func (s *ChangesService) getCommentInfoMapSliceResponse(u string) (*map[string][
 }
 
 // CreateChange creates a new change.
-// The change info ChangeInfo entity must be provided in the request body.
+//
+// The change input ChangeInput entity must be provided in the request body.
+//
 // Only the following attributes are honored: project, branch, subject, status and topic.
 // The first three attributes are mandatory.
+//
 // Valid values for status are: DRAFT and NEW.
 //
 // As response a ChangeInfo entity is returned that describes the resulting change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-change
-func (s *ChangesService) CreateChange(input *ChangeInfo) (*ChangeInfo, *Response, error) {
+func (s *ChangesService) CreateChange(input *ChangeInput) (*ChangeInfo, *Response, error) {
+	u := "changes/"
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// CreateChangeDeprecated creates a new change. (DEPRECATED)
+//
+// Use CreateChange instead.
+func (s *ChangesService) CreateChangeDeprecated(input *ChangeInfo) (*ChangeInfo, *Response, error) {
 	u := "changes/"
 
 	req, err := s.client.NewRequest("POST", u, input)
