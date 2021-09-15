@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -102,6 +103,68 @@ func ExampleChangesService_PublishChangeEdit() {
 	_, err = client.Changes.PublishChangeEdit("123", "NONE")
 	if err != nil {
 		panic(err)
+	}
+}
+
+func TestChangesService_CreateChange(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		decoder := json.NewDecoder(r.Body)
+		var payload map[string]interface{}
+		if err := decoder.Decode(&payload); err != nil {
+			t.Error(err)
+		}
+
+		jsonStr, err := json.MarshalIndent(payload, "", " ")
+		if err != nil {
+			t.Error(err)
+		}
+		t.Logf("Request payload:\n%s", jsonStr)
+
+		required := func(field string) string {
+			value, ok := payload[field]
+			strVal := value.(string)
+			if !ok {
+				t.Errorf("Missing required field %q", field)
+			}
+			return strVal
+		}
+		project := required("project")
+		branch := required("branch")
+		subject := required("subject")
+
+		for field, generic := range payload {
+			switch value := generic.(type) {
+			case string:
+				if len(value) == 0 {
+					t.Errorf("Empty value for field %q", field)
+				}
+			}
+		}
+
+		if r.URL.Path != "/changes/" {
+			t.Errorf("%s != /changes/", r.URL.Path)
+		}
+		if r.Method != "POST" {
+			t.Errorf("%s != POST", r.Method)
+		}
+		fmt.Fprintf(w, `{ "id": "abc1234", "project": "%s", "branch": "%s", "subject": "%s"}`, project, branch, subject)
+	}))
+	defer ts.Close()
+
+	client, err := gerrit.NewClient(ts.URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	info, _, err := client.Changes.CreateChange(&gerrit.ChangeInput{
+		Project: "myProject",
+		Branch:  "main",
+		Subject: "test change",
+	})
+	if err != nil {
+		t.Error(err)
+	}
+	if info.ID != "abc1234" {
+		t.Error("Invalid id")
 	}
 }
 
