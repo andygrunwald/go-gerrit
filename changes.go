@@ -745,26 +745,6 @@ func (s *ChangesService) CreateChange(input *ChangeInput) (*ChangeInfo, *Respons
 	return v, resp, err
 }
 
-// CreateChangeDeprecated creates a new change. (DEPRECATED)
-//
-// Use CreateChange instead.
-func (s *ChangesService) CreateChangeDeprecated(input *ChangeInfo) (*ChangeInfo, *Response, error) {
-	u := "changes/"
-
-	req, err := s.client.NewRequest("POST", u, input)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(ChangeInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
-}
-
 // SetCommitMessage creates a new patch set with a new commit message.
 // The new commit message must be provided in the request body inside a CommitMessageInput entity.
 // If a Change-Id footer is specified, it must match the current Change-Id footer.
