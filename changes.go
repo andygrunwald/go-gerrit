@@ -785,7 +785,7 @@ func (s *ChangesService) DeleteTopic(changeID string) (*Response, error) {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-change
 func (s *ChangesService) DeleteChange(changeID string) (*Response, error) {
-	u := fmt.Sprintf("changes/%s/", changeID)
+	u := fmt.Sprintf("changes/%s", changeID)
 	return s.client.DeleteRequest(u, nil)
 }
 
