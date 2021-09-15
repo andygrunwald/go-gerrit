@@ -24,6 +24,7 @@ type AccountInfo struct {
 		URL    string `json:"url,omitempty"`
 		Height int    `json:"height,omitempty"`
 	} `json:"avatars,omitempty"`
+	MoreAccounts bool `json:"_more_accounts,omitempty"`
 }
 
 // SSHKeyInfo entity contains information about an SSH key of a user.

@@ -479,6 +479,9 @@ type QueryOptions struct {
 	// The n parameter can be used to limit the returned results.
 	// If the n query parameter is supplied and additional changes exist that match the query beyond the end, the last change object has a _more_changes: true JSON field set.
 	Limit int `url:"n,omitempty"`
+
+	// The S or start query parameter can be supplied to skip a number of changes from the list.
+	Start int `url:"start,omitempty"`
 }
 
 // QueryChangeOptions specifies the parameters to the ChangesService.QueryChanges.
