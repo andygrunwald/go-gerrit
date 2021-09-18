@@ -1,9 +1,8 @@
 # go-gerrit
 
-[![GoDoc](https://godoc.org/github.com/andygrunwald/go-gerrit?status.svg)](https://pkg.go.dev/github.com/andygrunwald/go-gerrit)
-[![Go Report Card](https://goreportcard.com/badge/github.com/andygrunwald/go-gerrit)](https://goreportcard.com/report/github.com/andygrunwald/go-gerrit)
+[![GoDoc](https://pkg.go.dev/badge/github.com/andygrunwald/go-gerrit?utm_source=godoc)](https://pkg.go.dev/github.com/andygrunwald/go-gerrit)
 
-go-gerrit is a [Go](https://golang.org/) client library for accessing the [Gerrit Code Review](https://www.gerritcodereview.com/) API.
+go-gerrit is a [Go](https://golang.org/) client library for the [Gerrit Code Review](https://www.gerritcodereview.com/) system.
 
 ![go-gerrit - Go client/library for Gerrit Code Review](./img/logo.png "go-gerrit - Go client/library for Gerrit Code Review")
 
@@ -11,20 +10,20 @@ go-gerrit is a [Go](https://golang.org/) client library for accessing the [Gerri
 
 * [Authentication](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AuthenticationService) (HTTP Basic, HTTP Digest, HTTP Cookie)
 * Every API Endpoint like Gerrit
-	* [/access/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AccessService)
-	* [/accounts/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AccountsService)
-	* [/changes/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ChangesService)
-	* [/config/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ConfigService)
-	* [/groups/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#GroupsService)
-	* [/plugins/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#PluginsService)
-	* [/projects/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ProjectsService)
+    * [/access/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AccessService)
+    * [/accounts/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#AccountsService)
+    * [/changes/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ChangesService)
+    * [/config/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ConfigService)
+    * [/groups/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#GroupsService)
+    * [/plugins/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#PluginsService)
+    * [/projects/](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#ProjectsService)
 * Supports optional plugin APIs such as
-	* events-log - [About](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/about.md), [REST API](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/rest-api-events.md)
+    * events-log - [About](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/about.md), [REST API](https://gerrit.googlesource.com/plugins/events-log/+/master/src/main/resources/Documentation/rest-api-events.md)
 
 ## Installation
 
-go-gerrit follows the [Go Release Policy](https://golang.org/doc/devel/release.html#policy).
-This means, we support the current + previous Go version releases.
+_go-gerrit_ follows the [Go Release Policy](https://golang.org/doc/devel/release.html#policy).
+This means we support the current + 2 previous Go versions.
 
 It is go gettable ...
 
@@ -48,18 +47,18 @@ $ make vet staticcheck
 
 ## API / Usage
 
-Please have a look at the [GoDoc documentation](https://pkg.go.dev/github.com/andygrunwald/go-gerrit) for a detailed API description.
+Have a look at the [GoDoc documentation](https://pkg.go.dev/github.com/andygrunwald/go-gerrit) for a detailed API description.
 
-The [Gerrit Code Review - REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html) was the base document.
+The [Gerrit Code Review - REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html) was the foundation document.
 
 ### Authentication
 
-Gerrit support multiple ways for [authentication](https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication).
+Gerrit supports multiple ways for [authentication](https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication).
 
 #### HTTP Basic
 
 Some Gerrit instances (like [TYPO3](https://review.typo3.org/)) has [auth.gitBasicAuth](https://gerrit-review.googlesource.com/Documentation/config-gerrit.html#auth.gitBasicAuth) activated.
-With this you can authenticate with HTTP Basic like this:
+With this, you can authenticate with HTTP Basic like this:
 
 ```go
 instance := "https://review.typo3.org/"
@@ -73,7 +72,7 @@ fmt.Printf("Username: %s", self.Name)
 // Username: Andy Grunwald
 ```
 
-If you get an `401 Unauthorized`, check your Account Settings and have a look at the `HTTP Password` configuration.
+If you get a `401 Unauthorized`, check your Account Settings and have a look at the `HTTP Password` configuration.
 
 #### HTTP Digest
 
@@ -91,9 +90,9 @@ fmt.Printf("Username: %s", self.Name)
 // Username: Andy Grunwald
 ```
 
-If digest auth is not supported by the choosen Gerrit instance, an error like `WWW-Authenticate header type is not Digest` is thrown.
+If the chosen Gerrit instance does not support digest auth, an error like `WWW-Authenticate header type is not Digest` is thrown.
 
-If you get an `401 Unauthorized`, check your Account Settings and have a look at the `HTTP Password` configuration.
+If you get a `401 Unauthorized`, check your Account Settings and have a look at the `HTTP Password` configuration.
 
 #### HTTP Cookie
 
@@ -118,16 +117,12 @@ fmt.Printf("Username: %s", self.Name)
 // Username: Andy G.
 ```
 
-### More more more
-
-In the examples chapter below you will find a few more examples.
-If you miss one or got a question how to do something please [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) with your question.
-We will be happy to answer them.
-
 ## Examples
 
-Further a few examples how the API can be used.
-A few more examples are available in the [GoDoc examples section](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#pkg-examples).
+More examples are available
+
+* in the [GoDoc examples section](https://pkg.go.dev/github.com/andygrunwald/go-gerrit#pkg-examples).
+* in the [examples folder](./examples)
 
 ### Get version of Gerrit instance
 
@@ -138,6 +133,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/andygrunwald/go-gerrit"
 )
 
@@ -149,10 +145,13 @@ func main() {
 	}
 
 	v, _, err := client.Config.GetVersion()
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Printf("Version: %s", v)
 
-	// Version: 2.12.2-2512-g0b1bccd
+	// Version: 3.4.1-2066-g8db5605430
 }
 ```
 
@@ -165,6 +164,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/andygrunwald/go-gerrit"
 )
 
@@ -179,26 +179,31 @@ func main() {
 		Description: true,
 	}
 	projects, _, err := client.Projects.ListProjects(opt)
+	if err != nil {
+		panic(err)
+	}
+
 	for name, p := range *projects {
 		fmt.Printf("%s - State: %s\n", name, p.State)
 	}
 
-	// chromiumos/platform/depthcharge - State: ACTIVE
-	// external/github.com/maruel/subcommands - State: ACTIVE
-	// external/junit - State: ACTIVE
+	// chromiumos/third_party/bluez - State: ACTIVE
+	// external/github.com/Polymer/ShadowDOM - State: ACTIVE
+	// external/github.com/domokit/mojo_sdk - State: ACTIVE
 	// ...
 }
 ```
 
 ### Query changes
 
-Get some changes of the [kernel/common project](https://android-review.googlesource.com/#/q/project:kernel/common) from the [Android](http://source.android.com/) [Gerrit Review System](https://android-review.googlesource.com/).
+Get some changes of the [kernel/common project](https://android-review.googlesource.com/#/q/project:kernel/common) from the [Android](http://source.android.com/)[Gerrit Review System](https://android-review.googlesource.com/).
 
 ```go
 package main
 
 import (
 	"fmt"
+
 	"github.com/andygrunwald/go-gerrit"
 )
 
@@ -213,35 +218,39 @@ func main() {
 	opt.Query = []string{"project:kernel/common"}
 	opt.AdditionalFields = []string{"LABELS"}
 	changes, _, err := client.Changes.QueryChanges(opt)
+	if err != nil {
+		panic(err)
+	}
 
 	for _, change := range *changes {
 		fmt.Printf("Project: %s -> %s -> %s%d\n", change.Project, change.Subject, instance, change.Number)
 	}
 
-	// Project: kernel/common -> android: binder: Fix BR_ERROR usage and change LSM denials to use it. -> https://android-review.googlesource.com/150839
-	// Project: kernel/common -> android: binder: fix duplicate error return. -> https://android-review.googlesource.com/155031
-	// Project: kernel/common -> dm-verity: Add modes and emit uevent on corrupted blocks -> https://android-review.googlesource.com/169572
+	// Project: kernel/common -> ANDROID: GKI: Update symbols to symbol list -> https://android-review.googlesource.com/1830553
+	// Project: kernel/common -> ANDROID: db845c_gki.fragment: Remove CONFIG_USB_NET_AX8817X from fragment -> https://android-review.googlesource.com/1830439
+	// Project: kernel/common -> ANDROID: Update the ABI representation -> https://android-review.googlesource.com/1830469
 	// ...
 }
 ```
 
-## FAQ
+## Frequently Asked Questions (FAQ)
 
 ### How is the source code organized?
 
-The source code organisation was inspired by [go-github by Google](https://github.com/google/go-github).
+The source code organization is inspired by [go-github by Google](https://github.com/google/go-github).
 
-Every REST API Endpoint (e.g. [/access/](https://gerrit-review.googlesource.com/Documentation/rest-api-access.html) or [/changes/](https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html)) is coupled in a service (e.g. [AccessService in access.go](./access.go) or [ChangesService in changes.go](./changes.go)).
-Every service is part of [gerrit.Client](./gerrit.go) as a member variable.
+Every REST API Endpoint (e.g. [`/access/`](https://gerrit-review.googlesource.com/Documentation/rest-api-access.html), [`/changes/`](https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html)) is coupled in a service (e.g. [`AccessService` in access.go](./access.go), [`ChangesService` in changes.go](./changes.go)).
+Every service is part of [`gerrit.Client`](./gerrit.go) as a member variable.
 
-gerrit.Client can provide basic helper functions to avoid unnecessary code duplications such as building a new request, parse responses and so on.
+`gerrit.Client` can provide essential helper functions to avoid unnecessary code duplications, such as building a new request or parse responses.
 
-Based on this structure implementing a new API functionality is straight forwarded. Here is an example of *ChangeService.DeleteTopic* / [DELETE /changes/{change-id}/topic](https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-topic):
+Based on this structure, implementing a new API functionality is straight forward.
+Here is an example of `*ChangeService.DeleteTopic*` / [DELETE /changes/{change-id}/topic](https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-topic):
 
 ```go
 func (s *ChangesService) DeleteTopic(changeID string) (*Response, error) {
-	u := fmt.Sprintf("changes/%s/topic", changeID)
-	return s.client.DeleteRequest(u, nil)
+    u := fmt.Sprintf("changes/%s/topic", changeID)
+    return s.client.DeleteRequest(u, nil)
 }
 ```
 
@@ -250,17 +259,17 @@ func (s *ChangesService) DeleteTopic(changeID string) (*Response, error) {
 The library was implemented based on the REST API of Gerrit version 2.11.3-1230-gb8336f1 and tested against this version.
 
 This library might be working with older versions as well.
-If you notice an incompatibility [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) or try to fix it.
-We welcome contribution!
+If you notice an incompatibility [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new).
+We also appreciate your Pull Requests to improve this library.
+We welcome contributions!
 
+### What about adding code to support the REST API of an (optional) plugin?
 
-### What about adding code to support the REST API of an optional plugin?
-
-It will depend on the plugin, you are welcome to [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) first to propose the idea if you wish.
-As an example the addition of support for events-log plugin was supported because the plugin itself is fairly
-popular and the structures that the REST API uses could also be used by `gerrit stream-events`.
-
+It will depend on the plugin, and you are welcome to [open a new issue](https://github.com/andygrunwald/go-gerrit/issues/new) first to propose the idea and use-case.
+As an example, the addition of support for `events-log` plugin was supported because the plugin itself is fairly
+popular.
+The structures that the REST API uses could also be used by `gerrit stream-events`.
 
 ## License
 
-This project is released under the terms of the [MIT license](http://en.wikipedia.org/wiki/MIT_License).
+This project is released under the terms of the [MIT license](https://choosealicense.com/licenses/mit/).
