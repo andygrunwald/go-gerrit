@@ -106,6 +106,26 @@ func ExampleChangesService_PublishChangeEdit() {
 	}
 }
 
+func disallowEmptyFields(t *testing.T, payload map[string]interface{}, path string) {
+	for field, generic := range payload {
+		curPath := field
+		if len(path) > 0 {
+			curPath = path + "." + field
+		}
+		switch value := generic.(type) {
+		case string:
+			if len(value) == 0 {
+				t.Errorf("Empty value for field %q", curPath)
+			}
+		case map[string]interface{}:
+			if len(value) == 0 {
+				t.Errorf("Empty value for field %q", curPath)
+			}
+			disallowEmptyFields(t, value, curPath)
+		}
+	}
+}
+
 func TestChangesService_CreateChange(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
@@ -131,15 +151,13 @@ func TestChangesService_CreateChange(t *testing.T) {
 		project := required("project")
 		branch := required("branch")
 		subject := required("subject")
-
-		for field, generic := range payload {
-			switch value := generic.(type) {
-			case string:
-				if len(value) == 0 {
-					t.Errorf("Empty value for field %q", field)
-				}
+		if merge, ok := payload["merge"]; ok {
+			if _, ok := merge.(map[string]interface{})["source"]; !ok {
+				t.Error(`Missing required field "merge.source"`)
 			}
 		}
+
+		disallowEmptyFields(t, payload, "")
 
 		if r.URL.Path != "/changes/" {
 			t.Errorf("%s != /changes/", r.URL.Path)
@@ -155,16 +173,42 @@ func TestChangesService_CreateChange(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	info, _, err := client.Changes.CreateChange(&gerrit.ChangeInput{
-		Project: "myProject",
-		Branch:  "main",
-		Subject: "test change",
-	})
-	if err != nil {
-		t.Error(err)
+
+	cases := map[string]gerrit.ChangeInput{
+		"RequiredOnly": {
+			Project: "myProject",
+			Branch:  "main",
+			Subject: "test change",
+		},
+		"WithMerge": {
+			Project: "myProject",
+			Branch:  "main",
+			Subject: "test change",
+			Merge: &gerrit.MergeInput{
+				Source: "45/3/1",
+			},
+		},
+		"WithAppend": {
+			Project: "myProject",
+			Branch:  "main",
+			Subject: "test change",
+			Author: &gerrit.AccountInput{
+				Username: "roboto",
+				Name:     "Rob Oto",
+			},
+		},
 	}
-	if info.ID != "abc1234" {
-		t.Error("Invalid id")
+	for name, input := range cases {
+		t.Run(name, func(t *testing.T) {
+			info, _, err := client.Changes.CreateChange(&input)
+			if err != nil {
+				t.Error(err)
+			}
+
+			if info.ID != "abc1234" {
+				t.Error("Invalid id")
+			}
+		})
 	}
 }
 
