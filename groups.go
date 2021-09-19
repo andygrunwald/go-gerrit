@@ -31,6 +31,7 @@ type GroupInfo struct {
 	Owner       string           `json:"owner,omitempty"`
 	OwnerID     string           `json:"owner_id,omitempty"`
 	CreatedOn   *Timestamp       `json:"created_on,omitempty"`
+	MoreGroups  bool             `json:"_more_groups,omitempty"`
 	Members     []AccountInfo    `json:"members,omitempty"`
 	Includes    []GroupInfo      `json:"includes,omitempty"`
 }
