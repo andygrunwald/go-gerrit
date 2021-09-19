@@ -170,8 +170,8 @@ type ProjectBaseOptions struct {
 	// Limit the number of projects to be included in the results.
 	Limit int `url:"n,omitempty"`
 
-	// Skip the given number of branches from the beginning of the list.
-	Skip string `url:"s,omitempty"`
+	// Skip the given number of tags from the beginning of the list.
+	Skip int `url:"S,omitempty"`
 }
 
 // ProjectOptions specifies the parameters to the ProjectsService.ListProjects.
@@ -191,9 +191,6 @@ type ProjectOptions struct {
 	// Boundary matchers '^' and '$' are implicit.
 	// For example: the regex 'test.*' will match any projects that start with 'test' and regex '.*test' will match any project that end with 'test'.
 	Regex string `url:"r,omitempty"`
-
-	// Skip the given number of projects from the beginning of the list.
-	Skip string `url:"S,omitempty"`
 
 	// Limit the results to those projects that match the specified substring.
 	Substring string `url:"m,omitempty"`

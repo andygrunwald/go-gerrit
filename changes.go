@@ -518,8 +518,7 @@ type QueryOptions struct {
 type QueryChangeOptions struct {
 	QueryOptions
 
-	// The S or start query parameter can be supplied to skip a number of changes from the list.
-	Skip  int `url:"S,omitempty"`
+	// The `S` or `start` query parameter can be supplied to skip a number of changes from the list.
 	Start int `url:"start,omitempty"`
 
 	ChangeOptions
