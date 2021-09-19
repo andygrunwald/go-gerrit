@@ -31,20 +31,6 @@ It is go gettable ...
 $ go get github.com/andygrunwald/go-gerrit
 ```
 
-... (optional) to run checks and tests:
-
-**Tests Only**
-
-```sh
-$ make test
-```
-
-**Checks, Tests, Linters, etc**
-
-```sh
-$ make vet staticcheck
-```
-
 ## API / Usage
 
 Have a look at the [GoDoc documentation](https://pkg.go.dev/github.com/andygrunwald/go-gerrit) for a detailed API description.
@@ -232,6 +218,45 @@ func main() {
 	// ...
 }
 ```
+
+## Development
+
+### Running tests and linters
+
+Tests only:
+
+```sh
+$ make test
+```
+
+Checks, tests and linters
+
+```sh
+$ make vet staticcheck test
+```
+
+### Local Gerrit setup
+
+For local development, we suggest the usage of the [official Gerrit Code Review docker image](https://hub.docker.com/r/gerritcodereview/gerrit):
+
+```
+$ docker run -ti -p 8080:8080 -p 29418:29418 gerritcodereview/gerrit:3.4.1
+```
+
+Wait a few minutes until the ```Gerrit Code Review NNN ready``` message appears,
+where NNN is your current Gerrit version, then open your browser to http://localhost:8080
+and you will be in Gerrit Code Review.
+
+#### Authentication
+
+For local development setups, go to http://localhost:8080/settings/#HTTPCredentials and click `GENERATE NEW PASSWORD`.
+Now you can use (only for development purposes):
+
+```go
+client.Authentication.SetBasicAuth("admin", "secret")
+```
+
+Replace `secret` with your new value.
 
 ## Frequently Asked Questions (FAQ)
 
