@@ -12,11 +12,19 @@ type AccountsService struct {
 }
 
 // AccountInfo entity contains information about an account.
+//
+// TODO Add field secondary_emails
+// TODO Add field status
+// TODO Add field inactive
+// TODO Add field tags
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#account-info
 type AccountInfo struct {
-	AccountID int    `json:"_account_id,omitempty"`
-	Name      string `json:"name,omitempty"`
-	Email     string `json:"email,omitempty"`
-	Username  string `json:"username,omitempty"`
+	AccountID   int    `json:"_account_id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	DisplayName string `json:"display_name,omitempty"`
+	Email       string `json:"email,omitempty"`
+	Username    string `json:"username,omitempty"`
 
 	// Avatars lists avatars of various sizes for the account.
 	// This field is only populated if the avatars plugin is enabled.
@@ -25,6 +33,14 @@ type AccountInfo struct {
 		Height int    `json:"height,omitempty"`
 	} `json:"avatars,omitempty"`
 	MoreAccounts bool `json:"_more_accounts,omitempty"`
+}
+
+// QueryAccountOptions queries accounts visible to the caller.
+type QueryAccountOptions struct {
+	QueryOptions
+
+	// The `S` or `start` query parameter can be supplied to skip a number of accounts from the list.
+	Start int `url:"S,omitempty"`
 }
 
 // SSHKeyInfo entity contains information about an SSH key of a user.
@@ -519,7 +535,7 @@ func (s *AccountsService) GetStarredChanges(accountID string) (*[]ChangeInfo, *R
 // Returns a list of matching AccountInfo entities.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#query-account
-func (s *AccountsService) SuggestAccount(opt *QueryOptions) (*[]AccountInfo, *Response, error) {
+func (s *AccountsService) SuggestAccount(opt *QueryAccountOptions) (*[]AccountInfo, *Response, error) {
 	u := "accounts/"
 
 	u, err := addOptions(u, opt)
