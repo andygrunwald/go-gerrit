@@ -197,7 +197,7 @@ func (s *ChangesService) GetDraft(changeID, revisionID, draftID string) (*Commen
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-comment
 func (s *ChangesService) GetComment(changeID, revisionID, commentID string) (*CommentInfo, *Response, error) {
-	u := fmt.Sprintf("changes/%s/revisions/%s//comments/%s", changeID, revisionID, commentID)
+	u := fmt.Sprintf("changes/%s/revisions/%s/comments/%s", changeID, revisionID, commentID)
 	return s.getCommentInfoResponse(u)
 }
 
