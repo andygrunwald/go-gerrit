@@ -85,7 +85,8 @@ func TestProjectsService_GetProject_WithSlash(t *testing.T) {
 		testMethod(t, r, "GET")
 		testRequestURL(t, r, "/projects/plugins%2Fdelete-project")
 
-		fmt.Fprint(w, `)]}'`+"\n"+`{"id":"plugins%%2Fdelete-project","name":"plugins/delete-project","parent":"Public-Plugins","description":"A plugin which allows projects to be deleted from Gerrit via an SSH command","state":"ACTIVE"}`)
+		c := `)]}'` + "\n" + `{"id":"plugins%2Fdelete-project","name":"plugins/delete-project","parent":"Public-Plugins","description":"A plugin which allows projects to be deleted from Gerrit via an SSH command","state":"ACTIVE"}`
+		fmt.Fprint(w, c)
 	})
 	project, _, err := testClient.Projects.GetProject("plugins/delete-project")
 	if err != nil {
