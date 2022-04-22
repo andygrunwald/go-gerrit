@@ -58,6 +58,11 @@ type CommitMessageInput struct {
 	NotifyDetails []NotifyInfo `json:"notify_details"`
 }
 
+// ReadyForReviewInput entity contains information for transitioning a change from WIP to ready.
+type ReadyForReviewInput struct {
+	Message string `json:"message,omitempty"`
+}
+
 // ChangeEditInput entity contains information for restoring a path within change edit.
 type ChangeEditInput struct {
 	RestorePath string `json:"restore_path,omitempty"`
@@ -775,6 +780,24 @@ func (s *ChangesService) SetCommitMessage(changeID string, input *CommitMessageI
 	u := fmt.Sprintf("changes/%s/message", changeID)
 
 	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+// SetReadyForReview marks the change as ready for review (set WIP property to false)
+// Changes may only be marked ready by the owner, project owners or site administrators.
+// Activates notifications of reviewer. The request body does not need to include a
+// WorkInProgressInput entity if no review comment is added.
+// Marking a change ready for review also adds all of the reviewers of the change to the attention set.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#set-ready-for-review
+func (s *ChangesService) SetReadyForReview(changeID string, input *ReadyForReviewInput) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/ready", changeID)
+
+	req, err := s.client.NewRequest("POST", u, input)
 	if err != nil {
 		return nil, err
 	}
