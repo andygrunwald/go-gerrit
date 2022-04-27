@@ -450,3 +450,52 @@ func TestChangesService_SetCommitMessage_NotFound(t *testing.T) {
 		t.Error("Expected 404 code")
 	}
 }
+
+func TestChangesService_SetReadyForReview(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/changes/123/ready" {
+			t.Errorf("%s != /changes/123/ready", r.URL.Path)
+		}
+		if r.Method != "POST" {
+			t.Error("Method != POST")
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer ts.Close()
+
+	client, err := gerrit.NewClient(ts.URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	cm := &gerrit.ReadyForReviewInput{Message: "Now ready for review"}
+	_, err = client.Changes.SetReadyForReview("123", cm)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestChangesService_SetReadyForReview_NotFound(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/changes/123/ready" {
+			t.Errorf("%s != /changes/123/ready", r.URL.Path)
+		}
+		if r.Method != "POST" {
+			t.Error("Method != POST")
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer ts.Close()
+
+	client, err := gerrit.NewClient(ts.URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	cm := &gerrit.ReadyForReviewInput{Message: "Now ready for review"}
+	resp, err := client.Changes.SetReadyForReview("123", cm)
+	if err == nil {
+		t.Error("Expected error, instead nil")
+	}
+	if resp.StatusCode != http.StatusNotFound {
+		t.Error("Expected 404 code")
+	}
+}
