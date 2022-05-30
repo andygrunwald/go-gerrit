@@ -40,7 +40,7 @@ type ProjectInput struct {
 	CreateNewChangeForAllNotInTarget string                       `json:"create_new_change_for_all_not_in_target,omitempty"`
 	UseContentMerge                  string                       `json:"use_content_merge,omitempty"`
 	RequireChangeID                  string                       `json:"require_change_id,omitempty"`
-	MaxObjectSizeLimit               interface{}                  `json:"max_object_size_limit,omitempty"`
+	MaxObjectSizeLimit               string                       `json:"max_object_size_limit,omitempty"`
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
 
@@ -158,7 +158,7 @@ type ConfigInput struct {
 	UseSignedOffBy                   string                       `json:"use_signed_off_by,omitempty"`
 	CreateNewChangeForAllNotInTarget string                       `json:"create_new_change_for_all_not_in_target,omitempty"`
 	RequireChangeID                  string                       `json:"require_change_id,omitempty"`
-	MaxObjectSizeLimit               string       				  `json:"max_object_size_limit,omitempty"`
+	MaxObjectSizeLimit               interface{}		      `json:"max_object_size_limit,omitempty"`
 	SubmitType                       string                       `json:"submit_type,omitempty"`
 	State                            string                       `json:"state,omitempty"`
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
