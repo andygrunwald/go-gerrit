@@ -295,7 +295,7 @@ type RobotCommentInput struct {
 	Properties *map[string]*string `json:"properties,omitempty"`
 	// Suggested fixes for this robot comment as a list of FixSuggestionInfo
 	// entities.
-	FixSuggestions *FixSuggestionInfo `json:"fix_suggestions,omitempty"`
+	FixSuggestions []FixSuggestionInfo `json:"fix_suggestions,omitempty"`
 }
 
 // RobotCommentInfo entity contains information about a robot inline comment
@@ -314,7 +314,7 @@ type RobotCommentInfo struct {
 	Properties map[string]string `json:"properties,omitempty"`
 	// Suggested fixes for this robot comment as a list of FixSuggestionInfo
 	// entities.
-	FixSuggestions *FixSuggestionInfo `json:"fix_suggestions,omitempty"`
+	FixSuggestions []FixSuggestionInfo `json:"fix_suggestions,omitempty"`
 }
 
 // FixSuggestionInfo entity represents a suggested fix.
@@ -328,7 +328,7 @@ type FixSuggestionInfo struct {
 	// A list of FixReplacementInfo entities indicating how the content of one or
 	// several files should be modified. Within a file, they should refer to
 	// non-overlapping regions.
-	Replacements FixReplacementInfo `json:"replacements"`
+	Replacements []FixReplacementInfo `json:"replacements"`
 }
 
 // FixReplacementInfo entity describes how the content of a file should be replaced by another content.
@@ -345,7 +345,7 @@ type FixReplacementInfo struct {
 	Range CommentRange `json:"range"`
 
 	// The content which should be used instead of the current one.
-	Replacement string `json:"replacement,omitempty"`
+	Replacement string `json:"replacement"`
 }
 
 //  AttentionSetInfo entity contains details of users that are in the attention set.
