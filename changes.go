@@ -670,7 +670,7 @@ func (s *ChangesService) GetIncludedIn(changeID string) (*IncludedInInfo, *Respo
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-comments
 func (s *ChangesService) ListChangeComments(changeID string) (*map[string][]CommentInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/comments", changeID)
-	return s.getCommentInfoMapResponse(u)
+	return s.getCommentInfoMapSliceResponse(u)
 }
 
 // Lists the robot comments of all revisions of the change.
@@ -689,23 +689,7 @@ func (s *ChangesService) ListChangeRobotComments(changeID string) (map[string][]
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-drafts
 func (s *ChangesService) ListChangeDrafts(changeID string) (*map[string][]CommentInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/drafts", changeID)
-	return s.getCommentInfoMapResponse(u)
-}
-
-// getCommentInfoMapResponse retrieved a map of CommentInfo Response for a GET request
-func (s *ChangesService) getCommentInfoMapResponse(u string) (*map[string][]CommentInfo, *Response, error) {
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(map[string][]CommentInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
+	return s.getCommentInfoMapSliceResponse(u)
 }
 
 // CheckChange performs consistency checks on the change, and returns a ChangeInfo entity with the problems field set to a list of ProblemInfo entities.
