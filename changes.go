@@ -673,6 +673,15 @@ func (s *ChangesService) ListChangeComments(changeID string) (*map[string][]Comm
 	return s.getCommentInfoMapResponse(u)
 }
 
+// Lists the robot comments of all revisions of the change.
+// Return a map that maps the file path to a list of RobotCommentInfo entries. The entries in the map are sorted by file path.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-robot-comments
+func (s *ChangesService) ListChangeRobotComments(changeID string) (map[string][]RobotCommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/robotcomments", changeID)
+	return s.getRobotCommentInfoMapSliceResponse(u)
+}
+
 // ListChangeDrafts lLists the draft comments of all revisions of the change that belong to the calling user.
 // The entries in the map are sorted by file path, and the comments for each path are sorted by patch set number.
 // Each comment has the patch_set field set, and no author.
@@ -734,6 +743,22 @@ func (s *ChangesService) getCommentInfoMapSliceResponse(u string) (*map[string][
 
 	v := new(map[string][]CommentInfo)
 	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// getRobotCommentInfoMapSliceResponse retrieved a map with a slice of RobotCommentInfo Response for a GET request
+func (s *ChangesService) getRobotCommentInfoMapSliceResponse(u string) (map[string][]RobotCommentInfo, *Response, error) {
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var v map[string][]RobotCommentInfo
+	resp, err := s.client.Do(req, &v)
 	if err != nil {
 		return nil, resp, err
 	}

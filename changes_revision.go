@@ -201,6 +201,26 @@ func (s *ChangesService) GetComment(changeID, revisionID, commentID string) (*Co
 	return s.getCommentInfoResponse(u)
 }
 
+// GetRobotComment retrieves a robot comment of a revision.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-robot-comment
+func (s *ChangesService) GetRobotComment(changeID, revisionID, commentID string) (*RobotCommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/robotcomments/%s", changeID, revisionID, commentID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(RobotCommentInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 // GetSubmitType gets the method the server will use to submit (merge) the change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-submit-type
@@ -311,6 +331,11 @@ func (s *ChangesService) ListRevisionDrafts(changeID, revisionID string) (*map[s
 func (s *ChangesService) ListRevisionComments(changeID, revisionID string) (*map[string][]CommentInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/revisions/%s/comments/", changeID, revisionID)
 	return s.getCommentInfoMapSliceResponse(u)
+}
+
+func (s *ChangesService) ListRevisionRobotComments(changeID, revisionID string) (map[string][]RobotCommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/robotcomments", changeID, revisionID)
+	return s.getRobotCommentInfoMapSliceResponse(u)
 }
 
 // ListFiles lists the files that were modified, added or deleted in a revision.
