@@ -26,6 +26,25 @@ func (s *ProjectsService) GetCommit(projectName, commitID string) (*CommitInfo, 
 	return v, resp, err
 }
 
+// GetIncludeIn Retrieves the branches and tags in which a change is included.
+// Branches that are not visible to the calling user according to the project’s read permissions are filtered out from the result.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-included-in
+func (s *ProjectsService) GetIncludeIn(projectName, commitID string) (*IncludedInInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/commits/%s/in", url.QueryEscape((projectName)), commitID)
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	v := new(IncludedInInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
 // GetCommitContent gets the content of a file from a certain commit.
 // The content is returned as base64 encoded string.
 //
