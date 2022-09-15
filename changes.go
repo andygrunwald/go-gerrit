@@ -348,7 +348,8 @@ type FixReplacementInfo struct {
 	Replacement string `json:"replacement,omitempty"`
 }
 
-//  AttentionSetInfo entity contains details of users that are in the attention set.
+//	AttentionSetInfo entity contains details of users that are in the attention set.
+//
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#attention-set-info
 type AttentionSetInfo struct {
 	// AccountInfo entity.
