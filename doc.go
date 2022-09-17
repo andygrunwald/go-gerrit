@@ -22,7 +22,7 @@ The services of a client divide the API into logical chunks and correspond to
 the structure of the Gerrit API documentation at
 https://gerrit-review.googlesource.com/Documentation/rest-api.html#_endpoints.
 
-Authentication
+# Authentication
 
 The go-gerrit library supports various methods to support the authentication.
 This methods are combined in the AuthenticationService that is available at client.Authentication.
@@ -63,6 +63,5 @@ With this you can authenticate with HTTP Basic like this:
 Additionally when creating a new client, pass an http.Client that supports further actions for you.
 For more information regarding authentication have a look at the Gerrit documentation:
 https://gerrit-review.googlesource.com/Documentation/rest-api.html#authentication
-
 */
 package gerrit

@@ -228,16 +228,22 @@ type ReviewerInput struct {
 
 // ReviewInput entity contains information for adding a review to a revision.
 type ReviewInput struct {
-	Message               string                         `json:"message,omitempty"`
-	Tag                   string                         `json:"tag,omitempty"`
-	Labels                map[string]string              `json:"labels,omitempty"`
-	Comments              map[string][]CommentInput      `json:"comments,omitempty"`
-	RobotComments         map[string][]RobotCommentInput `json:"robot_comments,omitempty"`
-	StrictLabels          bool                           `json:"strict_labels,omitempty"`
-	Drafts                string                         `json:"drafts,omitempty"`
-	Notify                string                         `json:"notify,omitempty"`
-	OmitDuplicateComments bool                           `json:"omit_duplicate_comments,omitempty"`
-	OnBehalfOf            string                         `json:"on_behalf_of,omitempty"`
+	Message                          string                         `json:"message,omitempty"`
+	Tag                              string                         `json:"tag,omitempty"`
+	Labels                           map[string]string              `json:"labels,omitempty"`
+	Comments                         map[string][]CommentInput      `json:"comments,omitempty"`
+	RobotComments                    map[string][]RobotCommentInput `json:"robot_comments,omitempty"`
+	StrictLabels                     bool                           `json:"strict_labels,omitempty"`
+	Drafts                           string                         `json:"drafts,omitempty"`
+	Notify                           string                         `json:"notify,omitempty"`
+	OmitDuplicateComments            bool                           `json:"omit_duplicate_comments,omitempty"`
+	OnBehalfOf                       string                         `json:"on_behalf_of,omitempty"`
+	Reviewers                        []ReviewerInput                `json:"reviewers,omitempty"`
+	Ready                            bool                           `json:"ready,omitempty"`
+	WorkInProgress                   bool                           `json:"work_in_progress,omitempty"`
+	AddToAttentionSet                []AttentionSetInput            `json:"add_to_attention_set,omitempty"`
+	RemoveFromAttentionSet           []AttentionSetInput            `json:"remove_from_attention_set,omitempty"`
+	IgnoreAutomaticAttentionSetRules bool                           `json:"ignore_automatic_attention_set_rules,omitempty"`
 }
 
 // RelatedChangeAndCommitInfo entity contains information about a related change and commit.
@@ -348,7 +354,8 @@ type FixReplacementInfo struct {
 	Replacement string `json:"replacement,omitempty"`
 }
 
-//  AttentionSetInfo entity contains details of users that are in the attention set.
+//	AttentionSetInfo entity contains details of users that are in the attention set.
+//
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#attention-set-info
 type AttentionSetInfo struct {
 	// AccountInfo entity.
@@ -357,6 +364,19 @@ type AttentionSetInfo struct {
 	LastUpdate Timestamp `json:"last_update"`
 	// The reason of for adding or removing the user.
 	Reason string `json:"reason"`
+}
+// Doc: https://gerrit-review.googlesource.com/Documentation/user-notify.html#recipient-types
+type RecipientType string
+
+// AttentionSetInput entity contains details for adding users to the attention
+// set and removing them from it.
+//
+// https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#attention-set-input
+type AttentionSetInput struct {
+	User          string                       `json:"user,omitempty"`
+	Reason        string                       `json:"reason"`
+	Notify        string                       `json:"notify,omitempty"`
+	NotifyDetails map[RecipientType]NotifyInfo `json:"notify_details,omitempty"`
 }
 
 // DiffIntralineInfo entity contains information about intraline edits in a file.
