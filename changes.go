@@ -365,7 +365,7 @@ type AttentionSetInfo struct {
 	// The reason of for adding or removing the user.
 	Reason string `json:"reason"`
 }
-
+// Doc: https://gerrit-review.googlesource.com/Documentation/user-notify.html#recipient-types
 type RecipientType string
 
 // AttentionSetInput entity contains details for adding users to the attention
