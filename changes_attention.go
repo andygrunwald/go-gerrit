@@ -29,7 +29,6 @@ type AttentionSetInput struct {
 }
 
 // RemoveAttention deletes a single user from the attention set of a change.
-//
 // AttentionSetInput.Input must be provided
 //
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#remove-from-attention-set
