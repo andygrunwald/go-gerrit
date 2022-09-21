@@ -354,31 +354,6 @@ type FixReplacementInfo struct {
 	Replacement string `json:"replacement,omitempty"`
 }
 
-//	AttentionSetInfo entity contains details of users that are in the attention set.
-//
-// https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#attention-set-info
-type AttentionSetInfo struct {
-	// AccountInfo entity.
-	Account AccountInfo `json:"account"`
-	// The timestamp of the last update.
-	LastUpdate Timestamp `json:"last_update"`
-	// The reason of for adding or removing the user.
-	Reason string `json:"reason"`
-}
-// Doc: https://gerrit-review.googlesource.com/Documentation/user-notify.html#recipient-types
-type RecipientType string
-
-// AttentionSetInput entity contains details for adding users to the attention
-// set and removing them from it.
-//
-// https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#attention-set-input
-type AttentionSetInput struct {
-	User          string                       `json:"user,omitempty"`
-	Reason        string                       `json:"reason"`
-	Notify        string                       `json:"notify,omitempty"`
-	NotifyDetails map[RecipientType]NotifyInfo `json:"notify_details,omitempty"`
-}
-
 // DiffIntralineInfo entity contains information about intraline edits in a file.
 //
 // The information consists of a list of <skip length, mark length> pairs,
