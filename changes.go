@@ -3,7 +3,7 @@ package gerrit
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -911,7 +911,7 @@ func (s *ChangesService) change(tail string, changeID string, input interface{})
 		return nil, resp, err
 	}
 	if resp.StatusCode == http.StatusConflict {
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return v, resp, err
 		}
