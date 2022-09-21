@@ -2,7 +2,10 @@ name: Testing
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+  workflow_dispatch:
   schedule:
     - cron: "5 1 * * *"
 
@@ -12,7 +15,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.19', '1.18' ]
 
     steps:
       - uses: actions/checkout@v3
@@ -37,7 +40,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.19', '1.18' ]
 
     steps:
       - uses: actions/checkout@v3
@@ -61,7 +64,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.19', '1.18' ]
 
     steps:
       - uses: actions/checkout@v3
@@ -89,7 +92,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go: [ '1.18', '1.17' ]
+        go: [ '1.19', '1.18' ]
 
     steps:
       - uses: actions/checkout@v3

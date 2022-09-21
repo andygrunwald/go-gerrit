@@ -3,7 +3,7 @@ package gerrit
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"time"
 )
@@ -142,7 +142,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInf
 		return info, response, failures, err
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	defer response.Body.Close() // nolint: errcheck
 	if err != nil {
 		return info, response, failures, err

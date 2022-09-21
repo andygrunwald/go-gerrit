@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -405,7 +405,7 @@ func TestNewRequest(t *testing.T) {
 	}
 
 	// Test that body was JSON encoded
-	body, _ := ioutil.ReadAll(req.Body)
+	body, _ := io.ReadAll(req.Body)
 	if got, want := string(body), outBody; got != want {
 		t.Errorf("NewRequest Body is %v, want %v", got, want)
 	}
@@ -426,7 +426,7 @@ func TestNewRawPutRequest(t *testing.T) {
 	}
 
 	// Test that body was JSON encoded
-	body, _ := ioutil.ReadAll(req.Body)
+	body, _ := io.ReadAll(req.Body)
 	if got, want := string(body), "test raw PUT contents"; got != want {
 		t.Errorf("NewRequest Body is %v, want %v", got, want)
 	}
