@@ -7,6 +7,19 @@ import (
 	"net/http"
 )
 
+// RevisionKind describes the change kind.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#revision-info
+type RevisionKind string
+
+const (
+	Rework                 RevisionKind = "REWORK"
+	TrivialRebase          RevisionKind = "TRIVIAL_REBASE"
+	MergeFirstParentUpdate RevisionKind = "MERGE_FIRST_PARENT_UPDATE"
+	NoCodeChange           RevisionKind = "NO_CODE_CHANGE"
+	NoChange               RevisionKind = "NO_CHANGE"
+)
+
 // ChangesService contains Change related REST endpoints
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html
@@ -469,6 +482,7 @@ type MergeInput struct {
 
 // RevisionInfo entity contains information about a patch set.
 type RevisionInfo struct {
+	Kind              RevisionKind          `json:"kind,omitempty"`
 	Draft             bool                  `json:"draft,omitempty"`
 	Number            int                   `json:"_number"`
 	Created           Timestamp             `json:"created"`
