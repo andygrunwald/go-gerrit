@@ -73,12 +73,12 @@ jobs:
           go-version: ${{ matrix.go }}
 
       # Caching go modules to speed up the run
-      - uses: actions/cache@v3.2.5
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+      #- uses: actions/cache@v3.2.5
+      #  with:
+      #    path: ~/go/pkg/mod
+      #    key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      #    restore-keys: |
+      #      ${{ runner.os }}-go-
 
       - name: Run staticcheck
         uses: dominikh/staticcheck-action@v1.3.0
