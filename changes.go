@@ -282,14 +282,15 @@ type DiffContent struct {
 
 // CommentInput entity contains information for creating an inline comment.
 type CommentInput struct {
-	ID        string        `json:"id,omitempty"`
-	Path      string        `json:"path,omitempty"`
-	Side      string        `json:"side,omitempty"`
-	Line      int           `json:"line,omitempty"`
-	Range     *CommentRange `json:"range,omitempty"`
-	InReplyTo string        `json:"in_reply_to,omitempty"`
-	Updated   *Timestamp    `json:"updated,omitempty"`
-	Message   string        `json:"message,omitempty"`
+	ID         string        `json:"id,omitempty"`
+	Path       string        `json:"path,omitempty"`
+	Side       string        `json:"side,omitempty"`
+	Line       int           `json:"line,omitempty"`
+	Range      *CommentRange `json:"range,omitempty"`
+	InReplyTo  string        `json:"in_reply_to,omitempty"`
+	Updated    *Timestamp    `json:"updated,omitempty"`
+	Message    string        `json:"message,omitempty"`
+	Unresolved *bool         `json:"unresolved,omitempty"`
 }
 
 // MoveInput entity contains information for moving a change.
@@ -498,16 +499,19 @@ type RevisionInfo struct {
 
 // CommentInfo entity contains information about an inline comment.
 type CommentInfo struct {
-	PatchSet  int           `json:"patch_set,omitempty"`
-	ID        string        `json:"id"`
-	Path      string        `json:"path,omitempty"`
-	Side      string        `json:"side,omitempty"`
-	Line      int           `json:"line,omitempty"`
-	Range     *CommentRange `json:"range,omitempty"`
-	InReplyTo string        `json:"in_reply_to,omitempty"`
-	Message   string        `json:"message,omitempty"`
-	Updated   *Timestamp    `json:"updated"`
-	Author    AccountInfo   `json:"author,omitempty"`
+	PatchSet        int           `json:"patch_set,omitempty"`
+	ID              string        `json:"id"`
+	Path            string        `json:"path,omitempty"`
+	Side            string        `json:"side,omitempty"`
+	Line            int           `json:"line,omitempty"`
+	Range           *CommentRange `json:"range,omitempty"`
+	InReplyTo       string        `json:"in_reply_to,omitempty"`
+	Message         string        `json:"message,omitempty"`
+	Updated         *Timestamp    `json:"updated"`
+	Author          AccountInfo   `json:"author,omitempty"`
+	Unresolved      *bool         `json:"unresolved,omitempty"`
+	ChangeMessageID string        `json:"change_message_id,omitempty"`
+	CommitID        string        `json:"commit_id,omitempty"`
 }
 
 // QueryOptions specifies global parameters to query changes / reviewers.
