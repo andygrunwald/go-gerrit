@@ -73,7 +73,7 @@ func (s *ProjectsService) GetTag(projectName, tagName string) (*TagInfo, *Respon
 
 // CreateTag create a tag of a project
 //
-//Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-tag
+// Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-tag
 func (s *ProjectsService) CreateTag(projectName, tagName string, input *TagInput) (*TagInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/tags/%s", url.QueryEscape(projectName), url.QueryEscape(tagName))
 
@@ -93,7 +93,7 @@ func (s *ProjectsService) CreateTag(projectName, tagName string, input *TagInput
 
 // DeleteTag delete a tag of a project
 //
-//Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-tag
+// Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-tag
 func (s *ProjectsService) DeleteTag(projectName, tagName string) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/tags/%s", url.QueryEscape(projectName), url.QueryEscape(tagName))
 
@@ -109,7 +109,7 @@ func (s *ProjectsService) DeleteTag(projectName, tagName string) (*Response, err
 
 // DeleteTags delete tags of a project
 //
-//Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-tags
+// Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-tags
 func (s *ProjectsService) DeleteTags(projectName string, input *DeleteTagsInput) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/tags:delete", url.QueryEscape(projectName))
 
