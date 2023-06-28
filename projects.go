@@ -44,6 +44,12 @@ type ProjectInput struct {
 	PluginConfigValues               map[string]map[string]string `json:"plugin_config_values,omitempty"`
 }
 
+// DeleteOptionsInfo entity contains information for the deletion of a project.
+type DeleteOptionsInfo struct {
+	Force    bool `json:"force"`
+	Preserve bool `json:"preserve"`
+}
+
 // GCInput entity contains information to run the Git garbage collection.
 type GCInput struct {
 	ShowProgress bool `json:"show_progress"`
@@ -244,6 +250,17 @@ func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput)
 	v := new(ProjectInfo)
 	resp, err := s.client.Call("PUT", u, input, v)
 	return v, resp, err
+}
+
+// DeleteProject deletes a project
+//
+// Note: requires installation of delete-project plugin
+//
+// Gerrit API docs: https://gerrit.googlesource.com/plugins/delete-project/+/refs/heads/master/src/main/resources/Documentation/rest-api-projects.md
+func (s *ProjectsService) DeleteProject(projectName string, input *DeleteOptionsInfo) (*Response, error) {
+	u := fmt.Sprintf("projects/%s", projectName)
+
+	return s.client.DeleteRequest(u, input)
 }
 
 // GetProjectDescription retrieves the description of a project.
