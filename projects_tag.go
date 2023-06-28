@@ -15,6 +15,18 @@ type TagInfo struct {
 	Created  *Timestamp    `json:"created,omitempty"`
 }
 
+// TagInput entity for create a tag.
+type TagInput struct {
+	Ref      string `json:"ref"`
+	Revision string `json:"revision,omitempty"`
+	Message  string `json:"message,omitempty"`
+}
+
+// DeleteTagsInput entity for delete tags.
+type DeleteTagsInput struct {
+	Tags []string `json:"tags"`
+}
+
 // ListTags list the tags of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-tags
@@ -57,4 +69,56 @@ func (s *ProjectsService) GetTag(projectName, tagName string) (*TagInfo, *Respon
 	}
 
 	return v, resp, err
+}
+
+// CreateTag create a tag of a project
+//
+// Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-tag
+func (s *ProjectsService) CreateTag(projectName, tagName string, input *TagInput) (*TagInfo, *Response, error) {
+	u := fmt.Sprintf("projects/%s/tags/%s", url.QueryEscape(projectName), url.QueryEscape(tagName))
+
+	req, err := s.client.NewRequest("PUT", u, input)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(TagInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// DeleteTag delete a tag of a project
+//
+// Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-tag
+func (s *ProjectsService) DeleteTag(projectName, tagName string) (*Response, error) {
+	u := fmt.Sprintf("projects/%s/tags/%s", url.QueryEscape(projectName), url.QueryEscape(tagName))
+
+	req, err := s.client.NewRequest("DELETE", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.client.Do(req, nil)
+
+	return resp, err
+}
+
+// DeleteTags delete tags of a project
+//
+// Gerrit API docs:https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-tags
+func (s *ProjectsService) DeleteTags(projectName string, input *DeleteTagsInput) (*Response, error) {
+	u := fmt.Sprintf("projects/%s/tags:delete", url.QueryEscape(projectName))
+
+	req, err := s.client.NewRequest("POST", u, input)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.client.Do(req, nil)
+
+	return resp, err
 }
