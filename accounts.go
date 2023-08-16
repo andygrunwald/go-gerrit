@@ -13,11 +13,6 @@ type AccountsService struct {
 
 // AccountInfo entity contains information about an account.
 //
-// TODO Add field secondary_emails
-// TODO Add field status
-// TODO Add field inactive
-// TODO Add field tags
-//
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#account-info
 type AccountInfo struct {
 	AccountID   int    `json:"_account_id,omitempty"`
@@ -32,7 +27,11 @@ type AccountInfo struct {
 		URL    string `json:"url,omitempty"`
 		Height int    `json:"height,omitempty"`
 	} `json:"avatars,omitempty"`
-	MoreAccounts bool `json:"_more_accounts,omitempty"`
+	MoreAccounts    bool     `json:"_more_accounts,omitempty"`
+	SecondaryEmails []string `json:"secondary_emails,omitempty"`
+	Status          string   `json:"status,omitempty"`
+	Inactive        bool     `json:"inactive,omitempty"`
+	Tags            []string `json:"tags,omitempty"`
 }
 
 // QueryAccountOptions queries accounts visible to the caller.
