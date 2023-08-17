@@ -40,6 +40,19 @@ type QueryAccountOptions struct {
 
 	// The `S` or `start` query parameter can be supplied to skip a number of accounts from the list.
 	Start int `url:"S,omitempty"`
+
+	AccountOptions
+}
+
+// AccountOptions specifies parameters for Query Accounts.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#query-account
+type AccountOptions struct {
+	// Additional fields can be obtained by adding o parameters.
+	// Currently supported are "DETAILS" and "ALL_EMAILS".
+	//
+	// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#query-account
+	AdditionalFields []string `url:"o,omitempty"`
 }
 
 // SSHKeyInfo entity contains information about an SSH key of a user.
@@ -242,6 +255,33 @@ type CapabilityOptions struct {
 	// To filter the set of global capabilities the q parameter can be used.
 	// Filtering may decrease the response time by avoiding looking at every possible alternative for the caller.
 	Filter []string `url:"q,omitempty"`
+}
+
+// QueryAccounts lists accounts visible to the caller.
+// The query string must be provided by the q parameter.
+// The n parameter can be used to limit the returned results.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#query-accounts
+func (s *AccountsService) QueryAccounts(opt *QueryAccountOptions) (*[]AccountInfo, *Response, error) {
+	u := "accounts/"
+
+	u, err := addOptions(u, opt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]AccountInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
 }
 
 // GetAccount returns an account as an AccountInfo entity.
