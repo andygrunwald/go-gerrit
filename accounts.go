@@ -113,6 +113,14 @@ type AccountDetailInfo struct {
 	RegisteredOn Timestamp `json:"registered_on"`
 }
 
+// AccountExternalIdInfo contains informations to link to external ID providers
+type AccountExternalIdInfo struct {
+	Identity     string `json:"identity"`
+	EmailAddress string `json:"email_address,omitempty"`
+	Trusted      bool   `json:"trusted"`
+	CanDelete    bool   `json:"can_delete,omitempty"`
+}
+
 // AccountNameInput entity contains information for setting a name for an account.
 type AccountNameInput struct {
 	Name string `json:"name,omitempty"`
@@ -269,6 +277,26 @@ func (s *AccountsService) GetAccountDetails(accountID string) (*AccountDetailInf
 	}
 
 	v := new(AccountDetailInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetAccountExternalIDs returns AccountExternalIdInfo for the account
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account-external-ids
+func (s *AccountsService) GetAccountExternalIDs(accountID string) (*[]AccountExternalIdInfo, *Response, error) {
+	u := fmt.Sprintf("accounts/%s/external.ids", accountID)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new([]AccountExternalIdInfo)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
