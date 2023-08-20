@@ -126,7 +126,7 @@ type AccountDetailInfo struct {
 	RegisteredOn Timestamp `json:"registered_on"`
 }
 
-// AccountExternalIdInfo contains informations to link to external ID providers
+// AccountExternalIdInfo entity contains information for an external id of an account.
 type AccountExternalIdInfo struct {
 	Identity     string `json:"identity"`
 	EmailAddress string `json:"email_address,omitempty"`
@@ -325,7 +325,10 @@ func (s *AccountsService) GetAccountDetails(accountID string) (*AccountDetailInf
 	return v, resp, err
 }
 
-// GetAccountExternalIDs returns AccountExternalIdInfo for the account
+// GetAccountExternalIDs retrieves the external ids of a user account.
+//
+// Only external ids belonging to the caller may be requested.
+// Users that have Modify Account can request external ids that belong to other accounts.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account-external-ids
 func (s *AccountsService) GetAccountExternalIDs(accountID string) (*[]AccountExternalIdInfo, *Response, error) {
