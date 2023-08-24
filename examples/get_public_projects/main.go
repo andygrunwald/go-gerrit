@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/andygrunwald/go-gerrit"
@@ -8,7 +9,8 @@ import (
 
 func main() {
 	instance := "https://chromium-review.googlesource.com/"
-	client, err := gerrit.NewClient(instance, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -16,7 +18,7 @@ func main() {
 	opt := &gerrit.ProjectOptions{
 		Description: true,
 	}
-	projects, _, err := client.Projects.ListProjects(opt)
+	projects, _, err := client.Projects.ListProjects(ctx, opt)
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,8 +12,9 @@ import (
 )
 
 func ExampleChangesService_QueryChanges() {
+	ctx := context.Background()
 	instance := "https://android-review.googlesource.com/"
-	client, err := gerrit.NewClient(instance, nil)
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -23,7 +25,7 @@ func ExampleChangesService_QueryChanges() {
 	}
 	opt.Limit = 2
 	opt.AdditionalFields = []string{"LABELS"}
-	changes, _, err := client.Changes.QueryChanges(opt)
+	changes, _, err := client.Changes.QueryChanges(ctx, opt)
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +40,8 @@ func ExampleChangesService_QueryChanges() {
 
 func ExampleChangesService_QueryChanges_withSubmittable() {
 	instance := "https://android-review.googlesource.com/"
-	client, err := gerrit.NewClient(instance, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +52,7 @@ func ExampleChangesService_QueryChanges_withSubmittable() {
 	}
 	opt.AdditionalFields = []string{"SUBMITTABLE"}
 
-	changes, _, err := client.Changes.QueryChanges(opt)
+	changes, _, err := client.Changes.QueryChanges(ctx, opt)
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +68,8 @@ func ExampleChangesService_QueryChanges_withSubmittable() {
 // Prior to fixing #18 this test would fail.
 func ExampleChangesService_QueryChanges_withSymbols() {
 	instance := "https://android-review.googlesource.com/"
-	client, err := gerrit.NewClient(instance, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +80,7 @@ func ExampleChangesService_QueryChanges_withSymbols() {
 	}
 	opt.Limit = 2
 	opt.AdditionalFields = []string{"LABELS"}
-	changes, _, err := client.Changes.QueryChanges(opt)
+	changes, _, err := client.Changes.QueryChanges(ctx, opt)
 	if err != nil {
 		panic(err)
 	}
@@ -95,12 +99,13 @@ func ExampleChangesService_PublishChangeEdit() {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = client.Changes.PublishChangeEdit("123", "NONE")
+	_, err = client.Changes.PublishChangeEdit(ctx, "123", "NONE")
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +174,8 @@ func TestChangesService_CreateChange(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -200,7 +206,7 @@ func TestChangesService_CreateChange(t *testing.T) {
 	}
 	for name, input := range cases {
 		t.Run(name, func(t *testing.T) {
-			info, _, err := client.Changes.CreateChange(&input)
+			info, _, err := client.Changes.CreateChange(ctx, &input)
 			if err != nil {
 				t.Error(err)
 			}
@@ -221,11 +227,12 @@ func TestChangesService_SubmitChange(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	info, _, err := client.Changes.SubmitChange("123", nil)
+	info, _, err := client.Changes.SubmitChange(ctx, "123", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -240,11 +247,12 @@ func TestChangesService_SubmitChange_Conflict(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	_, response, _ := client.Changes.SubmitChange("123", nil)
+	_, response, _ := client.Changes.SubmitChange(ctx, "123", nil)
 	if response.StatusCode != http.StatusConflict {
 		t.Error("Expected 409 code")
 	}
@@ -259,11 +267,12 @@ func TestChangesService_AbandonChange(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	info, _, err := client.Changes.AbandonChange("123", nil)
+	info, _, err := client.Changes.AbandonChange(ctx, "123", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -278,11 +287,12 @@ func TestChangesService_AbandonChange_Conflict(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	_, response, _ := client.Changes.AbandonChange("123", nil)
+	_, response, _ := client.Changes.AbandonChange(ctx, "123", nil)
 	if response.StatusCode != http.StatusConflict {
 		t.Error("Expected 409 code")
 	}
@@ -297,11 +307,12 @@ func TestChangesService_RebaseChange(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	info, _, err := client.Changes.RebaseChange("123", nil)
+	info, _, err := client.Changes.RebaseChange(ctx, "123", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -316,11 +327,12 @@ func TestChangesService_RebaseChange_Conflict(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	_, response, _ := client.Changes.RebaseChange("123", nil)
+	_, response, _ := client.Changes.RebaseChange(ctx, "123", nil)
 	if response.StatusCode != http.StatusConflict {
 		t.Error("Expected 409 code")
 	}
@@ -335,11 +347,12 @@ func TestChangesService_RestoreChange(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	info, _, err := client.Changes.RestoreChange("123", nil)
+	info, _, err := client.Changes.RestoreChange(ctx, "123", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -354,11 +367,12 @@ func TestChangesService_RestoreChange_Conflict(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	_, response, _ := client.Changes.RestoreChange("123", nil)
+	_, response, _ := client.Changes.RestoreChange(ctx, "123", nil)
 	if response.StatusCode != http.StatusConflict {
 		t.Error("Expected 409 code")
 	}
@@ -373,11 +387,12 @@ func TestChangesService_RevertChange(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	info, _, err := client.Changes.RevertChange("123", nil)
+	info, _, err := client.Changes.RevertChange(ctx, "123", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -392,11 +407,12 @@ func TestChangesService_RevertChange_Conflict(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	_, response, _ := client.Changes.RevertChange("123", nil)
+	_, response, _ := client.Changes.RevertChange(ctx, "123", nil)
 	if response.StatusCode != http.StatusConflict {
 		t.Error("Expected 409 code")
 	}
@@ -414,12 +430,13 @@ func TestChangesService_SetCommitMessage(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
 	cm := &gerrit.CommitMessageInput{Message: "New commit message"}
-	_, err = client.Changes.SetCommitMessage("123", cm)
+	_, err = client.Changes.SetCommitMessage(ctx, "123", cm)
 	if err != nil {
 		t.Error(err)
 	}
@@ -437,12 +454,13 @@ func TestChangesService_SetCommitMessage_NotFound(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
 	cm := &gerrit.CommitMessageInput{Message: "New commit message"}
-	resp, err := client.Changes.SetCommitMessage("123", cm)
+	resp, err := client.Changes.SetCommitMessage(ctx, "123", cm)
 	if err == nil {
 		t.Error("Expected error, instead nil")
 	}
@@ -463,12 +481,13 @@ func TestChangesService_SetReadyForReview(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
 	cm := &gerrit.ReadyForReviewInput{Message: "Now ready for review"}
-	_, err = client.Changes.SetReadyForReview("123", cm)
+	_, err = client.Changes.SetReadyForReview(ctx, "123", cm)
 	if err != nil {
 		t.Error(err)
 	}
@@ -486,12 +505,13 @@ func TestChangesService_SetReadyForReview_NotFound(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
 	cm := &gerrit.ReadyForReviewInput{Message: "Now ready for review"}
-	resp, err := client.Changes.SetReadyForReview("123", cm)
+	resp, err := client.Changes.SetReadyForReview(ctx, "123", cm)
 	if err == nil {
 		t.Error("Expected error, instead nil")
 	}

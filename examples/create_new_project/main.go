@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/andygrunwald/go-gerrit"
@@ -8,7 +9,8 @@ import (
 
 func main() {
 	instance := fmt.Sprintf("http://%s:8080", "localhost")
-	client, err := gerrit.NewClient(instance, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -28,7 +30,7 @@ func main() {
 		Branches:          []string{gerritBranch},
 		CreateEmptyCommit: true,
 	}
-	projectInfo, _, err := client.Projects.CreateProject(gerritProject, data)
+	projectInfo, _, err := client.Projects.CreateProject(ctx, gerritProject, data)
 	if err != nil {
 		panic(err)
 	}

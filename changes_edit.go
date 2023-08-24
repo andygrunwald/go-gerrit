@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
@@ -36,7 +37,7 @@ type ChangeEditDetailOptions struct {
 // Edits aren’t tracked in the database.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-detail
-func (s *ChangesService) GetChangeEditDetails(changeID string, opt *ChangeEditDetailOptions) (*EditInfo, *Response, error) {
+func (s *ChangesService) GetChangeEditDetails(ctx context.Context, changeID string, opt *ChangeEditDetailOptions) (*EditInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/edit", changeID)
 
 	u, err := addOptions(u, opt)
@@ -44,7 +45,7 @@ func (s *ChangesService) GetChangeEditDetails(changeID string, opt *ChangeEditDe
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -62,10 +63,10 @@ func (s *ChangesService) GetChangeEditDetails(changeID string, opt *ChangeEditDe
 // Currently only web links are returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-meta-data
-func (s *ChangesService) RetrieveMetaDataOfAFileFromChangeEdit(changeID, filePath string) (*EditFileInfo, *Response, error) {
+func (s *ChangesService) RetrieveMetaDataOfAFileFromChangeEdit(ctx context.Context, changeID, filePath string) (*EditFileInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/edit/%s/meta", changeID, filePath)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -83,9 +84,9 @@ func (s *ChangesService) RetrieveMetaDataOfAFileFromChangeEdit(changeID, filePat
 // The commit message is returned as base64 encoded string.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-message
-func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(changeID string) (string, *Response, error) {
+func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(ctx context.Context, changeID string) (string, *Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:message", changeID)
-	return getStringResponseWithoutOptions(s.client, u)
+	return getStringResponseWithoutOptions(ctx, s.client, u)
 }
 
 // ChangeFileContentInChangeEdit put content of a file to a change edit.
@@ -95,10 +96,10 @@ func (s *ChangesService) RetrieveCommitMessageFromChangeEdit(changeID string) (s
 // As response “204 No Content” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#put-edit-file
-func (s *ChangesService) ChangeFileContentInChangeEdit(changeID, filePath, content string) (*Response, error) {
+func (s *ChangesService) ChangeFileContentInChangeEdit(ctx context.Context, changeID, filePath, content string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit/%s", changeID, url.QueryEscape(filePath))
 
-	req, err := s.client.NewRawPutRequest(u, content)
+	req, err := s.client.NewRawPutRequest(ctx, u, content)
 	if err != nil {
 		return nil, err
 	}
@@ -113,10 +114,10 @@ func (s *ChangesService) ChangeFileContentInChangeEdit(changeID, filePath, conte
 // As response “204 No Content” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#put-change-edit-message
-func (s *ChangesService) ChangeCommitMessageInChangeEdit(changeID string, input *ChangeEditMessageInput) (*Response, error) {
+func (s *ChangesService) ChangeCommitMessageInChangeEdit(ctx context.Context, changeID string, input *ChangeEditMessageInput) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:message", changeID)
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, err
 	}
@@ -131,9 +132,9 @@ func (s *ChangesService) ChangeCommitMessageInChangeEdit(changeID string, input 
 // When change edit doesn’t exist for this change yet it is created.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-edit-file
-func (s *ChangesService) DeleteFileInChangeEdit(changeID, filePath string) (*Response, error) {
+func (s *ChangesService) DeleteFileInChangeEdit(ctx context.Context, changeID, filePath string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
-	return s.client.DeleteRequest(u, nil)
+	return s.client.DeleteRequest(ctx, u, nil)
 }
 
 // DeleteChangeEdit deletes change edit.
@@ -141,9 +142,9 @@ func (s *ChangesService) DeleteFileInChangeEdit(changeID, filePath string) (*Res
 // As response “204 No Content” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-edit
-func (s *ChangesService) DeleteChangeEdit(changeID string) (*Response, error) {
+func (s *ChangesService) DeleteChangeEdit(ctx context.Context, changeID string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit", changeID)
-	return s.client.DeleteRequest(u, nil)
+	return s.client.DeleteRequest(ctx, u, nil)
 }
 
 // PublishChangeEdit promotes change edit to a regular patch set.
@@ -151,10 +152,10 @@ func (s *ChangesService) DeleteChangeEdit(changeID string) (*Response, error) {
 // As response “204 No Content” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#publish-edit
-func (s *ChangesService) PublishChangeEdit(changeID, notify string) (*Response, error) {
+func (s *ChangesService) PublishChangeEdit(ctx context.Context, changeID, notify string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:publish", changeID)
 
-	req, err := s.client.NewRequest("POST", u, map[string]string{
+	req, err := s.client.NewRequest(ctx, "POST", u, map[string]string{
 		"notify": notify,
 	})
 	if err != nil {
@@ -169,10 +170,10 @@ func (s *ChangesService) PublishChangeEdit(changeID, notify string) (*Response, 
 // When change edit is already based on top of the latest patch set, the response “409 Conflict” is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#rebase-edit
-func (s *ChangesService) RebaseChangeEdit(changeID string) (*Response, error) {
+func (s *ChangesService) RebaseChangeEdit(ctx context.Context, changeID string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit:rebase", changeID)
 
-	req, err := s.client.NewRequest("POST", u, nil)
+	req, err := s.client.NewRequest(ctx, "POST", u, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -190,10 +191,10 @@ func (s *ChangesService) RebaseChangeEdit(changeID string) (*Response, error) {
 // If only the content type is required, callers should use HEAD to avoid downloading the encoded file contents.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-file
-func (s *ChangesService) RetrieveFileContentFromChangeEdit(changeID, filePath string) (*string, *Response, error) {
+func (s *ChangesService) RetrieveFileContentFromChangeEdit(ctx context.Context, changeID, filePath string) (*string, *Response, error) {
 	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -214,10 +215,10 @@ func (s *ChangesService) RetrieveFileContentFromChangeEdit(changeID, filePath st
 // For further documentation please have a look at RetrieveFileContentFromChangeEdit.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-edit-file
-func (s *ChangesService) RetrieveFileContentTypeFromChangeEdit(changeID, filePath string) (*Response, error) {
+func (s *ChangesService) RetrieveFileContentTypeFromChangeEdit(ctx context.Context, changeID, filePath string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/edit/%s", changeID, filePath)
 
-	req, err := s.client.NewRequest("HEAD", u, nil)
+	req, err := s.client.NewRequest(ctx, "HEAD", u, nil)
 	if err != nil {
 		return nil, err
 	}

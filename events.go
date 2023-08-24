@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net/url"
@@ -120,7 +121,7 @@ func (events *EventsLogService) getURL(options *EventsLogOptions) (string, error
 // unmarshalled into EventInfo.
 //
 // Gerrit API docs: https://<yourserver>/plugins/events-log/Documentation/rest-api-events.html
-func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInfo, *Response, [][]byte, error) {
+func (events *EventsLogService) GetEvents(ctx context.Context, options *EventsLogOptions) ([]EventInfo, *Response, [][]byte, error) {
 	info := []EventInfo{}
 	failures := [][]byte{}
 	requestURL, err := events.getURL(options)
@@ -129,7 +130,7 @@ func (events *EventsLogService) GetEvents(options *EventsLogOptions) ([]EventInf
 		return info, nil, failures, err
 	}
 
-	request, err := events.client.NewRequest("GET", requestURL, nil)
+	request, err := events.client.NewRequest(ctx, "GET", requestURL, nil)
 	if err != nil {
 		return info, nil, failures, err
 	}

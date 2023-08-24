@@ -1,6 +1,9 @@
 package gerrit
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // AttentionSetInfo entity contains details of users that are in the attention set.
 //
@@ -32,8 +35,8 @@ type AttentionSetInput struct {
 // AttentionSetInput.Input must be provided
 //
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#remove-from-attention-set
-func (s *ChangesService) RemoveAttention(changeID, accountID string, input *AttentionSetInput) (*Response, error) {
+func (s *ChangesService) RemoveAttention(ctx context.Context, changeID, accountID string, input *AttentionSetInput) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/attention/%s", changeID, accountID)
 
-	return s.client.DeleteRequest(u, input)
+	return s.client.DeleteRequest(ctx, u, input)
 }

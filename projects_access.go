@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
@@ -48,10 +49,10 @@ type CheckAccessOptions struct {
 // ListAccessRights lists the access rights for a single project
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-access
-func (s *ProjectsService) ListAccessRights(projectName string) (*ProjectAccessInfo, *Response, error) {
+func (s *ProjectsService) ListAccessRights(ctx context.Context, projectName string) (*ProjectAccessInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/access", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -80,10 +81,10 @@ func (s *ProjectsService) ListAccessRights(projectName string) (*ProjectAccessIn
 // After removals have been applied, additions will be applied.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-access
-func (s *ProjectsService) AddUpdateDeleteAccessRights(projectName string, input *ProjectAccessInput) (*ProjectAccessInfo, *Response, error) {
+func (s *ProjectsService) AddUpdateDeleteAccessRights(ctx context.Context, projectName string, input *ProjectAccessInput) (*ProjectAccessInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/access", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("POST", u, input)
+	req, err := s.client.NewRequest(ctx, "POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -103,10 +104,10 @@ func (s *ProjectsService) AddUpdateDeleteAccessRights(projectName string, input 
 // Like Create Change, it returns a ChangeInfo entity describing the resulting change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-access-change
-func (s *ProjectsService) CreateAccessRightChange(projectName string, input *ProjectAccessInput) (*ChangeInfo, *Response, error) {
+func (s *ProjectsService) CreateAccessRightChange(ctx context.Context, projectName string, input *ProjectAccessInput) (*ChangeInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/access:review", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -125,7 +126,7 @@ func (s *ProjectsService) CreateAccessRightChange(projectName string, input *Pro
 // The result is a AccessCheckInfo entity detailing the access of the given user for the given project, project-ref, or project-permission-ref combination.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#check-access
-func (s *ProjectsService) CheckAccess(projectName string, opt *CheckAccessOptions) (*AccessCheckInfo, *Response, error) {
+func (s *ProjectsService) CheckAccess(ctx context.Context, projectName string, opt *CheckAccessOptions) (*AccessCheckInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/check.access", url.QueryEscape(projectName))
 
 	u, err := addOptions(u, opt)
@@ -133,7 +134,7 @@ func (s *ProjectsService) CheckAccess(projectName string, opt *CheckAccessOption
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -1,5 +1,7 @@
 package gerrit
 
+import "context"
+
 // AccessService contains Access Right related REST endpoints
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-access.html
@@ -63,7 +65,7 @@ type ListAccessRightsOptions struct {
 // The entries in the map are sorted by project name.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-access.html#list-access
-func (s *AccessService) ListAccessRights(opt *ListAccessRightsOptions) (*map[string]ProjectAccessInfo, *Response, error) {
+func (s *AccessService) ListAccessRights(ctx context.Context, opt *ListAccessRightsOptions) (*map[string]ProjectAccessInfo, *Response, error) {
 	u := "access/"
 
 	u, err := addOptions(u, opt)
@@ -72,6 +74,6 @@ func (s *AccessService) ListAccessRights(opt *ListAccessRightsOptions) (*map[str
 	}
 
 	v := new(map[string]ProjectAccessInfo)
-	resp, err := s.client.Call("GET", u, nil, v)
+	resp, err := s.client.Call(ctx, "GET", u, nil, v)
 	return v, resp, err
 }

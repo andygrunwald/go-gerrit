@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
@@ -46,7 +47,7 @@ type BranchOptions struct {
 // ListBranches list the branches of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-branches
-func (s *ProjectsService) ListBranches(projectName string, opt *BranchOptions) (*[]BranchInfo, *Response, error) {
+func (s *ProjectsService) ListBranches(ctx context.Context, projectName string, opt *BranchOptions) (*[]BranchInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/", url.QueryEscape(projectName))
 
 	u, err := addOptions(u, opt)
@@ -54,7 +55,7 @@ func (s *ProjectsService) ListBranches(projectName string, opt *BranchOptions) (
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -71,10 +72,10 @@ func (s *ProjectsService) ListBranches(projectName string, opt *BranchOptions) (
 // GetBranch retrieves a branch of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-branch
-func (s *ProjectsService) GetBranch(projectName, branchID string) (*BranchInfo, *Response, error) {
+func (s *ProjectsService) GetBranch(ctx context.Context, projectName, branchID string) (*BranchInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/%s", url.QueryEscape(projectName), url.QueryEscape(branchID))
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -92,10 +93,10 @@ func (s *ProjectsService) GetBranch(projectName, branchID string) (*BranchInfo, 
 // The caller must be project owner.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-reflog
-func (s *ProjectsService) GetReflog(projectName, branchID string) (*[]ReflogEntryInfo, *Response, error) {
+func (s *ProjectsService) GetReflog(ctx context.Context, projectName, branchID string) (*[]ReflogEntryInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/%s/reflog", url.QueryEscape(projectName), url.QueryEscape(branchID))
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -113,10 +114,10 @@ func (s *ProjectsService) GetReflog(projectName, branchID string) (*[]ReflogEntr
 // In the request body additional data for the branch can be provided as BranchInput.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-branch
-func (s *ProjectsService) CreateBranch(projectName, branchID string, input *BranchInput) (*BranchInfo, *Response, error) {
+func (s *ProjectsService) CreateBranch(ctx context.Context, projectName, branchID string, input *BranchInput) (*BranchInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/%s", url.QueryEscape(projectName), url.QueryEscape(branchID))
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -133,25 +134,25 @@ func (s *ProjectsService) CreateBranch(projectName, branchID string, input *Bran
 // DeleteBranch deletes a branch.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branch
-func (s *ProjectsService) DeleteBranch(projectName, branchID string) (*Response, error) {
+func (s *ProjectsService) DeleteBranch(ctx context.Context, projectName, branchID string) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/%s", url.QueryEscape(projectName), url.QueryEscape(branchID))
-	return s.client.DeleteRequest(u, nil)
+	return s.client.DeleteRequest(ctx, u, nil)
 }
 
 // DeleteBranches delete one or more branches.
 // If some branches could not be deleted, the response is “409 Conflict” and the error message is contained in the response body.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-branches
-func (s *ProjectsService) DeleteBranches(projectName string, input *DeleteBranchesInput) (*Response, error) {
+func (s *ProjectsService) DeleteBranches(ctx context.Context, projectName string, input *DeleteBranchesInput) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/branches:delete", url.QueryEscape(projectName))
-	return s.client.DeleteRequest(u, input)
+	return s.client.DeleteRequest(ctx, u, input)
 }
 
 // GetBranchContent gets the content of a file from the HEAD revision of a certain branch.
 // The content is returned as base64 encoded string.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-content
-func (s *ProjectsService) GetBranchContent(projectName, branchID, fileID string) (string, *Response, error) {
+func (s *ProjectsService) GetBranchContent(ctx context.Context, projectName, branchID, fileID string) (string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/branches/%s/files/%s/content", url.QueryEscape(projectName), url.QueryEscape(branchID), fileID)
-	return getStringResponseWithoutOptions(s.client, u)
+	return getStringResponseWithoutOptions(ctx, s.client, u)
 }

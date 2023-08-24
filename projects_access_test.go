@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -21,7 +22,7 @@ func TestProjectsService_ListAccessRights(t *testing.T) {
 		_, _ = fmt.Fprint(w, `)]}'`+"\n"+resp)
 	})
 
-	projectAccessRight, _, err := testClient.Projects.ListAccessRights("MyProject")
+	projectAccessRight, _, err := testClient.Projects.ListAccessRights(context.Background(), "MyProject")
 	if err != nil {
 		t.Errorf("project: list access rights error: %s", err)
 	}
@@ -47,7 +48,7 @@ func TestProjectsService_AddUpdateDeleteAccessRights(t *testing.T) {
 		t.Errorf("project: add/update/delete access right request params error: %s", err)
 	}
 
-	projectAccessRight, _, err := testClient.Projects.AddUpdateDeleteAccessRights("MyProject", req)
+	projectAccessRight, _, err := testClient.Projects.AddUpdateDeleteAccessRights(context.Background(), "MyProject", req)
 	if err != nil {
 		t.Errorf("project: add/update/delete access right error: %s", err)
 	}
@@ -78,7 +79,7 @@ func TestProjectsService_AccessCheck(t *testing.T) {
 		t.Errorf("project: access check request params error: %s", err)
 	}
 
-	accessCheckInfo, _, err := testClient.Projects.CheckAccess("MyProject", req)
+	accessCheckInfo, _, err := testClient.Projects.CheckAccess(context.Background(), "MyProject", req)
 	if err != nil {
 		t.Errorf("project: access check error: %s", err)
 	}
@@ -104,7 +105,7 @@ func TestProjectsService_CreateAccessChange(t *testing.T) {
 		t.Errorf("project: create access change request params error: %s", err)
 	}
 
-	changeInfo, _, err := testClient.Projects.CreateAccessRightChange("MyProject", req)
+	changeInfo, _, err := testClient.Projects.CreateAccessRightChange(context.Background(), "MyProject", req)
 	if err != nil {
 		t.Errorf("project: create access change error: %s", err)
 	}

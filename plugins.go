@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -39,7 +40,7 @@ type PluginOptions struct {
 // The entries in the map are sorted by plugin ID.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-plugins.html#list-plugins
-func (s *PluginsService) ListPlugins(opt *PluginOptions) (*map[string]PluginInfo, *Response, error) {
+func (s *PluginsService) ListPlugins(ctx context.Context, opt *PluginOptions) (*map[string]PluginInfo, *Response, error) {
 	u := "plugins/"
 
 	u, err := addOptions(u, opt)
@@ -47,7 +48,7 @@ func (s *PluginsService) ListPlugins(opt *PluginOptions) (*map[string]PluginInfo
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -64,9 +65,9 @@ func (s *PluginsService) ListPlugins(opt *PluginOptions) (*map[string]PluginInfo
 // GetPluginStatus retrieves the status of a plugin on the Gerrit server.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-plugins.html#get-plugin-status
-func (s *PluginsService) GetPluginStatus(pluginID string) (*PluginInfo, *Response, error) {
+func (s *PluginsService) GetPluginStatus(ctx context.Context, pluginID string) (*PluginInfo, *Response, error) {
 	u := fmt.Sprintf("plugins/%s/gerrit~status", pluginID)
-	return s.requestWithPluginInfoResponse("GET", u, nil)
+	return s.requestWithPluginInfoResponse(ctx, "GET", u, nil)
 }
 
 // InstallPlugin installs a new plugin on the Gerrit server.
@@ -80,9 +81,9 @@ func (s *PluginsService) GetPluginStatus(pluginID string) (*PluginInfo, *Respons
 // If an existing plugin was overwritten the response is “200 OK”.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-dashboard
-func (s *PluginsService) InstallPlugin(pluginID string, input *PluginInput) (*PluginInfo, *Response, error) {
+func (s *PluginsService) InstallPlugin(ctx context.Context, pluginID string, input *PluginInput) (*PluginInfo, *Response, error) {
 	u := fmt.Sprintf("plugins/%s", pluginID)
-	return s.requestWithPluginInfoResponse("PUT", u, input)
+	return s.requestWithPluginInfoResponse(ctx, "PUT", u, input)
 }
 
 // EnablePlugin enables a plugin on the Gerrit server.
@@ -90,9 +91,9 @@ func (s *PluginsService) InstallPlugin(pluginID string, input *PluginInput) (*Pl
 // As response a PluginInfo entity is returned that describes the plugin.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-plugins.html#enable-plugin
-func (s *PluginsService) EnablePlugin(pluginID string) (*PluginInfo, *Response, error) {
+func (s *PluginsService) EnablePlugin(ctx context.Context, pluginID string) (*PluginInfo, *Response, error) {
 	u := fmt.Sprintf("plugins/%s/gerrit~enable", pluginID)
-	return s.requestWithPluginInfoResponse("POST", u, nil)
+	return s.requestWithPluginInfoResponse(ctx, "POST", u, nil)
 }
 
 // DisablePlugin disables a plugin on the Gerrit server.
@@ -100,9 +101,9 @@ func (s *PluginsService) EnablePlugin(pluginID string) (*PluginInfo, *Response, 
 // As response a PluginInfo entity is returned that describes the plugin.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-plugins.html#disable-plugin
-func (s *PluginsService) DisablePlugin(pluginID string) (*PluginInfo, *Response, error) {
+func (s *PluginsService) DisablePlugin(ctx context.Context, pluginID string) (*PluginInfo, *Response, error) {
 	u := fmt.Sprintf("plugins/%s/gerrit~disable", pluginID)
-	return s.requestWithPluginInfoResponse("POST", u, nil)
+	return s.requestWithPluginInfoResponse(ctx, "POST", u, nil)
 }
 
 // ReloadPlugin reloads a plugin on the Gerrit server.
@@ -110,13 +111,13 @@ func (s *PluginsService) DisablePlugin(pluginID string) (*PluginInfo, *Response,
 // As response a PluginInfo entity is returned that describes the plugin.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-plugins.html#disable-plugin
-func (s *PluginsService) ReloadPlugin(pluginID string) (*PluginInfo, *Response, error) {
+func (s *PluginsService) ReloadPlugin(ctx context.Context, pluginID string) (*PluginInfo, *Response, error) {
 	u := fmt.Sprintf("plugins/%s/gerrit~reload", pluginID)
-	return s.requestWithPluginInfoResponse("POST", u, nil)
+	return s.requestWithPluginInfoResponse(ctx, "POST", u, nil)
 }
 
-func (s *PluginsService) requestWithPluginInfoResponse(method, u string, input interface{}) (*PluginInfo, *Response, error) {
-	req, err := s.client.NewRequest(method, u, input)
+func (s *PluginsService) requestWithPluginInfoResponse(ctx context.Context, method, u string, input interface{}) (*PluginInfo, *Response, error) {
+	req, err := s.client.NewRequest(ctx, method, u, input)
 	if err != nil {
 		return nil, nil, err
 	}

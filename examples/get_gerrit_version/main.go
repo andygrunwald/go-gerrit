@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/andygrunwald/go-gerrit"
@@ -8,12 +9,13 @@ import (
 
 func main() {
 	instance := "https://gerrit-review.googlesource.com/"
-	client, err := gerrit.NewClient(instance, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	v, _, err := client.Config.GetVersion()
+	v, _, err := client.Config.GetVersion(ctx)
 	if err != nil {
 		panic(err)
 	}

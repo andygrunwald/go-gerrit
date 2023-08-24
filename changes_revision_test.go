@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -32,8 +33,9 @@ func TestChangesService_ListFiles(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	got, _, err := client.Changes.ListFiles("123", "456", &gerrit.FilesOptions{
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	got, _, err := client.Changes.ListFiles(ctx, "123", "456", &gerrit.FilesOptions{
 		Base: "7",
 	})
 	if err != nil {
@@ -67,8 +69,9 @@ func TestChangesService_ListFilesReviewed(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	got, _, err := client.Changes.ListFilesReviewed("123", "456", &gerrit.FilesOptions{
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	got, _, err := client.Changes.ListFilesReviewed(ctx, "123", "456", &gerrit.FilesOptions{
 		Q: "abc",
 	})
 	if err != nil {

@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -30,12 +31,13 @@ func TestChangesService_GetHashtags(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	hashtags, _, err := client.Changes.GetHashtags("123")
+	hashtags, _, err := client.Changes.GetHashtags(ctx, "123")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,12 +68,13 @@ func TestChangesService_SetHashtags(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client, err := gerrit.NewClient(ts.URL, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, ts.URL, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	hashtags, _, err := client.Changes.SetHashtags("123", &gerrit.HashtagsInput{
+	hashtags, _, err := client.Changes.SetHashtags(ctx, "123", &gerrit.HashtagsInput{
 		Add:    []string{"hashtag3"},
 		Remove: []string{"hashtag2"},
 	})

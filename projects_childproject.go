@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
@@ -17,7 +18,7 @@ type ChildProjectOptions struct {
 // ListChildProjects lists the direct child projects of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-child-projects
-func (s *ProjectsService) ListChildProjects(projectName string, opt *ChildProjectOptions) (*[]ProjectInfo, *Response, error) {
+func (s *ProjectsService) ListChildProjects(ctx context.Context, projectName string, opt *ChildProjectOptions) (*[]ProjectInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/children/", url.QueryEscape(projectName))
 
 	u, err := addOptions(u, opt)
@@ -25,7 +26,7 @@ func (s *ProjectsService) ListChildProjects(projectName string, opt *ChildProjec
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -43,7 +44,7 @@ func (s *ProjectsService) ListChildProjects(projectName string, opt *ChildProjec
 // If a non-direct child project should be retrieved the parameter recursive must be set.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-child-project
-func (s *ProjectsService) GetChildProject(projectName, childProjectName string, opt *ChildProjectOptions) (*ProjectInfo, *Response, error) {
+func (s *ProjectsService) GetChildProject(ctx context.Context, projectName, childProjectName string, opt *ChildProjectOptions) (*ProjectInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/children/%s", url.QueryEscape(projectName), url.QueryEscape(childProjectName))
 
 	u, err := addOptions(u, opt)
@@ -51,7 +52,7 @@ func (s *ProjectsService) GetChildProject(projectName, childProjectName string, 
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
