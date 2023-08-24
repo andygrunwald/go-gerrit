@@ -13,7 +13,12 @@ import (
 	"strings"
 
 	"github.com/google/go-querystring/query"
+	"github.com/hashicorp/go-retryablehttp"
 )
+
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
 
 // TODO Try to reduce the code duplications of a std API req
 // Maybe with http://play.golang.org/p/j-667shCCB
@@ -22,7 +27,7 @@ import (
 // A Client manages communication with the Gerrit API.
 type Client struct {
 	// client is the HTTP client used to communicate with the API.
-	client *http.Client
+	client HTTPClient
 
 	// baseURL is the base URL of the Gerrit instance for API requests.
 	// It must have a trailing slash.
@@ -83,7 +88,7 @@ var (
 // returning the client. ErrAuthenticationFailed will be returned if the credentials
 // cannot be validated. The process of validating the credentials is relatively simple and
 // only requires that the provided user have permission to GET /a/accounts/self.
-func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
+func NewClient(gerritURL string, httpClient HTTPClient) (*Client, error) {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
@@ -185,6 +190,41 @@ func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
 	}
 
 	return c, nil
+}
+
+// retryableHttpClientShim is used to provide a compatible interface for
+// retryablehttp.Client, which otherwise expects retryablehttp.Request as an
+// input to its Do() method.
+type retryableHttpClientShim struct {
+	client *retryablehttp.Client
+}
+
+func (c *retryableHttpClientShim) Do(req *http.Request) (*http.Response, error) {
+	retryableReq, err := retryablehttp.FromRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	return c.client.Do(retryableReq)
+}
+
+// NewRetryableClient returns a new Gerrit API client with retry support. gerritURL
+// specifies the HTTP endpoint of the Gerrit instance. For example,
+// "http://localhost:8080/". If gerritURL does not have a trailing slash, one is added
+// automatically.
+// If a nil httpClient is provided, a new one is created using retryablehttp.NewClient().
+//
+// The url may contain credentials, http://admin:secret@localhost:8081/ for
+// example. These credentials may either be a user name and password or
+// name and value as in the case of cookie based authentication. If the url contains
+// credentials then this function will attempt to validate the credentials before
+// returning the client. ErrAuthenticationFailed will be returned if the credentials
+// cannot be validated. The process of validating the credentials is relatively simple and
+// only requires that the provided user have permission to GET /a/accounts/self.
+func NewRetryableClient(gerritURL string, httpClient *retryablehttp.Client) (*Client, error) {
+	if httpClient == nil {
+		httpClient = retryablehttp.NewClient()
+	}
+	return NewClient(gerritURL, &retryableHttpClientShim{client: httpClient})
 }
 
 // checkAuth is used by NewClient to check if the current credentials are
