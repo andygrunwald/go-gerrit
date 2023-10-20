@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
+	"time"
 
 	"github.com/andygrunwald/go-gerrit"
 )
@@ -497,5 +499,125 @@ func TestChangesService_SetReadyForReview_NotFound(t *testing.T) {
 	}
 	if resp.StatusCode != http.StatusNotFound {
 		t.Error("Expected 404 code")
+	}
+}
+
+func TestChangesService_ListChangeRobotComment(t *testing.T) {
+	listRobotCommentResponse := `)]}'
+		{
+		  "main.c": [
+		    {
+		      "robot_id": "robot",
+		      "robot_run_id": "1",
+		      "fix_suggestions": [
+		        {
+		          "fix_id": "c3302a6f_1578ee9e",
+		          "description": "suggestion",
+		          "replacements": [
+		            {
+		              "path": "main.c",
+		              "range": {
+		                "start_line": 3,
+		                "start_character": 0,
+		                "end_line": 5,
+		                "end_character": 1
+		              },
+		              "replacement": "int main() { printf(\"Hello world!\"); }"
+		            }
+		          ]
+		        }
+		      ],
+		      "author": {
+		        "_account_id": 1000000,
+		        "name": "Jhon Smith",
+		        "username": "jhon"
+		      },
+		      "change_message_id": "517e6c92e4bd105f1e611294a3010ea177771551",
+		      "patch_set": 1,
+		      "id": "f7d3d07f_bf17b66e",
+		      "line": 5,
+		      "range": {
+		        "start_line": 3,
+		        "start_character": 0,
+		        "end_line": 5,
+		        "end_character": 1
+		      },
+		      "updated": "2022-07-05 13:44:34.000000000",
+		      "message": "[clang-format] fix suggestion",
+		      "commit_id": "be8ce493368f2ce0fa73b56f5e2bd0dc17ca4359"
+		    }
+		  ]
+		}`
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/changes/changeID/robotcomments" {
+			t.Errorf("%s != /changes/changeID/robotcomments", r.URL.Path)
+		}
+		if r.Method != "GET" {
+			t.Error("Method != GET")
+		}
+		fmt.Fprint(w, listRobotCommentResponse)
+	}))
+	defer ts.Close()
+
+	client, err := gerrit.NewClient(ts.URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	got, _, err := client.Changes.ListChangeRobotComments("changeID")
+	if err != nil {
+		t.Errorf("Changes.ListChangeRobotComments returned error: %v", err)
+	}
+
+	want := map[string][]gerrit.RobotCommentInfo{
+		"main.c": {
+			{
+				CommentInfo: gerrit.CommentInfo{
+					PatchSet: 1,
+					ID:       "f7d3d07f_bf17b66e",
+					Line:     5,
+					Range: &gerrit.CommentRange{
+						StartLine:      3,
+						StartCharacter: 0,
+						EndLine:        5,
+						EndCharacter:   1,
+					},
+					Message: "[clang-format] fix suggestion",
+					Updated: &gerrit.Timestamp{
+						Time: time.Date(2022, 7, 5, 13, 44, 34, 0, time.UTC),
+					},
+					Author: gerrit.AccountInfo{
+						AccountID: 1000000,
+						Name:      "Jhon Smith",
+						Username:  "jhon",
+					},
+				},
+				RobotID:    "robot",
+				RobotRunID: "1",
+				FixSuggestions: []gerrit.FixSuggestionInfo{
+					{
+						FixID:       "c3302a6f_1578ee9e",
+						Description: "suggestion",
+						Replacements: []gerrit.FixReplacementInfo{
+							{
+								Path: "main.c",
+								Range: gerrit.CommentRange{
+									StartLine:      3,
+									StartCharacter: 0,
+									EndLine:        5,
+									EndCharacter:   1,
+								},
+								Replacement: "int main() { printf(\"Hello world!\"); }",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Change.ListChangeRobotComments:\ngot: %+v\nwant: %+v", got, want)
 	}
 }

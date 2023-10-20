@@ -320,7 +320,7 @@ type RobotCommentInput struct {
 	Properties *map[string]*string `json:"properties,omitempty"`
 	// Suggested fixes for this robot comment as a list of FixSuggestionInfo
 	// entities.
-	FixSuggestions *FixSuggestionInfo `json:"fix_suggestions,omitempty"`
+	FixSuggestions []FixSuggestionInfo `json:"fix_suggestions,omitempty"`
 }
 
 // RobotCommentInfo entity contains information about a robot inline comment
@@ -339,7 +339,7 @@ type RobotCommentInfo struct {
 	Properties map[string]string `json:"properties,omitempty"`
 	// Suggested fixes for this robot comment as a list of FixSuggestionInfo
 	// entities.
-	FixSuggestions *FixSuggestionInfo `json:"fix_suggestions,omitempty"`
+	FixSuggestions []FixSuggestionInfo `json:"fix_suggestions,omitempty"`
 }
 
 // FixSuggestionInfo entity represents a suggested fix.
@@ -353,7 +353,7 @@ type FixSuggestionInfo struct {
 	// A list of FixReplacementInfo entities indicating how the content of one or
 	// several files should be modified. Within a file, they should refer to
 	// non-overlapping regions.
-	Replacements FixReplacementInfo `json:"replacements"`
+	Replacements []FixReplacementInfo `json:"replacements"`
 }
 
 // FixReplacementInfo entity describes how the content of a file should be replaced by another content.
@@ -370,7 +370,7 @@ type FixReplacementInfo struct {
 	Range CommentRange `json:"range"`
 
 	// The content which should be used instead of the current one.
-	Replacement string `json:"replacement,omitempty"`
+	Replacement string `json:"replacement"`
 }
 
 // DiffIntralineInfo entity contains information about intraline edits in a file.
@@ -688,7 +688,16 @@ func (s *ChangesService) GetIncludedIn(changeID string) (*IncludedInInfo, *Respo
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-comments
 func (s *ChangesService) ListChangeComments(changeID string) (*map[string][]CommentInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/comments", changeID)
-	return s.getCommentInfoMapResponse(u)
+	return s.getCommentInfoMapSliceResponse(u)
+}
+
+// Lists the robot comments of all revisions of the change.
+// Return a map that maps the file path to a list of RobotCommentInfo entries. The entries in the map are sorted by file path.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-robot-comments
+func (s *ChangesService) ListChangeRobotComments(changeID string) (map[string][]RobotCommentInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/robotcomments", changeID)
+	return s.getRobotCommentInfoMapSliceResponse(u)
 }
 
 // ListChangeDrafts lLists the draft comments of all revisions of the change that belong to the calling user.
@@ -698,23 +707,7 @@ func (s *ChangesService) ListChangeComments(changeID string) (*map[string][]Comm
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-change-drafts
 func (s *ChangesService) ListChangeDrafts(changeID string) (*map[string][]CommentInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/drafts", changeID)
-	return s.getCommentInfoMapResponse(u)
-}
-
-// getCommentInfoMapResponse retrieved a map of CommentInfo Response for a GET request
-func (s *ChangesService) getCommentInfoMapResponse(u string) (*map[string][]CommentInfo, *Response, error) {
-	req, err := s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(map[string][]CommentInfo)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return v, resp, err
+	return s.getCommentInfoMapSliceResponse(u)
 }
 
 // CheckChange performs consistency checks on the change, and returns a ChangeInfo entity with the problems field set to a list of ProblemInfo entities.
@@ -752,6 +745,22 @@ func (s *ChangesService) getCommentInfoMapSliceResponse(u string) (*map[string][
 
 	v := new(map[string][]CommentInfo)
 	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// getRobotCommentInfoMapSliceResponse retrieved a map with a slice of RobotCommentInfo Response for a GET request
+func (s *ChangesService) getRobotCommentInfoMapSliceResponse(u string) (map[string][]RobotCommentInfo, *Response, error) {
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var v map[string][]RobotCommentInfo
+	resp, err := s.client.Do(req, &v)
 	if err != nil {
 		return nil, resp, err
 	}
