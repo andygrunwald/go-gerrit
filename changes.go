@@ -165,7 +165,12 @@ type ProblemInfo struct {
 
 // RebaseInput entity contains information for changing parent when rebasing.
 type RebaseInput struct {
-	Base string `json:"base,omitempty"`
+	Base               string            `json:"base,omitempty"`
+	Strategy           string            `json:"strategy,omitempty"`
+	AllowConflicts     bool              `json:"allow_conflicts,omitempty"`
+	OnBehalfOfUploader bool              `json:"on_behalf_of_uploader,omitempty"`
+	CommitterEmail     string            `json:"committer_email,omitempty"`
+	ValidationOptions  map[string]string `json:"validation_options,omitempty"`
 }
 
 // RestoreInput entity contains information for restoring a change.
