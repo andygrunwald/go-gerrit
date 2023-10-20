@@ -32,7 +32,7 @@ type BranchOptions struct {
 	Limit int `url:"n,omitempty"`
 
 	// Skip the given number of branches from the beginning of the list.
-	Skip string `url:"s,omitempty"`
+	Skip int `url:"S,omitempty"`
 
 	// Substring limits the results to those projects that match the specified substring.
 	Substring string `url:"m,omitempty"`
