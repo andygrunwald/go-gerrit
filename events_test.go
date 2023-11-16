@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"net/http"
 	"testing"
 	"time"
@@ -30,7 +31,7 @@ func TestEventsLogService_GetEvents_NoDateRange(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{}
-	events, _, _, err := testClient.EventsLog.GetEvents(options)
+	events, _, _, err := testClient.EventsLog.GetEvents(context.Background(), options)
 	if err != nil {
 		t.Error(err)
 	}
@@ -80,7 +81,7 @@ func TestEventsLogService_GetEvents_DateRangeFromAndTo(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{From: from, To: to}
-	_, _, _, err := testClient.EventsLog.GetEvents(options)
+	_, _, _, err := testClient.EventsLog.GetEvents(context.Background(), options)
 	if err != nil {
 		t.Error(err)
 	}
@@ -111,7 +112,7 @@ func TestEventsLogService_GetEvents_DateRangeFromOnly(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{From: from}
-	_, _, _, err := testClient.EventsLog.GetEvents(options)
+	_, _, _, err := testClient.EventsLog.GetEvents(context.Background(), options)
 	if err != nil {
 		t.Error(err)
 	}
@@ -141,7 +142,7 @@ func TestEventsLogService_GetEvents_DateRangeToOnly(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{To: to}
-	_, _, _, err := testClient.EventsLog.GetEvents(options)
+	_, _, _, err := testClient.EventsLog.GetEvents(context.Background(), options)
 	if err != nil {
 		t.Error(err)
 	}
@@ -158,7 +159,7 @@ func TestEventsLogService_GetEvents_UnmarshalError(t *testing.T) {
 	})
 
 	options := &gerrit.EventsLogOptions{IgnoreUnmarshalErrors: true}
-	events, _, failures, err := testClient.EventsLog.GetEvents(options)
+	events, _, failures, err := testClient.EventsLog.GetEvents(context.Background(), options)
 	if err != nil {
 		t.Error(err)
 	}

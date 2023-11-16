@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -8,10 +9,10 @@ import (
 // The entries in the list are sorted by group name and UUID.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#included-groups
-func (s *GroupsService) ListIncludedGroups(groupID string) (*[]GroupInfo, *Response, error) {
+func (s *GroupsService) ListIncludedGroups(ctx context.Context, groupID string) (*[]GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/groups/", groupID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -28,10 +29,10 @@ func (s *GroupsService) ListIncludedGroups(groupID string) (*[]GroupInfo, *Respo
 // GetIncludedGroup retrieves an included group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-included-group
-func (s *GroupsService) GetIncludedGroup(groupID, includeGroupID string) (*GroupInfo, *Response, error) {
+func (s *GroupsService) GetIncludedGroup(ctx context.Context, groupID, includeGroupID string) (*GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/groups/%s", groupID, includeGroupID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -52,10 +53,10 @@ func (s *GroupsService) GetIncludedGroup(groupID, includeGroupID string) (*Group
 // The request also succeeds if the group is already included in this group, but then the HTTP response code is 200 OK.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#include-group
-func (s *GroupsService) IncludeGroup(groupID, includeGroupID string) (*GroupInfo, *Response, error) {
+func (s *GroupsService) IncludeGroup(ctx context.Context, groupID, includeGroupID string) (*GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/groups/%s", groupID, includeGroupID)
 
-	req, err := s.client.NewRequest("PUT", u, nil)
+	req, err := s.client.NewRequest(ctx, "PUT", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -76,10 +77,10 @@ func (s *GroupsService) IncludeGroup(groupID, includeGroupID string) (*GroupInfo
 // A GroupInfo entity is returned for each group specified in the input, independently of whether the group was newly included into the group or whether the group was already included in the group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#include-groups
-func (s *GroupsService) IncludeGroups(groupID string, input *GroupsInput) (*[]GroupInfo, *Response, error) {
+func (s *GroupsService) IncludeGroups(ctx context.Context, groupID string, input *GroupsInput) (*[]GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/groups", groupID)
 
-	req, err := s.client.NewRequest("POST", u, input)
+	req, err := s.client.NewRequest(ctx, "POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -96,19 +97,19 @@ func (s *GroupsService) IncludeGroups(groupID string, input *GroupsInput) (*[]Gr
 // DeleteIncludedGroup deletes an included group from a Gerrit internal group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#include-group
-func (s *GroupsService) DeleteIncludedGroup(groupID, includeGroupID string) (*Response, error) {
+func (s *GroupsService) DeleteIncludedGroup(ctx context.Context, groupID, includeGroupID string) (*Response, error) {
 	u := fmt.Sprintf("groups/%s/groups/%s", groupID, includeGroupID)
-	return s.client.DeleteRequest(u, nil)
+	return s.client.DeleteRequest(ctx, u, nil)
 }
 
 // DeleteIncludedGroups delete one or several included groups from a Gerrit internal group.
 // The groups to be deleted from the group must be provided in the request body as a GroupsInput entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#delete-included-groups
-func (s *GroupsService) DeleteIncludedGroups(groupID string, input *GroupsInput) (*Response, error) {
+func (s *GroupsService) DeleteIncludedGroups(ctx context.Context, groupID string, input *GroupsInput) (*Response, error) {
 	u := fmt.Sprintf("groups/%s/groups.delete", groupID)
 
-	req, err := s.client.NewRequest("POST", u, input)
+	req, err := s.client.NewRequest(ctx, "POST", u, input)
 	if err != nil {
 		return nil, err
 	}

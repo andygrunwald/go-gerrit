@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
@@ -217,7 +218,7 @@ type ProjectOptions struct {
 // The entries in the map are sorted by project name.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-projects
-func (s *ProjectsService) ListProjects(opt *ProjectOptions) (*map[string]ProjectInfo, *Response, error) {
+func (s *ProjectsService) ListProjects(ctx context.Context, opt *ProjectOptions) (*map[string]ProjectInfo, *Response, error) {
 	u := "projects/"
 
 	u, err := addOptions(u, opt)
@@ -226,29 +227,29 @@ func (s *ProjectsService) ListProjects(opt *ProjectOptions) (*map[string]Project
 	}
 
 	v := new(map[string]ProjectInfo)
-	resp, err := s.client.Call("GET", u, nil, v)
+	resp, err := s.client.Call(ctx, "GET", u, nil, v)
 	return v, resp, err
 }
 
 // GetProject retrieves a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project
-func (s *ProjectsService) GetProject(projectName string) (*ProjectInfo, *Response, error) {
+func (s *ProjectsService) GetProject(ctx context.Context, projectName string) (*ProjectInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s", url.QueryEscape(projectName))
 
 	v := new(ProjectInfo)
-	resp, err := s.client.Call("GET", u, nil, v)
+	resp, err := s.client.Call(ctx, "GET", u, nil, v)
 	return v, resp, err
 }
 
 // CreateProject creates a new project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#create-project
-func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput) (*ProjectInfo, *Response, error) {
+func (s *ProjectsService) CreateProject(ctx context.Context, projectName string, input *ProjectInput) (*ProjectInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/", url.QueryEscape(projectName))
 
 	v := new(ProjectInfo)
-	resp, err := s.client.Call("PUT", u, input, v)
+	resp, err := s.client.Call(ctx, "PUT", u, input, v)
 	return v, resp, err
 }
 
@@ -257,45 +258,45 @@ func (s *ProjectsService) CreateProject(projectName string, input *ProjectInput)
 // Note: requires installation of delete-project plugin
 //
 // Gerrit API docs: https://gerrit.googlesource.com/plugins/delete-project/+/refs/heads/master/src/main/resources/Documentation/rest-api-projects.md
-func (s *ProjectsService) DeleteProject(projectName string, input *DeleteOptionsInfo) (*Response, error) {
+func (s *ProjectsService) DeleteProject(ctx context.Context, projectName string, input *DeleteOptionsInfo) (*Response, error) {
 	u := fmt.Sprintf("projects/%s", projectName)
 
-	return s.client.DeleteRequest(u, input)
+	return s.client.DeleteRequest(ctx, u, input)
 }
 
 // GetProjectDescription retrieves the description of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-description
-func (s *ProjectsService) GetProjectDescription(projectName string) (string, *Response, error) {
+func (s *ProjectsService) GetProjectDescription(ctx context.Context, projectName string) (string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/description", url.QueryEscape(projectName))
 
-	return getStringResponseWithoutOptions(s.client, u)
+	return getStringResponseWithoutOptions(ctx, s.client, u)
 }
 
 // GetProjectParent retrieves the name of a project’s parent project.
 // For the All-Projects root project an empty string is returned.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-project-parent
-func (s *ProjectsService) GetProjectParent(projectName string) (string, *Response, error) {
+func (s *ProjectsService) GetProjectParent(ctx context.Context, projectName string) (string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/parent", url.QueryEscape(projectName))
-	return getStringResponseWithoutOptions(s.client, u)
+	return getStringResponseWithoutOptions(ctx, s.client, u)
 }
 
 // GetHEAD retrieves for a project the name of the branch to which HEAD points.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-head
-func (s *ProjectsService) GetHEAD(projectName string) (string, *Response, error) {
+func (s *ProjectsService) GetHEAD(ctx context.Context, projectName string) (string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/HEAD", url.QueryEscape(projectName))
-	return getStringResponseWithoutOptions(s.client, u)
+	return getStringResponseWithoutOptions(ctx, s.client, u)
 }
 
 // GetRepositoryStatistics return statistics for the repository of a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-repository-statistics
-func (s *ProjectsService) GetRepositoryStatistics(projectName string) (*RepositoryStatisticsInfo, *Response, error) {
+func (s *ProjectsService) GetRepositoryStatistics(ctx context.Context, projectName string) (*RepositoryStatisticsInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/statistics.git", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -314,10 +315,10 @@ func (s *ProjectsService) GetRepositoryStatistics(projectName string) (*Reposito
 // it generally contains fields that may have been inherited from parent projects.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-config
-func (s *ProjectsService) GetConfig(projectName string) (*ConfigInfo, *Response, error) {
+func (s *ProjectsService) GetConfig(ctx context.Context, projectName string) (*ConfigInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/config", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -335,12 +336,12 @@ func (s *ProjectsService) GetConfig(projectName string) (*ConfigInfo, *Response,
 // The new project description must be provided in the request body inside a ProjectDescriptionInput entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-project-description
-func (s *ProjectsService) SetProjectDescription(projectName string, input *ProjectDescriptionInput) (*string, *Response, error) {
+func (s *ProjectsService) SetProjectDescription(ctx context.Context, projectName string, input *ProjectDescriptionInput) (*string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/description", url.QueryEscape(projectName))
 
 	// TODO Use here the getStringResponseWithoutOptions (for PUT requests)
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -361,9 +362,9 @@ func (s *ProjectsService) SetProjectDescription(projectName string, input *Proje
 // In this case, if you want to specify a commit message, use PUT to delete the description.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-project-description
-func (s *ProjectsService) DeleteProjectDescription(projectName string) (*Response, error) {
+func (s *ProjectsService) DeleteProjectDescription(ctx context.Context, projectName string) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/description", url.QueryEscape(projectName))
-	return s.client.DeleteRequest(u, nil)
+	return s.client.DeleteRequest(ctx, u, nil)
 }
 
 // BanCommit marks commits as banned for the project.
@@ -377,10 +378,10 @@ func (s *ProjectsService) DeleteProjectDescription(projectName string) (*Respons
 // The caller must be project owner.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#ban-commit
-func (s *ProjectsService) BanCommit(projectName string, input *BanInput) (*BanResultInfo, *Response, error) {
+func (s *ProjectsService) BanCommit(ctx context.Context, projectName string, input *BanInput) (*BanResultInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/ban", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -398,10 +399,10 @@ func (s *ProjectsService) BanCommit(projectName string, input *BanInput) (*BanRe
 // The new configuration must be provided in the request body as a ConfigInput entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-config
-func (s *ProjectsService) SetConfig(projectName string, input *ConfigInput) (*ConfigInfo, *Response, error) {
+func (s *ProjectsService) SetConfig(ctx context.Context, projectName string, input *ConfigInput) (*ConfigInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/config", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -419,12 +420,12 @@ func (s *ProjectsService) SetConfig(projectName string, input *ConfigInput) (*Co
 // The new ref to which HEAD should point must be provided in the request body inside a HeadInput entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-head
-func (s *ProjectsService) SetHEAD(projectName string, input *HeadInput) (*string, *Response, error) {
+func (s *ProjectsService) SetHEAD(ctx context.Context, projectName string, input *HeadInput) (*string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/HEAD", url.QueryEscape(projectName))
 
 	// TODO Use here the getStringResponseWithoutOptions (for PUT requests)
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -442,12 +443,12 @@ func (s *ProjectsService) SetHEAD(projectName string, input *HeadInput) (*string
 // The new name of the parent project must be provided in the request body inside a ProjectParentInput entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-project-parent
-func (s *ProjectsService) SetProjectParent(projectName string, input *ProjectParentInput) (*string, *Response, error) {
+func (s *ProjectsService) SetProjectParent(ctx context.Context, projectName string, input *ProjectParentInput) (*string, *Response, error) {
 	u := fmt.Sprintf("projects/%s/parent", url.QueryEscape(projectName))
 
 	// TODO Use here the getStringResponseWithoutOptions (for PUT requests)
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -465,10 +466,10 @@ func (s *ProjectsService) SetProjectParent(projectName string, input *ProjectPar
 // The response is the streamed output of the garbage collection.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#run-gc
-func (s *ProjectsService) RunGC(projectName string, input *GCInput) (*Response, error) {
+func (s *ProjectsService) RunGC(ctx context.Context, projectName string, input *GCInput) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/gc", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("POST", u, input)
+	req, err := s.client.NewRequest(ctx, "POST", u, input)
 	if err != nil {
 		return nil, err
 	}

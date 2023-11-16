@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -9,8 +10,8 @@ import (
 	"github.com/andygrunwald/go-gerrit"
 )
 
-func newClient(t *testing.T, server *httptest.Server) *gerrit.Client {
-	client, err := gerrit.NewClient(server.URL, nil)
+func newClient(ctx context.Context, t *testing.T, server *httptest.Server) *gerrit.Client {
+	client, err := gerrit.NewClient(ctx, server.URL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -28,8 +29,9 @@ func TestChangesService_ListReviewers(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	data, _, err := client.Changes.ListReviewers("123")
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	data, _, err := client.Changes.ListReviewers(ctx, "123")
 	if err != nil {
 		t.Error(err)
 	}
@@ -54,8 +56,9 @@ func TestChangesService_SuggestReviewers(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	data, _, err := client.Changes.SuggestReviewers("123", nil)
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	data, _, err := client.Changes.SuggestReviewers(ctx, "123", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -80,8 +83,9 @@ func TestChangesService_GetReviewer(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	data, _, err := client.Changes.GetReviewer("123", "1")
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	data, _, err := client.Changes.GetReviewer(ctx, "123", "1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -104,8 +108,9 @@ func TestChangesService_AddReviewer(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	data, _, err := client.Changes.AddReviewer("123", &gerrit.ReviewerInput{})
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	data, _, err := client.Changes.AddReviewer(ctx, "123", &gerrit.ReviewerInput{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -127,8 +132,9 @@ func TestChangesService_DeleteReviewer(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	_, err := client.Changes.DeleteReviewer("123", "1")
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	_, err := client.Changes.DeleteReviewer(ctx, "123", "1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -144,8 +150,9 @@ func TestChangesService_ListVotes(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	votes, _, err := client.Changes.ListVotes("123", "1")
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	votes, _, err := client.Changes.ListVotes(ctx, "123", "1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -171,8 +178,9 @@ func TestChangesService_DeleteVote(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(t, ts)
-	_, err := client.Changes.DeleteVote("123", "1", "Code-Review", nil)
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	_, err := client.Changes.DeleteVote(ctx, "123", "1", "Code-Review", nil)
 	if err != nil {
 		t.Error(err)
 	}

@@ -1,14 +1,17 @@
 package gerrit
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // GetHashtags gets the hashtags associated with a change.
 //
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-hashtags
-func (c *ChangesService) GetHashtags(changeID string) ([]string, *Response, error) {
+func (c *ChangesService) GetHashtags(ctx context.Context, changeID string) ([]string, *Response, error) {
 	u := fmt.Sprintf("changes/%s/hashtags", changeID)
 
-	req, err := c.client.NewRequest("GET", u, nil)
+	req, err := c.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -35,10 +38,10 @@ type HashtagsInput struct {
 // As response the change’s hashtags are returned as a list of strings.
 //
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#set-hashtags
-func (c *ChangesService) SetHashtags(changeID string, input *HashtagsInput) ([]string, *Response, error) {
+func (c *ChangesService) SetHashtags(ctx context.Context, changeID string, input *HashtagsInput) ([]string, *Response, error) {
 	u := fmt.Sprintf("changes/%s/hashtags", changeID)
 
-	req, err := c.client.NewRequest("POST", u, input)
+	req, err := c.client.NewRequest(ctx, "POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}

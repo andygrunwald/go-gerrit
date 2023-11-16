@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -28,7 +29,7 @@ func TestProjectsService_ListProjects(t *testing.T) {
 		Regex: "(arch|benchmarks)",
 	}
 	opt.Limit = 2
-	project, _, err := testClient.Projects.ListProjects(opt)
+	project, _, err := testClient.Projects.ListProjects(context.Background(), opt)
 	if err != nil {
 		t.Errorf("Projects.ListProjects returned error: %v", err)
 	}
@@ -59,7 +60,7 @@ func TestProjectsService_GetProject(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"id":"go","name":"go","parent":"All-Projects","description":"The Go Programming Language","state":"ACTIVE"}`)
 	})
 
-	project, _, err := testClient.Projects.GetProject("go")
+	project, _, err := testClient.Projects.GetProject(context.Background(), "go")
 	if err != nil {
 		t.Errorf("Projects.GetProject returned error: %v", err)
 	}
@@ -88,7 +89,7 @@ func TestProjectsService_GetProject_WithSlash(t *testing.T) {
 		c := `)]}'` + "\n" + `{"id":"plugins%2Fdelete-project","name":"plugins/delete-project","parent":"Public-Plugins","description":"A plugin which allows projects to be deleted from Gerrit via an SSH command","state":"ACTIVE"}`
 		fmt.Fprint(w, c)
 	})
-	project, _, err := testClient.Projects.GetProject("plugins/delete-project")
+	project, _, err := testClient.Projects.GetProject(context.Background(), "plugins/delete-project")
 	if err != nil {
 		t.Errorf("Projects.GetProject returned error: %v", err)
 	}
@@ -130,7 +131,7 @@ func TestProjectsService_CreateProject(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"id":"go","name":"go","parent":"All-Projects","description":"The Go Programming Language"}`)
 	})
 
-	project, _, err := testClient.Projects.CreateProject("go", input)
+	project, _, err := testClient.Projects.CreateProject(context.Background(), "go", input)
 	if err != nil {
 		t.Errorf("Projects.CreateProject returned error: %v", err)
 	}
@@ -158,7 +159,7 @@ func TestProjectsService_GetProjectDescription(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`"The Go Programming Language"`)
 	})
 
-	description, _, err := testClient.Projects.GetProjectDescription("go")
+	description, _, err := testClient.Projects.GetProjectDescription(context.Background(), "go")
 	if err != nil {
 		t.Errorf("Projects.GetProjectDescription returned error: %v", err)
 	}
@@ -172,7 +173,8 @@ func TestProjectsService_GetProjectDescription(t *testing.T) {
 
 func ExampleProjectsService_ListProjects() {
 	instance := "https://chromium-review.googlesource.com/"
-	client, err := gerrit.NewClient(instance, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -181,7 +183,7 @@ func ExampleProjectsService_ListProjects() {
 		Description: true,
 		Prefix:      "infra/infra/infra_l",
 	}
-	projects, _, err := client.Projects.ListProjects(opt)
+	projects, _, err := client.Projects.ListProjects(ctx, opt)
 	if err != nil {
 		panic(err)
 	}
@@ -255,7 +257,7 @@ func TestProjectsService_GetBranch(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		branchInfo, _, err := testClient.Projects.GetBranch("go", tc.branch)
+		branchInfo, _, err := testClient.Projects.GetBranch(context.Background(), "go", tc.branch)
 		if err != nil {
 			t.Errorf("tc %s: Projects.GetProject returned error: %v", tc.name, err)
 		}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/andygrunwald/go-gerrit"
@@ -8,7 +9,8 @@ import (
 
 func main() {
 	instance := "https://android-review.googlesource.com/"
-	client, err := gerrit.NewClient(instance, nil)
+	ctx := context.Background()
+	client, err := gerrit.NewClient(ctx, instance, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -16,7 +18,7 @@ func main() {
 	opt := &gerrit.QueryChangeOptions{}
 	opt.Query = []string{"project:kernel/common"}
 	opt.AdditionalFields = []string{"LABELS"}
-	changes, _, err := client.Changes.QueryChanges(opt)
+	changes, _, err := client.Changes.QueryChanges(ctx, opt)
 	if err != nil {
 		panic(err)
 	}

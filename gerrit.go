@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -83,7 +84,7 @@ var (
 // returning the client. ErrAuthenticationFailed will be returned if the credentials
 // cannot be validated. The process of validating the credentials is relatively simple and
 // only requires that the provided user have permission to GET /a/accounts/self.
-func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
+func NewClient(ctx context.Context, gerritURL string, httpClient *http.Client) (*Client, error) {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
@@ -163,19 +164,19 @@ func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
 	if hasAuth {
 		// Digest auth (first since that's the default auth type)
 		c.Authentication.SetDigestAuth(username, password)
-		if success, err := checkAuth(c); success || err != nil {
+		if success, err := checkAuth(ctx, c); success || err != nil {
 			return c, err
 		}
 
 		// Basic auth
 		c.Authentication.SetBasicAuth(username, password)
-		if success, err := checkAuth(c); success || err != nil {
+		if success, err := checkAuth(ctx, c); success || err != nil {
 			return c, err
 		}
 
 		// Cookie auth
 		c.Authentication.SetCookieAuth(username, password)
-		if success, err := checkAuth(c); success || err != nil {
+		if success, err := checkAuth(ctx, c); success || err != nil {
 			return c, err
 		}
 
@@ -189,8 +190,8 @@ func NewClient(gerritURL string, httpClient *http.Client) (*Client, error) {
 
 // checkAuth is used by NewClient to check if the current credentials are
 // valid. If the response is 401 Unauthorized then the error will be discarded.
-func checkAuth(client *Client) (bool, error) {
-	_, response, err := client.Accounts.GetAccount("self")
+func checkAuth(ctx context.Context, client *Client) (bool, error) {
+	_, response, err := client.Accounts.GetAccount(ctx, "self")
 	switch err {
 	case ErrWWWAuthenticateHeaderMissing:
 		return false, nil
@@ -214,7 +215,7 @@ func checkAuth(client *Client) (bool, error) {
 // A relative URL can be provided in urlStr, in which case it is resolved relative to the baseURL of the Client.
 // Relative URLs should always be specified without a preceding slash.
 // If specified, the value pointed to by body is JSON encoded and included as the request body.
-func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
+func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
 	// Build URL for request
 	u, err := c.buildURLForRequest(urlStr)
 	if err != nil {
@@ -230,13 +231,13 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		}
 	}
 
-	req, err := http.NewRequest(method, u, buf)
+	req, err := http.NewRequestWithContext(ctx, method, u, buf)
 	if err != nil {
 		return nil, err
 	}
 
 	// Apply Authentication
-	if err := c.addAuthentication(req); err != nil {
+	if err := c.addAuthentication(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -258,7 +259,7 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 
 // NewRawPutRequest creates a raw PUT request and makes no attempt to encode
 // or marshal the body. Just passes it straight through.
-func (c *Client) NewRawPutRequest(urlStr string, body string) (*http.Request, error) {
+func (c *Client) NewRawPutRequest(ctx context.Context, urlStr string, body string) (*http.Request, error) {
 	// Build URL for request
 	u, err := c.buildURLForRequest(urlStr)
 	if err != nil {
@@ -266,13 +267,13 @@ func (c *Client) NewRawPutRequest(urlStr string, body string) (*http.Request, er
 	}
 
 	buf := bytes.NewBuffer([]byte(body))
-	req, err := http.NewRequest("PUT", u, buf)
+	req, err := http.NewRequestWithContext(ctx, "PUT", u, buf)
 	if err != nil {
 		return nil, err
 	}
 
 	// Apply Authentication
-	if err := c.addAuthentication(req); err != nil {
+	if err := c.addAuthentication(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -301,8 +302,8 @@ func (c *Client) NewRawPutRequest(urlStr string, body string) (*http.Request, er
 // v is the HTTP response.
 //
 // For more information read https://github.com/google/go-github/issues/234
-func (c *Client) Call(method, u string, body interface{}, v interface{}) (*Response, error) {
-	req, err := c.NewRequest(method, u, body)
+func (c *Client) Call(ctx context.Context, method, u string, body interface{}, v interface{}) (*Response, error) {
+	req, err := c.NewRequest(ctx, method, u, body)
 	if err != nil {
 		return nil, err
 	}
@@ -385,7 +386,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	return response, err
 }
 
-func (c *Client) addAuthentication(req *http.Request) error {
+func (c *Client) addAuthentication(ctx context.Context, req *http.Request) error {
 	// Apply HTTP Basic Authentication
 	if c.Authentication.HasBasicAuth() {
 		req.SetBasicAuth(c.Authentication.name, c.Authentication.secret)
@@ -414,7 +415,7 @@ func (c *Client) addAuthentication(req *http.Request) error {
 
 		// WARNING: Don't use c.NewRequest here unless you like
 		// infinite recursion.
-		digestRequest, err := http.NewRequest(req.Method, uri, nil)
+		digestRequest, err := http.NewRequestWithContext(ctx, req.Method, uri, nil)
 		digestRequest.Header.Set("Accept", "*/*")
 		digestRequest.Header.Set("Content-Type", "application/json")
 		if err != nil {
@@ -449,8 +450,8 @@ func (c *Client) addAuthentication(req *http.Request) error {
 //
 // Relative URLs should always be specified without a preceding slash.
 // If specified, the value pointed to by body is JSON encoded and included as the request body.
-func (c *Client) DeleteRequest(urlStr string, body interface{}) (*Response, error) {
-	req, err := c.NewRequest("DELETE", urlStr, body)
+func (c *Client) DeleteRequest(ctx context.Context, urlStr string, body interface{}) (*Response, error) {
+	req, err := c.NewRequest(ctx, "DELETE", urlStr, body)
 	if err != nil {
 		return nil, err
 	}
@@ -560,8 +561,8 @@ func addOptions(s string, opt interface{}) (string, error) {
 }
 
 // getStringResponseWithoutOptions retrieved a single string Response for a GET request
-func getStringResponseWithoutOptions(client *Client, u string) (string, *Response, error) {
+func getStringResponseWithoutOptions(ctx context.Context, client *Client, u string) (string, *Response, error) {
 	v := new(string)
-	resp, err := client.Call("GET", u, nil, v)
+	resp, err := client.Call(ctx, "GET", u, nil, v)
 	return *v, resp, err
 }

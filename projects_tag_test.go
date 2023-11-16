@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -36,7 +37,7 @@ func TestProjectsService_CreateTag(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"ref":"v1.0.0","revision":"master","message":"v1.0.0 release"}`)
 	})
 
-	tag, _, err := testClient.Projects.CreateTag("go", "v1.0.0", input)
+	tag, _, err := testClient.Projects.CreateTag(context.Background(), "go", "v1.0.0", input)
 	if err != nil {
 		t.Errorf("Projects.CreateTag returned error: %v", err)
 	}
@@ -61,7 +62,7 @@ func TestProjectsService_DeleteTag(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	_, err := testClient.Projects.DeleteTag("go", "v1.0.0")
+	_, err := testClient.Projects.DeleteTag(context.Background(), "go", "v1.0.0")
 	if err != nil {
 		t.Errorf("Projects.DeleteTag returned error: %v", err)
 	}
@@ -87,7 +88,7 @@ func TestProjectsService_DeleteTags(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	_, err := testClient.Projects.DeleteTags("go", input)
+	_, err := testClient.Projects.DeleteTags(context.Background(), "go", input)
 	if err != nil {
 		t.Errorf("Projects.DeleteTags returned error: %v", err)
 	}

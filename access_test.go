@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -25,7 +26,7 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 	opt := &gerrit.ListAccessRightsOptions{
 		Project: []string{"go"},
 	}
-	access, _, err := testClient.Access.ListAccessRights(opt)
+	access, _, err := testClient.Access.ListAccessRights(context.Background(), opt)
 	if err != nil {
 		t.Errorf("Access.ListAccessRights returned error: %v", err)
 	}
@@ -60,7 +61,7 @@ func TestAccessService_ListAccessRights_WithoutOpts(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{}`)
 	})
 
-	access, _, err := testClient.Access.ListAccessRights(nil)
+	access, _, err := testClient.Access.ListAccessRights(context.Background(), nil)
 	if err != nil {
 		t.Errorf("Access.ListAccessRights returned error: %v", err)
 	}

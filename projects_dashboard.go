@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
@@ -35,10 +36,10 @@ type DashboardInfo struct {
 // ListDashboards list custom dashboards for a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#list-dashboards
-func (s *ProjectsService) ListDashboards(projectName string) (*[]DashboardInfo, *Response, error) {
+func (s *ProjectsService) ListDashboards(ctx context.Context, projectName string) (*[]DashboardInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/dashboards/", url.QueryEscape(projectName))
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -55,10 +56,10 @@ func (s *ProjectsService) ListDashboards(projectName string) (*[]DashboardInfo, 
 // GetDashboard list custom dashboards for a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#get-dashboard
-func (s *ProjectsService) GetDashboard(projectName, dashboardName string) (*DashboardInfo, *Response, error) {
+func (s *ProjectsService) GetDashboard(ctx context.Context, projectName, dashboardName string) (*DashboardInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/dashboards/%s", url.QueryEscape(projectName), url.QueryEscape(dashboardName))
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -78,10 +79,10 @@ func (s *ProjectsService) GetDashboard(projectName, dashboardName string) (*Dash
 // The creation/update information for the dashboard must be provided in the request body as a DashboardInput entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#set-dashboard
-func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *DashboardInput) (*DashboardInfo, *Response, error) {
+func (s *ProjectsService) SetDashboard(ctx context.Context, projectName, dashboardID string, input *DashboardInput) (*DashboardInfo, *Response, error) {
 	u := fmt.Sprintf("projects/%s/dashboards/%s", url.QueryEscape(projectName), url.QueryEscape(dashboardID))
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -102,7 +103,7 @@ func (s *ProjectsService) SetDashboard(projectName, dashboardID string, input *D
 // Please note that some proxies prohibit request bodies for DELETE requests.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#delete-dashboard
-func (s *ProjectsService) DeleteDashboard(projectName, dashboardID string, input *DashboardInput) (*Response, error) {
+func (s *ProjectsService) DeleteDashboard(ctx context.Context, projectName, dashboardID string, input *DashboardInput) (*Response, error) {
 	u := fmt.Sprintf("projects/%s/dashboards/%s", url.QueryEscape(projectName), url.QueryEscape(dashboardID))
-	return s.client.DeleteRequest(u, input)
+	return s.client.DeleteRequest(ctx, u, input)
 }

@@ -1,6 +1,7 @@
 package gerrit_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -19,7 +20,7 @@ func TestProjectsService_GetIncludeIn(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"branches": ["master"],"tags": ["1.1.0"]}`)
 	})
 
-	includedInInfo, _, err := testClient.Projects.GetIncludeIn("swift", "a8a477efffbbf3b44169bb9a1d3a334cbbd9aa96")
+	includedInInfo, _, err := testClient.Projects.GetIncludeIn(context.Background(), "swift", "a8a477efffbbf3b44169bb9a1d3a334cbbd9aa96")
 	if err != nil {
 		t.Errorf("Projects.GetIncludeIn returned error: %v", err)
 	}

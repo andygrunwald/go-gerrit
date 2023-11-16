@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -37,10 +38,10 @@ type DeleteVoteInput struct {
 // ListReviewers lists the reviewers of a change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-reviewers
-func (s *ChangesService) ListReviewers(changeID string) (*[]ReviewerInfo, *Response, error) {
+func (s *ChangesService) ListReviewers(ctx context.Context, changeID string) (*[]ReviewerInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers/", changeID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -58,7 +59,7 @@ func (s *ChangesService) ListReviewers(changeID string) (*[]ReviewerInfo, *Respo
 // If result limit is not passed, then the default 10 is used.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#suggest-reviewers
-func (s *ChangesService) SuggestReviewers(changeID string, opt *QueryOptions) (*[]SuggestedReviewerInfo, *Response, error) {
+func (s *ChangesService) SuggestReviewers(ctx context.Context, changeID string, opt *QueryOptions) (*[]SuggestedReviewerInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/suggest_reviewers", changeID)
 
 	u, err := addOptions(u, opt)
@@ -66,7 +67,7 @@ func (s *ChangesService) SuggestReviewers(changeID string, opt *QueryOptions) (*
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -83,10 +84,10 @@ func (s *ChangesService) SuggestReviewers(changeID string, opt *QueryOptions) (*
 // GetReviewer retrieves a reviewer of a change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-reviewer
-func (s *ChangesService) GetReviewer(changeID, accountID string) (*ReviewerInfo, *Response, error) {
+func (s *ChangesService) GetReviewer(ctx context.Context, changeID, accountID string) (*ReviewerInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers/%s", changeID, accountID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -109,10 +110,10 @@ func (s *ChangesService) GetReviewer(changeID, accountID string) (*ReviewerInfo,
 // If a group with many members is added as reviewer a confirmation may be required.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#add-reviewer
-func (s *ChangesService) AddReviewer(changeID string, input *ReviewerInput) (*AddReviewerResult, *Response, error) {
+func (s *ChangesService) AddReviewer(ctx context.Context, changeID string, input *ReviewerInput) (*AddReviewerResult, *Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers", changeID)
 
-	req, err := s.client.NewRequest("POST", u, input)
+	req, err := s.client.NewRequest(ctx, "POST", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -129,17 +130,17 @@ func (s *ChangesService) AddReviewer(changeID string, input *ReviewerInput) (*Ad
 // DeleteReviewer deletes a reviewer from a change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-reviewer
-func (s *ChangesService) DeleteReviewer(changeID, accountID string) (*Response, error) {
+func (s *ChangesService) DeleteReviewer(ctx context.Context, changeID, accountID string) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers/%s", changeID, accountID)
-	return s.client.DeleteRequest(u, nil)
+	return s.client.DeleteRequest(ctx, u, nil)
 }
 
 // ListVotes lists the votes for a specific reviewer of the change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-votes
-func (s *ChangesService) ListVotes(changeID string, accountID string) (map[string]int, *Response, error) {
+func (s *ChangesService) ListVotes(ctx context.Context, changeID string, accountID string) (map[string]int, *Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers/%s/votes/", changeID, accountID)
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -157,7 +158,7 @@ func (s *ChangesService) ListVotes(changeID string, accountID string) (map[strin
 // the change.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-vote
-func (s *ChangesService) DeleteVote(changeID string, accountID string, label string, input *DeleteVoteInput) (*Response, error) {
+func (s *ChangesService) DeleteVote(ctx context.Context, changeID string, accountID string, label string, input *DeleteVoteInput) (*Response, error) {
 	u := fmt.Sprintf("changes/%s/reviewers/%s/votes/%s", changeID, accountID, label)
-	return s.client.DeleteRequest(u, input)
+	return s.client.DeleteRequest(ctx, u, input)
 }

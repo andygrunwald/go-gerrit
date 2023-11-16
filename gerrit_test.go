@@ -2,6 +2,7 @@ package gerrit_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -41,7 +42,7 @@ func setup() {
 	testServer = httptest.NewServer(testMux)
 
 	// gerrit client configured to use test server
-	testClient, _ = gerrit.NewClient(testServer.URL, nil)
+	testClient, _ = gerrit.NewClient(context.Background(), testServer.URL, nil)
 }
 
 // teardown closes the test HTTP server.
@@ -115,7 +116,7 @@ func testQueryValues(t *testing.T, r *http.Request, values testValues) {
 func TestNewClient_NoGerritInstance(t *testing.T) {
 	mockData := []string{"", "://not-existing"}
 	for _, data := range mockData {
-		c, err := gerrit.NewClient(data, nil)
+		c, err := gerrit.NewClient(context.Background(), data, nil)
 		if c != nil {
 			t.Errorf("NewClient return is not nil. Expected no client. Go %+v", c)
 		}
@@ -126,7 +127,7 @@ func TestNewClient_NoGerritInstance(t *testing.T) {
 }
 
 func TestNewClient_Services(t *testing.T) {
-	c, err := gerrit.NewClient("https://gerrit-review.googlesource.com/", nil)
+	c, err := gerrit.NewClient(context.Background(), "https://gerrit-review.googlesource.com/", nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
@@ -158,14 +159,14 @@ func TestNewClient_Services(t *testing.T) {
 }
 
 func TestNewClient_TestErrNoInstanceGiven(t *testing.T) {
-	_, err := gerrit.NewClient("", nil)
+	_, err := gerrit.NewClient(context.Background(), "", nil)
 	if err != gerrit.ErrNoInstanceGiven {
 		t.Error("Expected `ErrNoInstanceGiven`")
 	}
 }
 
 func TestNewClient_NoCredentials(t *testing.T) {
-	client, err := gerrit.NewClient("http://localhost/", nil)
+	client, err := gerrit.NewClient(context.Background(), "http://localhost/", nil)
 	if err != nil {
 		t.Errorf("Unexpected error: %s", err.Error())
 	}
@@ -175,7 +176,7 @@ func TestNewClient_NoCredentials(t *testing.T) {
 }
 
 func TestNewClient_UsernameWithoutPassword(t *testing.T) {
-	_, err := gerrit.NewClient("http://foo@localhost/", nil)
+	_, err := gerrit.NewClient(context.Background(), "http://foo@localhost/", nil)
 	if err != gerrit.ErrUserProvidedWithoutPassword {
 		t.Error("Expected ErrUserProvidedWithoutPassword")
 	}
@@ -189,8 +190,9 @@ func TestNewClient_AuthenticationFailed(t *testing.T) {
 		writeresponse(t, w, nil, http.StatusUnauthorized)
 	})
 
+	ctx := context.Background()
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClient(serverURL, nil)
+	client, err := gerrit.NewClient(ctx, serverURL, nil)
 	if err != gerrit.ErrAuthenticationFailed {
 		t.Error(err)
 	}
@@ -227,8 +229,9 @@ func TestNewClient_DigestAuth(t *testing.T) {
 		}
 	})
 
+	ctx := context.Background()
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClient(serverURL, nil)
+	client, err := gerrit.NewClient(ctx, serverURL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -266,7 +269,7 @@ func TestNewClient_BasicAuth(t *testing.T) {
 	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClient(serverURL, nil)
+	client, err := gerrit.NewClient(context.Background(), serverURL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -341,7 +344,7 @@ func TestNewClient_BasicAuth_PasswordWithSlashes(t *testing.T) {
 	serverURL := fmt.Sprintf(
 		"http://admin:ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg@%s",
 		testServer.Listener.Addr().String())
-	client, err := gerrit.NewClient(serverURL, nil)
+	client, err := gerrit.NewClient(context.Background(), serverURL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -380,7 +383,7 @@ func TestNewClient_CookieAuth(t *testing.T) {
 	})
 
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
-	client, err := gerrit.NewClient(serverURL, nil)
+	client, err := gerrit.NewClient(context.Background(), serverURL, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -390,14 +393,15 @@ func TestNewClient_CookieAuth(t *testing.T) {
 }
 
 func TestNewRequest(t *testing.T) {
-	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
+	ctx := context.Background()
+	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
 
 	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
 	inBody, outBody := &gerrit.PermissionRuleInfo{Action: "ALLOW", Force: true, Min: 0, Max: 0}, `{"action":"ALLOW","force":true,"min":0,"max":0}`+"\n"
-	req, _ := c.NewRequest("GET", inURL, inBody)
+	req, _ := c.NewRequest(ctx, "GET", inURL, inBody)
 
 	// Test that relative URL was expanded
 	if got, want := req.URL.String(), outURL; got != want {
@@ -412,13 +416,14 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestNewRawPutRequest(t *testing.T) {
-	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
+	ctx := context.Background()
+	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
 
 	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
-	req, _ := c.NewRawPutRequest(inURL, "test raw PUT contents")
+	req, _ := c.NewRawPutRequest(ctx, inURL, "test raw PUT contents")
 
 	// Test that relative URL was expanded
 	if got, want := req.URL.String(), outURL; got != want {
@@ -442,11 +447,12 @@ func testURLParseError(t *testing.T, err error) {
 }
 
 func TestNewRequest_BadURL(t *testing.T) {
-	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
+	ctx := context.Background()
+	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
-	_, err = c.NewRequest("GET", ":", nil)
+	_, err = c.NewRequest(ctx, "GET", ":", nil)
 	testURLParseError(t, err)
 }
 
@@ -455,11 +461,12 @@ func TestNewRequest_BadURL(t *testing.T) {
 // since there is no difference between an HTTP request body that is an empty string versus one that is not set at all.
 // However in certain cases, intermediate systems may treat these differently resulting in subtle errors.
 func TestNewRequest_EmptyBody(t *testing.T) {
-	c, err := gerrit.NewClient(testGerritInstanceURL, nil)
+	ctx := context.Background()
+	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
 		t.Errorf("An error occured. Expected nil. Got %+v.", err)
 	}
-	req, err := c.NewRequest("GET", "/", nil)
+	req, err := c.NewRequest(ctx, "GET", "/", nil)
 	if err != nil {
 		t.Fatalf("NewRequest returned unexpected error: %v", err)
 	}
@@ -483,7 +490,7 @@ func TestDo(t *testing.T) {
 		fmt.Fprint(w, `)]}'`+"\n"+`{"A":"a"}`)
 	})
 
-	req, err := testClient.NewRequest("GET", "/", nil)
+	req, err := testClient.NewRequest(context.Background(), "GET", "/", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -510,7 +517,7 @@ func TestDo_ioWriter(t *testing.T) {
 		fmt.Fprint(w, content)
 	})
 
-	req, err := testClient.NewRequest("GET", "/", nil)
+	req, err := testClient.NewRequest(context.Background(), "GET", "/", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -534,7 +541,7 @@ func TestDo_HTTPError(t *testing.T) {
 		http.Error(w, "Bad Request", 400)
 	})
 
-	req, _ := testClient.NewRequest("GET", "/", nil)
+	req, _ := testClient.NewRequest(context.Background(), "GET", "/", nil)
 	_, err := testClient.Do(req, nil)
 
 	if err == nil {
@@ -552,7 +559,7 @@ func TestDo_RedirectLoop(t *testing.T) {
 		http.Redirect(w, r, "/", http.StatusFound)
 	})
 
-	req, _ := testClient.NewRequest("GET", "/", nil)
+	req, _ := testClient.NewRequest(context.Background(), "GET", "/", nil)
 	_, err := testClient.Do(req, nil)
 
 	if err == nil {
@@ -597,7 +604,7 @@ func TestNewClientFailsOnDeadConnection(t *testing.T) {
 	setup()
 	serverURL := fmt.Sprintf("http://admin:secret@%s/", testServer.Listener.Addr().String())
 	teardown() // Closes the server
-	_, err := gerrit.NewClient(serverURL, nil)
+	_, err := gerrit.NewClient(context.Background(), serverURL, nil)
 	if err == nil {
 		t.Fatal("Expected err to not be nil")
 	}

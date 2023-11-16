@@ -1,6 +1,7 @@
 package gerrit
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -89,7 +90,7 @@ type ListGroupsOptions struct {
 // The entries in the map are sorted by group name.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#list-groups
-func (s *GroupsService) ListGroups(opt *ListGroupsOptions) (*map[string]GroupInfo, *Response, error) {
+func (s *GroupsService) ListGroups(ctx context.Context, opt *ListGroupsOptions) (*map[string]GroupInfo, *Response, error) {
 	u := "groups/"
 
 	u, err := addOptions(u, opt)
@@ -97,7 +98,7 @@ func (s *GroupsService) ListGroups(opt *ListGroupsOptions) (*map[string]GroupInf
 		return nil, nil, err
 	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -114,22 +115,22 @@ func (s *GroupsService) ListGroups(opt *ListGroupsOptions) (*map[string]GroupInf
 // GetGroup retrieves a group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group
-func (s *GroupsService) GetGroup(groupID string) (*GroupInfo, *Response, error) {
+func (s *GroupsService) GetGroup(ctx context.Context, groupID string) (*GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s", groupID)
-	return s.getGroupInfoResponse(u)
+	return s.getGroupInfoResponse(ctx, u)
 }
 
 // GetGroupDetail retrieves a group with the direct members and the directly included groups.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-detail
-func (s *GroupsService) GetGroupDetail(groupID string) (*GroupInfo, *Response, error) {
+func (s *GroupsService) GetGroupDetail(ctx context.Context, groupID string) (*GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/detail", groupID)
-	return s.getGroupInfoResponse(u)
+	return s.getGroupInfoResponse(ctx, u)
 }
 
 // getGroupInfoResponse retrieved a single GroupInfo Response for a GET request
-func (s *GroupsService) getGroupInfoResponse(u string) (*GroupInfo, *Response, error) {
-	req, err := s.client.NewRequest("GET", u, nil)
+func (s *GroupsService) getGroupInfoResponse(ctx context.Context, u string) (*GroupInfo, *Response, error) {
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -146,26 +147,26 @@ func (s *GroupsService) getGroupInfoResponse(u string) (*GroupInfo, *Response, e
 // GetGroupName retrieves the name of a group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-name
-func (s *GroupsService) GetGroupName(groupID string) (string, *Response, error) {
+func (s *GroupsService) GetGroupName(ctx context.Context, groupID string) (string, *Response, error) {
 	u := fmt.Sprintf("groups/%s/name", groupID)
-	return getStringResponseWithoutOptions(s.client, u)
+	return getStringResponseWithoutOptions(ctx, s.client, u)
 }
 
 // GetGroupDescription retrieves the description of a group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-description
-func (s *GroupsService) GetGroupDescription(groupID string) (string, *Response, error) {
+func (s *GroupsService) GetGroupDescription(ctx context.Context, groupID string) (string, *Response, error) {
 	u := fmt.Sprintf("groups/%s/description", groupID)
-	return getStringResponseWithoutOptions(s.client, u)
+	return getStringResponseWithoutOptions(ctx, s.client, u)
 }
 
 // GetGroupOptions retrieves the options of a group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-options
-func (s *GroupsService) GetGroupOptions(groupID string) (*GroupOptionsInfo, *Response, error) {
+func (s *GroupsService) GetGroupOptions(ctx context.Context, groupID string) (*GroupOptionsInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/options", groupID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -182,10 +183,10 @@ func (s *GroupsService) GetGroupOptions(groupID string) (*GroupOptionsInfo, *Res
 // GetGroupOwner retrieves the owner group of a Gerrit internal group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-group-owner
-func (s *GroupsService) GetGroupOwner(groupID string) (*GroupInfo, *Response, error) {
+func (s *GroupsService) GetGroupOwner(ctx context.Context, groupID string) (*GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/owner", groupID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -203,10 +204,10 @@ func (s *GroupsService) GetGroupOwner(groupID string) (*GroupInfo, *Response, er
 // The returned audit events are sorted by date in reverse order so that the newest audit event comes first.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#get-audit-log
-func (s *GroupsService) GetAuditLog(groupID string) (*[]GroupAuditEventInfo, *Response, error) {
+func (s *GroupsService) GetAuditLog(ctx context.Context, groupID string) (*[]GroupAuditEventInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/log.audit", groupID)
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -227,10 +228,10 @@ func (s *GroupsService) GetAuditLog(groupID string) (*[]GroupAuditEventInfo, *Re
 // If the group creation fails because the name is already in use the response is “409 Conflict”.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#create-group
-func (s *GroupsService) CreateGroup(groupID string, input *GroupInput) (*GroupInfo, *Response, error) {
+func (s *GroupsService) CreateGroup(ctx context.Context, groupID string, input *GroupInput) (*GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s", groupID)
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -251,7 +252,7 @@ func (s *GroupsService) CreateGroup(groupID string, input *GroupInput) (*GroupIn
 // If renaming the group fails because the new name is already in use the response is “409 Conflict”.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#rename-group
-func (s *GroupsService) RenameGroup(groupID, name string) (*string, *Response, error) {
+func (s *GroupsService) RenameGroup(ctx context.Context, groupID, name string) (*string, *Response, error) {
 	u := fmt.Sprintf("groups/%s/name", groupID)
 	input := struct {
 		Name string `json:"name"`
@@ -259,7 +260,7 @@ func (s *GroupsService) RenameGroup(groupID, name string) (*string, *Response, e
 		Name: name,
 	}
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -280,7 +281,7 @@ func (s *GroupsService) RenameGroup(groupID, name string) (*string, *Response, e
 // If the description was deleted the response is “204 No Content”.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#set-group-description
-func (s *GroupsService) SetGroupDescription(groupID, description string) (*string, *Response, error) {
+func (s *GroupsService) SetGroupDescription(ctx context.Context, groupID, description string) (*string, *Response, error) {
 	u := fmt.Sprintf("groups/%s/description", groupID)
 	input := struct {
 		Description string `json:"description"`
@@ -288,7 +289,7 @@ func (s *GroupsService) SetGroupDescription(groupID, description string) (*strin
 		Description: description,
 	}
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -305,9 +306,9 @@ func (s *GroupsService) SetGroupDescription(groupID, description string) (*strin
 // DeleteGroupDescription deletes the description of a Gerrit internal group.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#delete-group-description
-func (s *GroupsService) DeleteGroupDescription(groupID string) (*Response, error) {
+func (s *GroupsService) DeleteGroupDescription(ctx context.Context, groupID string) (*Response, error) {
 	u := fmt.Sprintf("groups/%s/description", groupID)
-	return s.client.DeleteRequest(u, nil)
+	return s.client.DeleteRequest(ctx, u, nil)
 }
 
 // SetGroupOptions sets the options of a Gerrit internal group.
@@ -316,10 +317,10 @@ func (s *GroupsService) DeleteGroupDescription(groupID string) (*Response, error
 // As response the new group options are returned as a GroupOptionsInfo entity.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#set-group-options
-func (s *GroupsService) SetGroupOptions(groupID string, input *GroupOptionsInput) (*GroupOptionsInfo, *Response, error) {
+func (s *GroupsService) SetGroupOptions(ctx context.Context, groupID string, input *GroupOptionsInput) (*GroupOptionsInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/options", groupID)
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -338,7 +339,7 @@ func (s *GroupsService) SetGroupOptions(groupID string, input *GroupOptionsInput
 // The new owner can be specified by name, by group UUID or by the legacy numeric group ID.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-groups.html#set-group-owner
-func (s *GroupsService) SetGroupOwner(groupID, owner string) (*GroupInfo, *Response, error) {
+func (s *GroupsService) SetGroupOwner(ctx context.Context, groupID, owner string) (*GroupInfo, *Response, error) {
 	u := fmt.Sprintf("groups/%s/owner", groupID)
 	input := struct {
 		Owner string `json:"owner"`
@@ -346,7 +347,7 @@ func (s *GroupsService) SetGroupOwner(groupID, owner string) (*GroupInfo, *Respo
 		Owner: owner,
 	}
 
-	req, err := s.client.NewRequest("PUT", u, input)
+	req, err := s.client.NewRequest(ctx, "PUT", u, input)
 	if err != nil {
 		return nil, nil, err
 	}
