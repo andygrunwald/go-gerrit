@@ -487,6 +487,17 @@ type MergeInput struct {
 	AllowConflicts bool   `json:"allow_conflicts,omitempty"`
 }
 
+// The ParentInfo entity contains information about the parent commit of a patch-set.
+type ParentInfo struct {
+	BranchName             string `json:"branch_name,omitempty"`
+	CommitID               string `json:"commit_id,omitempty"`
+	IsMergedInTargetBranch bool   `json:"is_merged_in_target_branch"`
+	ChangeID               string `json:"change_id,omitempty"`
+	ChangeNumber           int    `json:"change_number,omitempty"`
+	PatchSetNumber         int    `json:"patch_set_number,omitempty"`
+	ChangeStatus           string `json:"change_status,omitempty"`
+}
+
 // RevisionInfo entity contains information about a patch set.
 type RevisionInfo struct {
 	Kind              RevisionKind          `json:"kind,omitempty"`
@@ -501,6 +512,7 @@ type RevisionInfo struct {
 	Actions           map[string]ActionInfo `json:"actions,omitempty"`
 	Reviewed          bool                  `json:"reviewed,omitempty"`
 	MessageWithFooter string                `json:"messageWithFooter,omitempty"`
+	ParentsData       []ParentInfo          `json:"parents_data,omitempty"`
 }
 
 // CommentInfo entity contains information about an inline comment.
