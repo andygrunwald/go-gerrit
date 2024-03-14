@@ -249,7 +249,7 @@ type ReviewerInput struct {
 type ReviewInput struct {
 	Message                          string                         `json:"message,omitempty"`
 	Tag                              string                         `json:"tag,omitempty"`
-	Labels                           map[string]int              `json:"labels,omitempty"`
+	Labels                           map[string]int                 `json:"labels,omitempty"`
 	Comments                         map[string][]CommentInput      `json:"comments,omitempty"`
 	RobotComments                    map[string][]RobotCommentInput `json:"robot_comments,omitempty"`
 	StrictLabels                     bool                           `json:"strict_labels,omitempty"`
