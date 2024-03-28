@@ -202,8 +202,10 @@ type ReviewerUpdateInfo struct {
 // made to a review.
 type ReviewResult struct {
 	ReviewInfo
-	Reviewers map[string]AddReviewerResult `json:"reviewers,omitempty"`
-	Ready     bool                         `json:"ready,omitempty"`
+	Reviewers  map[string]AddReviewerResult `json:"reviewers,omitempty"`
+	Ready      bool                         `json:"ready,omitempty"`
+	Error      string                       `json:"error,omitempty"`
+	ChangeInfo ChangeInfo                   `json:"change_info"`
 }
 
 // TopicInput entity contains information for setting a topic.
