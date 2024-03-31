@@ -305,7 +305,7 @@ type CommentInput struct {
 type MoveInput struct {
 	DestinationBranch string `json:"destination_branch"`
 	Message           string `json:"message,omitempty"`
-	KeepAllLabels     bool   `json:"keep_all_labels"`
+	KeepAllVotes      bool   `json:"keep_all_votes"`
 }
 
 // RobotCommentInput entity contains information for creating an inline robot comment.
