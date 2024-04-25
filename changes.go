@@ -226,7 +226,10 @@ type SubmitRecord struct {
 
 // SubmitInput entity contains information for submitting a change.
 type SubmitInput struct {
-	WaitForMerge bool `json:"wait_for_merge"`
+	OnBehalfOf    string                       `json:"on_behalf_of,omitempty"`
+	Notify        string                       `json:"notify,omitempty"`
+	NotifyDetails map[RecipientType]NotifyInfo `json:"notify_details,omitempty"`
+	WaitForMerge  bool                         `json:"wait_for_merge,omitempty"`
 }
 
 // SubmitInfo entity contains information about the change status after submitting.
