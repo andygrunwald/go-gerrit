@@ -101,8 +101,18 @@ type ChangeMessageInfo struct {
 
 // CherryPickInput entity contains information for cherry-picking a change to a new branch.
 type CherryPickInput struct {
-	Message     string `json:"message"`
-	Destination string `json:"destination"`
+	Message           string                       `json:"message,omitempty"`
+	Destination       string                       `json:"destination"`
+	Base              string                       `json:"base,omitempty"`
+	Parent            int                          `json:"parent,omitempty"`
+	Notify            string                       `json:"notify,omitempty"`
+	NotifyDetails     map[RecipientType]NotifyInfo `json:"notify_details,omitempty"`
+	KeepReviewers     bool                         `json:"keep_reviewers,omitempty"`
+	AllowConflicts    bool                         `json:"allow_conflicts,omitempty"`
+	Topic             string                       `json:"topic,omitempty"`
+	AllowEmpty        bool                         `json:"allow_empty,omitempty"`
+	CommitterEmail    string                       `json:"committer_email,omitempty"`
+	ValidationOptions map[string]string            `json:"validation_options,omitempty"`
 }
 
 // CommentRange entity describes the range of an inline comment.
