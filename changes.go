@@ -223,15 +223,38 @@ type TopicInput struct {
 	Topic string `json:"topic,omitempty"`
 }
 
+type Account struct {
+	AccountId int      `json:"_account_id"`
+	Name      string   `json:"name"`
+	Email     string   `json:"email"`
+	Username  string   `json:"username"`
+	Tags      []string `json:"tags,omitempty"`
+}
+
+type SubmitRecordLabel struct {
+	Label     string   `json:"label"`
+	Status    string   `json:"status"`
+	AppliedBy *Account `json:"applied_by,omitempty"`
+}
+
 // SubmitRecord entity describes results from a submit_rule.
 type SubmitRecord struct {
+	RuleName     string                            `json:"rule_name"`
 	Status       string                            `json:"status"`
+	Labels       []SubmitRecordLabel               `json:"labels"`
 	Ok           map[string]map[string]AccountInfo `json:"ok,omitempty"`
 	Reject       map[string]map[string]AccountInfo `json:"reject,omitempty"`
 	Need         map[string]interface{}            `json:"need,omitempty"`
 	May          map[string]map[string]AccountInfo `json:"may,omitempty"`
 	Impossible   map[string]interface{}            `json:"impossible,omitempty"`
+	Requirements []Requirement                     `json:"requirements,omitempty"`
 	ErrorMessage string                            `json:"error_message,omitempty"`
+}
+
+type Requirement struct {
+	Status       string `json:"status"`
+	FallbackText string `json:"fallback_text"`
+	Type         string `json:"type"`
 }
 
 // SubmitInput entity contains information for submitting a change.
@@ -472,6 +495,7 @@ type ChangeInfo struct {
 	CherryPickOfPatchSet   int                         `json:"cherry_pick_of_patch_set,omitempty"`
 	ContainsGitConflicts   bool                        `json:"contains_git_conflicts,omitempty"`
 	BaseChange             string                      `json:"base_change,omitempty"`
+	SubmitRecords          []SubmitRecord              `json:"submit_records"`
 }
 
 // LabelInfo entity contains information about a label on a change, always corresponding to the current patch set.
