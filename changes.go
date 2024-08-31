@@ -60,6 +60,20 @@ type AbandonInput struct {
 }
 type IntStr string
 
+// UnmarshalJSON implements the json.Unmarshaler interface for IntStr
+func (i *IntStr) UnmarshalJSON(data []byte) error {
+	// Remove quotes from the JSON string
+	str := string(data)
+	// Convert string to int
+	val, err := strconv.Atoi(str)
+	if err != nil {
+		return err
+	}
+	// Set the value
+	*i = IntStr(fmt.Sprintf("%d", val))
+	return nil
+}
+
 func (i IntStr) Int() int {
 	v, err := strconv.Atoi(string(i))
 	if err != nil {
