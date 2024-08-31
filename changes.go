@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 // RevisionKind describes the change kind.
@@ -57,12 +58,27 @@ type AbandonInput struct {
 	Notify        string       `json:"notify,omitempty"`
 	NotifyDetails []NotifyInfo `json:"notify_details,omitempty"`
 }
+type IntStr string
+
+func (i IntStr) Int() int {
+	v, err := strconv.Atoi(string(i))
+	if err != nil {
+		return 0
+	}
+	return v
+}
+
+func (i IntStr) String() string {
+	return string(i)
+}
 
 // ApprovalInfo entity contains information about an approval from a user for a label on a change.
 type ApprovalInfo struct {
 	AccountInfo
-	Value int    `json:"value,omitempty"`
-	Date  string `json:"date,omitempty"`
+	Value       IntStr `json:"value,omitempty"`
+	OldValue    IntStr `json:"old_value,omitempty"`
+	Description string `json:"description,omitempty"`
+	Date        string `json:"date,omitempty"`
 }
 
 // CommitMessageInput entity contains information for changing the commit message of a change.
@@ -223,35 +239,27 @@ type TopicInput struct {
 	Topic string `json:"topic,omitempty"`
 }
 
-type Account struct {
-	AccountId int      `json:"_account_id"`
-	Name      string   `json:"name"`
-	Email     string   `json:"email"`
-	Username  string   `json:"username"`
-	Tags      []string `json:"tags,omitempty"`
+type SubmitRecordInfoLabel struct {
+	Label     string      `json:"label,omitempty"`
+	Status    string      `json:"status,omitempty"`
+	AppliedBy AccountInfo `json:"applied_by,omitempty"`
 }
 
-type SubmitRecordLabel struct {
-	Label     string   `json:"label"`
-	Status    string   `json:"status"`
-	AppliedBy *Account `json:"applied_by,omitempty"`
-}
-
-// SubmitRecord entity describes results from a submit_rule.
-type SubmitRecord struct {
-	RuleName     string                            `json:"rule_name"`
-	Status       string                            `json:"status"`
-	Labels       []SubmitRecordLabel               `json:"labels"`
+// SubmitRecordInfo entity describes results from a submit_rule.
+type SubmitRecordInfo struct {
+	RuleName     string                            `json:"rule_name,omitempty"`
+	Status       string                            `json:"status,omitempty"`
+	Labels       []SubmitRecordInfoLabel           `json:"labels,omitempty"`
 	Ok           map[string]map[string]AccountInfo `json:"ok,omitempty"`
 	Reject       map[string]map[string]AccountInfo `json:"reject,omitempty"`
 	Need         map[string]interface{}            `json:"need,omitempty"`
 	May          map[string]map[string]AccountInfo `json:"may,omitempty"`
 	Impossible   map[string]interface{}            `json:"impossible,omitempty"`
-	Requirements []Requirement                     `json:"requirements,omitempty"`
+	Requirements []RequirementInfo                 `json:"requirements,omitempty"`
 	ErrorMessage string                            `json:"error_message,omitempty"`
 }
 
-type Requirement struct {
+type RequirementInfo struct {
 	Status       string `json:"status"`
 	FallbackText string `json:"fallback_text"`
 	Type         string `json:"type"`
@@ -495,7 +503,7 @@ type ChangeInfo struct {
 	CherryPickOfPatchSet   int                         `json:"cherry_pick_of_patch_set,omitempty"`
 	ContainsGitConflicts   bool                        `json:"contains_git_conflicts,omitempty"`
 	BaseChange             string                      `json:"base_change,omitempty"`
-	SubmitRecords          []SubmitRecord              `json:"submit_records"`
+	SubmitRecords          []SubmitRecordInfo          `json:"submit_records,omitempty"`
 }
 
 // LabelInfo entity contains information about a label on a change, always corresponding to the current patch set.
