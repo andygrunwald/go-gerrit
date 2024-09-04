@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // RevisionKind describes the change kind.
@@ -62,14 +63,12 @@ type IntStr string
 
 // UnmarshalJSON implements the json.Unmarshaler interface for IntStr
 func (i *IntStr) UnmarshalJSON(data []byte) error {
-	// Remove quotes from the JSON string
 	str := string(data)
-	// Convert string to int
-	val, err := strconv.Atoi(str)
+	str = strings.Trim(str, "\"")
+	val, err := strconv.Atoi(strings.Trim(str, "/"))
 	if err != nil {
 		return err
 	}
-	// Set the value
 	*i = IntStr(fmt.Sprintf("%d", val))
 	return nil
 }
