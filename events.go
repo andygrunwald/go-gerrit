@@ -40,28 +40,28 @@ type RefUpdate struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/cmd-stream-events.html#events
 type EventInfo struct {
-	Type           string        `json:"type"`
-	Change         ChangeInfo    `json:"change,omitempty"`
-	ChangeKey      ChangeInfo    `json:"changeKey,omitempty"`
-	PatchSet       PatchSet      `json:"patchSet,omitempty"`
-	EventCreatedOn int           `json:"eventCreatedOn,omitempty"`
-	Reason         string        `json:"reason,omitempty"`
-	Abandoner      AccountInfo   `json:"abandoner,omitempty"`
-	Restorer       AccountInfo   `json:"restorer,omitempty"`
-	Submitter      AccountInfo   `json:"submitter,omitempty"`
-	Author         AccountInfo   `json:"author,omitempty"`
-	Uploader       AccountInfo   `json:"uploader,omitempty"`
-	Approvals      []AccountInfo `json:"approvals,omitempty"`
-	Comment        string        `json:"comment,omitempty"`
-	Editor         AccountInfo   `json:"editor,omitempty"`
-	Added          []string      `json:"added,omitempty"`
-	Removed        []string      `json:"removed,omitempty"`
-	Hashtags       []string      `json:"hashtags,omitempty"`
-	RefUpdate      RefUpdate     `json:"refUpdate,omitempty"`
-	Project        ProjectInfo   `json:"project,omitempty"`
-	Reviewer       AccountInfo   `json:"reviewer,omitempty"`
-	OldTopic       string        `json:"oldTopic,omitempty"`
-	Changer        AccountInfo   `json:"changer,omitempty"`
+	Type           string         `json:"type"`
+	Change         ChangeInfo     `json:"change,omitempty"`
+	ChangeKey      ChangeInfo     `json:"changeKey,omitempty"`
+	PatchSet       PatchSet       `json:"patchSet,omitempty"`
+	EventCreatedOn int            `json:"eventCreatedOn,omitempty"`
+	Reason         string         `json:"reason,omitempty"`
+	Abandoner      AccountInfo    `json:"abandoner,omitempty"`
+	Restorer       AccountInfo    `json:"restorer,omitempty"`
+	Submitter      AccountInfo    `json:"submitter,omitempty"`
+	Author         AccountInfo    `json:"author,omitempty"`
+	Uploader       AccountInfo    `json:"uploader,omitempty"`
+	Approvals      []ApprovalInfo `json:"approvals,omitempty"`
+	Comment        string         `json:"comment,omitempty"`
+	Editor         AccountInfo    `json:"editor,omitempty"`
+	Added          []string       `json:"added,omitempty"`
+	Removed        []string       `json:"removed,omitempty"`
+	Hashtags       []string       `json:"hashtags,omitempty"`
+	RefUpdate      RefUpdate      `json:"refUpdate,omitempty"`
+	Project        ProjectInfo    `json:"project,omitempty"`
+	Reviewer       AccountInfo    `json:"reviewer,omitempty"`
+	OldTopic       string         `json:"oldTopic,omitempty"`
+	Changer        AccountInfo    `json:"changer,omitempty"`
 }
 
 // EventsLogService contains functions for querying the API provided

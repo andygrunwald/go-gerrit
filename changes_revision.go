@@ -482,10 +482,10 @@ func (s *ChangesService) TestSubmitType(ctx context.Context, changeID, revisionI
 // Request body may be either the Prolog code as text/plain or a RuleInput object.
 // The query parameter filters may be set to SKIP to bypass parent project filters while testing a project-specific rule.
 //
-// The response is a list of SubmitRecord entries describing the permutations that satisfy the tested submit rule.
+// The response is a list of SubmitRecordInfo entries describing the permutations that satisfy the tested submit rule.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#test-submit-rule
-func (s *ChangesService) TestSubmitRule(ctx context.Context, changeID, revisionID string, input *RuleInput) (*[]SubmitRecord, *Response, error) {
+func (s *ChangesService) TestSubmitRule(ctx context.Context, changeID, revisionID string, input *RuleInput) (*[]SubmitRecordInfo, *Response, error) {
 	u := fmt.Sprintf("changes/%s/revisions/%s/test.submit_rule", changeID, revisionID)
 
 	req, err := s.client.NewRequest(ctx, "POST", u, input)
@@ -493,7 +493,7 @@ func (s *ChangesService) TestSubmitRule(ctx context.Context, changeID, revisionI
 		return nil, nil, err
 	}
 
-	v := new([]SubmitRecord)
+	v := new([]SubmitRecordInfo)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
