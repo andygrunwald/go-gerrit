@@ -89,7 +89,7 @@ func (i IntStr) String() string {
 type ApprovalInfo struct {
 	AccountInfo
 	Value       IntStr `json:"value,omitempty"`
-	OldValue    IntStr `json:"old_value,omitempty"`
+	OldValue    IntStr `json:"oldValue,omitempty"`
 	Description string `json:"description,omitempty"`
 	Date        string `json:"date,omitempty"`
 }
