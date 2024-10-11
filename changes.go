@@ -425,53 +425,54 @@ type ChangeInput struct {
 
 // ChangeInfo entity contains information about a change.
 type ChangeInfo struct {
-	ID                     string                      `json:"id"`
-	URL                    string                      `json:"url,omitempty"`
-	Project                string                      `json:"project"`
-	Branch                 string                      `json:"branch"`
-	Topic                  string                      `json:"topic,omitempty"`
-	AttentionSet           map[string]AttentionSetInfo `json:"attention_set,omitempty"`
-	Assignee               AccountInfo                 `json:"assignee,omitempty"`
-	Hashtags               []string                    `json:"hashtags,omitempty"`
-	ChangeID               string                      `json:"change_id"`
-	Subject                string                      `json:"subject"`
-	Status                 string                      `json:"status"`
-	Created                Timestamp                   `json:"created"`
-	Updated                Timestamp                   `json:"updated"`
-	Submitted              *Timestamp                  `json:"submitted,omitempty"`
-	Submitter              AccountInfo                 `json:"submitter,omitempty"`
-	Starred                bool                        `json:"starred,omitempty"`
-	Reviewed               bool                        `json:"reviewed,omitempty"`
-	SubmitType             string                      `json:"submit_type,omitempty"`
-	Mergeable              bool                        `json:"mergeable,omitempty"`
-	Submittable            bool                        `json:"submittable,omitempty"`
-	Insertions             int                         `json:"insertions"`
-	Deletions              int                         `json:"deletions"`
-	TotalCommentCount      int                         `json:"total_comment_count,omitempty"`
-	UnresolvedCommentCount int                         `json:"unresolved_comment_count,omitempty"`
-	Number                 int                         `json:"_number"`
-	Owner                  AccountInfo                 `json:"owner"`
-	Actions                map[string]ActionInfo       `json:"actions,omitempty"`
-	Labels                 map[string]LabelInfo        `json:"labels,omitempty"`
-	PermittedLabels        map[string][]string         `json:"permitted_labels,omitempty"`
-	RemovableReviewers     []AccountInfo               `json:"removable_reviewers,omitempty"`
-	Reviewers              map[string][]AccountInfo    `json:"reviewers,omitempty"`
-	PendingReviewers       map[string][]AccountInfo    `json:"pending_reviewers,omitempty"`
-	ReviewerUpdates        []ReviewerUpdateInfo        `json:"reviewer_updates,omitempty"`
-	Messages               []ChangeMessageInfo         `json:"messages,omitempty"`
-	CurrentRevision        string                      `json:"current_revision,omitempty"`
-	Revisions              map[string]RevisionInfo     `json:"revisions,omitempty"`
-	MoreChanges            bool                        `json:"_more_changes,omitempty"`
-	Problems               []ProblemInfo               `json:"problems,omitempty"`
-	IsPrivate              bool                        `json:"is_private,omitempty"`
-	WorkInProgress         bool                        `json:"work_in_progress,omitempty"`
-	HasReviewStarted       bool                        `json:"has_review_started,omitempty"`
-	RevertOf               int                         `json:"revert_of,omitempty"`
-	SubmissionID           string                      `json:"submission_id,omitempty"`
-	CherryPickOfChange     int                         `json:"cherry_pick_of_change,omitempty"`
-	CherryPickOfPatchSet   int                         `json:"cherry_pick_of_patch_set,omitempty"`
-	ContainsGitConflicts   bool                        `json:"contains_git_conflicts,omitempty"`
-	BaseChange             string                      `json:"base_change,omitempty"`
+	ID                     string                        `json:"id"`
+	URL                    string                        `json:"url,omitempty"`
+	Project                string                        `json:"project"`
+	Branch                 string                        `json:"branch"`
+	Topic                  string                        `json:"topic,omitempty"`
+	AttentionSet           map[string]AttentionSetInfo   `json:"attention_set,omitempty"`
+	Assignee               AccountInfo                   `json:"assignee,omitempty"`
+	Hashtags               []string                      `json:"hashtags,omitempty"`
+	ChangeID               string                        `json:"change_id"`
+	Subject                string                        `json:"subject"`
+	Status                 string                        `json:"status"`
+	Created                Timestamp                     `json:"created"`
+	Updated                Timestamp                     `json:"updated"`
+	Submitted              *Timestamp                    `json:"submitted,omitempty"`
+	Submitter              AccountInfo                   `json:"submitter,omitempty"`
+	Starred                bool                          `json:"starred,omitempty"`
+	Reviewed               bool                          `json:"reviewed,omitempty"`
+	SubmitType             string                        `json:"submit_type,omitempty"`
+	Mergeable              bool                          `json:"mergeable,omitempty"`
+	Submittable            bool                          `json:"submittable,omitempty"`
+	Insertions             int                           `json:"insertions"`
+	Deletions              int                           `json:"deletions"`
+	TotalCommentCount      int                           `json:"total_comment_count,omitempty"`
+	UnresolvedCommentCount int                           `json:"unresolved_comment_count,omitempty"`
+	Number                 int                           `json:"_number"`
+	Owner                  AccountInfo                   `json:"owner"`
+	Actions                map[string]ActionInfo         `json:"actions,omitempty"`
+	Labels                 map[string]LabelInfo          `json:"labels,omitempty"`
+	PermittedLabels        map[string][]string           `json:"permitted_labels,omitempty"`
+	RemovableReviewers     []AccountInfo                 `json:"removable_reviewers,omitempty"`
+	Reviewers              map[string][]AccountInfo      `json:"reviewers,omitempty"`
+	PendingReviewers       map[string][]AccountInfo      `json:"pending_reviewers,omitempty"`
+	ReviewerUpdates        []ReviewerUpdateInfo          `json:"reviewer_updates,omitempty"`
+	Messages               []ChangeMessageInfo           `json:"messages,omitempty"`
+	CurrentRevision        string                        `json:"current_revision,omitempty"`
+	Revisions              map[string]RevisionInfo       `json:"revisions,omitempty"`
+	MoreChanges            bool                          `json:"_more_changes,omitempty"`
+	Problems               []ProblemInfo                 `json:"problems,omitempty"`
+	IsPrivate              bool                          `json:"is_private,omitempty"`
+	WorkInProgress         bool                          `json:"work_in_progress,omitempty"`
+	HasReviewStarted       bool                          `json:"has_review_started,omitempty"`
+	RevertOf               int                           `json:"revert_of,omitempty"`
+	SubmissionID           string                        `json:"submission_id,omitempty"`
+	CherryPickOfChange     int                           `json:"cherry_pick_of_change,omitempty"`
+	CherryPickOfPatchSet   int                           `json:"cherry_pick_of_patch_set,omitempty"`
+	ContainsGitConflicts   bool                          `json:"contains_git_conflicts,omitempty"`
+	BaseChange             string                        `json:"base_change,omitempty"`
+	SubmitRequirements     []SubmitRequirementResultInfo `json:"submit_requirements,omitempty"`
 }
 
 // LabelInfo entity contains information about a label on a change, always corresponding to the current patch set.
@@ -545,6 +546,31 @@ type CommentInfo struct {
 	Unresolved      *bool         `json:"unresolved,omitempty"`
 	ChangeMessageID string        `json:"change_message_id,omitempty"`
 	CommitID        string        `json:"commit_id,omitempty"`
+}
+
+// SubmitRequirementExpressionInfo entity contains information about a submit requirement exppression.
+//
+// Docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submit-requirement-expression-info
+type SubmitRequirementExpressionInfo struct {
+	Expression   string   `json:"expression,omitempty"`
+	Fulfilled    bool     `json:"fulfilled"`
+	Status       string   `json:"status"`
+	PassingAtoms []string `json:"passing_atoms,omitempty"`
+	FailingAtoms []string `json:"failing_atoms,omitempty"`
+	ErrorMessage string   `json:"error_message,omitempty"`
+}
+
+// SubmitRequirementResultInfo entity describes the result of evaluating a submit requirement on a change.
+//
+// Docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#submit-requirement-result-info
+type SubmitRequirementResultInfo struct {
+	Name                           string                          `json:"name"`
+	Description                    string                          `json:"description,omitempty"`
+	Status                         string                          `json:"status"`
+	IsLegacy                       bool                            `json:"is_legacy"`
+	ApplicabilityExpressionResult  SubmitRequirementExpressionInfo `json:"applicability_expression_result,omitempty"`
+	SubmittabilityExpressionResult SubmitRequirementExpressionInfo `json:"submittability_expression_result"`
+	OverrideExpressionResult       SubmitRequirementExpressionInfo `json:"override_expression_result,omitempty"`
 }
 
 // QueryOptions specifies global parameters to query changes / reviewers.
