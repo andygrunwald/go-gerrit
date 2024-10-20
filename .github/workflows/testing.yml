@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.22", "1.21"]
+        go: ["1.23", "1.22"]
 
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.22", "1.21"]
+        go: ["1.23", "1.22"]
 
     steps:
       - uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.22", "1.21"]
+        go: ["1.23", "1.22"]
 
     steps:
       - uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
       - name: Run staticcheck
         uses: dominikh/staticcheck-action@v1.3.1
         with:
-          version: "2023.1"
+          version: "2024.1.1"
           install-go: false
           cache-key: ${{ matrix.go }}
 
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.22", "1.21"]
+        go: ["1.23", "1.22"]
 
     steps:
       - uses: actions/checkout@v4
