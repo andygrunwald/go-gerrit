@@ -27,7 +27,10 @@ func TestProjectsService_ListAccessRights(t *testing.T) {
 		t.Errorf("project: list access rights error: %s", err)
 	}
 
-	fmt.Printf("project access rights: %v\n", projectAccessRight)
+	// Doing one deep check to verify the mapping
+	if projectAccessRight.InheritsFrom.Name != "All-Projects" {
+		t.Errorf("projectAccessRight.InheritsFrom.Name not matching. Expected '%s', got '%s'", "All-Projects", projectAccessRight.InheritsFrom.Name)
+	}
 }
 
 func TestProjectsService_AddUpdateDeleteAccessRights(t *testing.T) {
@@ -53,7 +56,10 @@ func TestProjectsService_AddUpdateDeleteAccessRights(t *testing.T) {
 		t.Errorf("project: add/update/delete access right error: %s", err)
 	}
 
-	fmt.Printf("project access rights: %v\n", projectAccessRight)
+	// Doing one deep check to verify the mapping
+	if projectAccessRight.InheritsFrom.Name != "All-Projects" {
+		t.Errorf("projectAccessRight.InheritsFrom.Name not matching. Expected '%s', got '%s'", "All-Projects", projectAccessRight.InheritsFrom.Name)
+	}
 }
 
 func TestProjectsService_AccessCheck(t *testing.T) {
@@ -84,7 +90,10 @@ func TestProjectsService_AccessCheck(t *testing.T) {
 		t.Errorf("project: access check error: %s", err)
 	}
 
-	fmt.Printf("project access check info: %v\n", accessCheckInfo)
+	// Doing one deep check to verify the mapping
+	if accessCheckInfo.Status != 403 {
+		t.Errorf("accessCheckInfo.Status not matching. Expected '%d', got '%d'", 403, accessCheckInfo.Status)
+	}
 }
 
 func TestProjectsService_CreateAccessChange(t *testing.T) {
@@ -110,5 +119,8 @@ func TestProjectsService_CreateAccessChange(t *testing.T) {
 		t.Errorf("project: create access change error: %s", err)
 	}
 
-	fmt.Printf("project create access change info: %v\n", changeInfo)
+	// Doing one deep check to verify the mapping
+	if changeInfo.ChangeID != "Ieaf185bf90a1fc3b58461e399385e158a20b31a2" {
+		t.Errorf("changeInfo.ChangeID not matching. Expected '%s', got '%s'", "Ieaf185bf90a1fc3b58461e399385e158a20b31a2", changeInfo.ChangeID)
+	}
 }
