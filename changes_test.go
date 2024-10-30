@@ -143,7 +143,9 @@ func TestChangesService_CreateChange(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		t.Logf("Request payload:\n%s", jsonStr)
+		if len(jsonStr) == 0 {
+			t.Error("Empty request payload")
+		}
 
 		required := func(field string) string {
 			value, ok := payload[field]
