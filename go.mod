@@ -1,4 +1,4 @@
-module github.com/halvfigur/go-gerrit
+module github.com/andygrunwald/go-gerrit
 
 go 1.16
 
