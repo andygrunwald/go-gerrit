@@ -2,6 +2,7 @@ package gerrit
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/url"
 )
@@ -138,6 +139,35 @@ type PatchOptions struct {
 
 	// If the path parameter is set, the returned content is a diff of the single file that the path refers to.
 	Path string `url:"path,omitempty"`
+}
+
+// StringPointerWriter is a new type based on *string.
+// We would like it to implement Writer interface so that we can avoid
+// unmarshalling of non JSON responses by Client.Do
+type StringPointerWriter struct {
+	Target *string
+}
+
+func NewStringPointerWriter(target *string) (*StringPointerWriter, error) {
+	if target == nil {
+		return nil, errors.New("StringPointerWriter: target *string cannot be nil")
+	}
+	return &StringPointerWriter{Target: target}, nil
+}
+
+// Write implements the io.Writer interface for *StringPointerWriter.
+func (spw *StringPointerWriter) Write(p []byte) (n int, err error) {
+	// Check if the StringPointerWriter pointer itself is nil, or if its Target is nil.
+	if spw == nil || spw.Target == nil {
+		return 0, errors.New("StringPointerWriter: receiver or target *string is nil, cannot write")
+	}
+
+	// *(spw.Target) gives us the actual string value.
+	// We append the new data (converted from []byte to string) to it.
+	*(spw.Target) = *(spw.Target) + string(p)
+
+	// Return the number of bytes written and no error.
+	return len(p), nil
 }
 
 // GetDiff gets the diff of a file from a certain revision.
@@ -445,8 +475,17 @@ func (s *ChangesService) GetPatch(ctx context.Context, changeID, revisionID stri
 		return nil, nil, err
 	}
 
-	v := new(string)
-	resp, err := s.client.Do(req, v)
+	strVal := ""
+	var v *string = &strVal
+
+	// Create an instance of our writer struct since the /patch endpoint
+	// returns a base64 encoded string which cannot be marshalled as JSON.
+	stringWriter, err := NewStringPointerWriter(v)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	resp, err := s.client.Do(req, stringWriter)
 	if err != nil {
 		return nil, resp, err
 	}
