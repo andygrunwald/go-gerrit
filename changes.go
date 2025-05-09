@@ -65,6 +65,13 @@ type ApprovalInfo struct {
 	Date  string `json:"date,omitempty"`
 }
 
+// CommitMessageInfo entity contains information about a commit message.
+type CommitMessageInfo struct {
+	Subject     string `json:"subject,omitempty"`
+	FullMessage string `json:"full_message,omitempty"`
+	Footers     string `json:"footers,omitempty"`
+}
+
 // CommitMessageInput entity contains information for changing the commit message of a change.
 type CommitMessageInput struct {
 	Message       string       `json:"message,omitempty"`
@@ -678,6 +685,26 @@ func (s *ChangesService) getChangeInfoResponse(ctx context.Context, u string, op
 	}
 
 	v := new(ChangeInfo)
+	resp, err := s.client.Do(req, v)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return v, resp, err
+}
+
+// GetCommitMessage retrieves the commit message of a change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-message
+func (s *ChangesService) GetCommitMessage(ctx context.Context, changeID string) (*CommitMessageInfo, *Response, error) {
+	u := fmt.Sprintf("changes/%s/message", changeID)
+
+	req, err := s.client.NewRequest(ctx, "GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	v := new(CommitMessageInfo)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
 		return nil, resp, err
