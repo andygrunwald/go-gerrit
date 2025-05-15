@@ -464,7 +464,7 @@ type ChangeInfo struct {
 	MoreChanges            bool                          `json:"_more_changes,omitempty"`
 	Problems               []ProblemInfo                 `json:"problems,omitempty"`
 	IsPrivate              bool                          `json:"is_private,omitempty"`
-	WorkInProgress         bool                          `json:"work_in_progress,omitempty"`
+	WorkInProgress         bool                          `json:"wip,omitempty"`
 	HasReviewStarted       bool                          `json:"has_review_started,omitempty"`
 	RevertOf               int                           `json:"revert_of,omitempty"`
 	SubmissionID           string                        `json:"submission_id,omitempty"`
