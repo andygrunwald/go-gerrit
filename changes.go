@@ -402,6 +402,13 @@ type FixReplacementInfo struct {
 // the edits to span newlines.
 type DiffIntralineInfo [][2]int
 
+// ApplyPatchInput contains information about a patch to apply to a Gerrit CL.
+// See https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#applypatch-input.
+type ApplyPatchInput struct {
+	Patch          string `json:"patch"`
+	AllowConflicts bool   `json:"allow_conflicts,omitempty"`
+}
+
 // ChangeInput entity contains information about creating a new change.
 //
 // Docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-input
@@ -418,6 +425,7 @@ type ChangeInput struct {
 	NewBranch         bool                   `json:"new_branch,omitempty"`
 	ValidationOptions map[string]interface{} `json:"validation_options,omitempty"`
 	Merge             *MergeInput            `json:"merge,omitempty"`
+	Patch             *ApplyPatchInput       `json:"patch,omitempty"`
 	Author            *AccountInput          `json:"author,omitempty"`
 	Notify            string                 `json:"notify,omitempty"`
 	NotifyDetails     string                 `json:"notify_details,omitempty"`
