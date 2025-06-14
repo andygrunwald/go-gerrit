@@ -429,6 +429,7 @@ type ChangeInput struct {
 	Author            *AccountInput          `json:"author,omitempty"`
 	Notify            string                 `json:"notify,omitempty"`
 	NotifyDetails     string                 `json:"notify_details,omitempty"`
+	ResponseFormatOptions []string               `json:"response_format_options,omitempty"`
 }
 
 // ChangeInfo entity contains information about a change.
