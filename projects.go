@@ -17,13 +17,14 @@ type ProjectsService struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#project-info
 type ProjectInfo struct {
-	ID          string            `json:"id"`
-	Name        string            `json:"name"`
-	Parent      string            `json:"parent,omitempty"`
-	Description string            `json:"description,omitempty"`
-	State       string            `json:"state,omitempty"`
-	Branches    map[string]string `json:"branches,omitempty"`
-	WebLinks    []WebLinkInfo     `json:"web_links,omitempty"`
+	ID           string            `json:"id"`
+	Name         string            `json:"name"`
+	Parent       string            `json:"parent,omitempty"`
+	Description  string            `json:"description,omitempty"`
+	State        string            `json:"state,omitempty"`
+	Branches     map[string]string `json:"branches,omitempty"`
+	WebLinks     []WebLinkInfo     `json:"web_links,omitempty"`
+	MoreProjects bool              `json:"_more_projects,omitempty"`
 }
 
 // ProjectInput entity contains information for the creation of a new project.
