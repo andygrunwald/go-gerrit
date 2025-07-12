@@ -413,22 +413,22 @@ type ApplyPatchInput struct {
 //
 // Docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-input
 type ChangeInput struct {
-	Project           string                 `json:"project"`
-	Branch            string                 `json:"branch"`
-	Subject           string                 `json:"subject"`
-	Topic             string                 `json:"topic,omitempty"`
-	Status            string                 `json:"status,omitempty"`
-	IsPrivate         bool                   `json:"is_private,omitempty"`
-	WorkInProgress    bool                   `json:"work_in_progress,omitempty"`
-	BaseChange        string                 `json:"base_change,omitempty"`
-	BaseCommit        string                 `json:"base_commit,omitempty"`
-	NewBranch         bool                   `json:"new_branch,omitempty"`
-	ValidationOptions map[string]interface{} `json:"validation_options,omitempty"`
-	Merge             *MergeInput            `json:"merge,omitempty"`
-	Patch             *ApplyPatchInput       `json:"patch,omitempty"`
-	Author            *AccountInput          `json:"author,omitempty"`
-	Notify            string                 `json:"notify,omitempty"`
-	NotifyDetails     string                 `json:"notify_details,omitempty"`
+	Project               string                 `json:"project"`
+	Branch                string                 `json:"branch"`
+	Subject               string                 `json:"subject"`
+	Topic                 string                 `json:"topic,omitempty"`
+	Status                string                 `json:"status,omitempty"`
+	IsPrivate             bool                   `json:"is_private,omitempty"`
+	WorkInProgress        bool                   `json:"work_in_progress,omitempty"`
+	BaseChange            string                 `json:"base_change,omitempty"`
+	BaseCommit            string                 `json:"base_commit,omitempty"`
+	NewBranch             bool                   `json:"new_branch,omitempty"`
+	ValidationOptions     map[string]interface{} `json:"validation_options,omitempty"`
+	Merge                 *MergeInput            `json:"merge,omitempty"`
+	Patch                 *ApplyPatchInput       `json:"patch,omitempty"`
+	Author                *AccountInput          `json:"author,omitempty"`
+	Notify                string                 `json:"notify,omitempty"`
+	NotifyDetails         string                 `json:"notify_details,omitempty"`
 	ResponseFormatOptions []string               `json:"response_format_options,omitempty"`
 }
 
