@@ -5,7 +5,7 @@ type Change struct {
 	Branch          string       `json:"branch,omitempty"`
 	Topic           string       `json:"topic,omitempty"`
 	ID              string       `json:"id,omitempty"`
-	Number          string       `json:"number,omitempty"`
+	Number          int          `json:"number,omitempty"`
 	Subject         string       `json:"subject,omitempty"`
 	Owner           Account      `json:"owner"`
 	URL             string       `json:"url,omitempty"`
@@ -39,7 +39,7 @@ type Account struct {
 }
 
 type PatchSet struct {
-	Number         string            `json:"number,omitempty"`
+	Number         int               `json:"number,omitempty"`
 	Revision       string            `json:"revision,omitempty"`
 	Parents        []string          `json:"parents,omitempty"`
 	Ref            string            `json:"ref,omitempty"`
@@ -90,7 +90,7 @@ type Label struct {
 
 type Dependency struct {
 	ID                string `json:"id,omitempty"`
-	Number            string `json:"number,omitempty"`
+	Number            int    `json:"number,omitempty"`
 	Revision          string `json:"revision,omitempty"`
 	Ref               string `json:"ref,omitempty"`
 	IsCurrentPatchSet bool   `json:"isCurrentPatchSet,omitempty"`
