@@ -76,7 +76,7 @@ func ExampleChangesService_QueryChanges_withSymbols() {
 
 	opt := &gerrit.QueryChangeOptions{}
 	opt.Query = []string{
-		"change:249244+status:merged",
+		"change:249244 status:merged",
 	}
 	opt.Limit = 2
 	opt.AdditionalFields = []string{"LABELS"}
