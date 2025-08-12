@@ -505,7 +505,6 @@ func CheckResponse(r *http.Response) error {
 // Gerrit. Note, Gerrit itself does not escape these values when using the
 // search box so we shouldn't escape them either.
 var queryParameterReplacements = map[string]string{
-	"+": "GOGERRIT_URL_PLACEHOLDER_PLUS",
 	":": "GOGERRIT_URL_PLACEHOLDER_COLON"}
 
 // addOptions adds the parameters in opt as URL query parameters to s.
