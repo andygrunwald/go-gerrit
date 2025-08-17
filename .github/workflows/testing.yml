@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.24", "1.23"]
+        go: ["1.25", "1.24"]
 
     steps:
       - uses: actions/checkout@v5
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.24", "1.23"]
+        go: ["1.25", "1.24"]
 
     steps:
       - uses: actions/checkout@v5
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.24", "1.23"]
+        go: ["1.25", "1.24"]
 
     steps:
       - uses: actions/checkout@v5
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.24", "1.23"]
+        go: ["1.25", "1.24"]
 
     steps:
       - uses: actions/checkout@v5
