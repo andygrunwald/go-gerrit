@@ -2,6 +2,7 @@ package gerrit_test
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -80,5 +81,43 @@ func TestChangesService_ListFilesReviewed(t *testing.T) {
 	want := []string{"/COMMIT_MSG", "gerrit-server/RefControl.java"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("client.Changes.ListFilesReviewed:\ngot:  %q\nwant: %q", got, want)
+	}
+}
+
+func TestChangesService_GetPatch(t *testing.T) {
+	rawPatch := `diff --git a/COMMIT_MSG b/COMMIT_MSG
+index 123..456 100644
+--- a/COMMIT_MSG
++++ b/COMMIT_MSG
+@@ -1,1 +1,1 @@
+-Old subject
++New subject for A
+diff --git a/fileA.txt b/fileA.txt
+new file mode 100644
+index 0000000..abc 100644
+--- /dev/null
++++ b/fileA.txt
+@@ -0,0 +1 @@
++Content for A
+`
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if got, want := r.URL.String(), "/changes/123/revisions/456/patch"; got != want {
+			t.Errorf("request URL:\ngot:  %q\nwant: %q", got, want)
+		}
+		encodedPatchContent := base64.StdEncoding.EncodeToString(
+			[]byte(rawPatch))
+		fmt.Fprint(w, encodedPatchContent)
+	}))
+	defer ts.Close()
+
+	ctx := context.Background()
+	client := newClient(ctx, t, ts)
+	got, _, err := client.Changes.GetPatch(ctx, "123", "456", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := base64.StdEncoding.EncodeToString([]byte(rawPatch))
+	if !reflect.DeepEqual(*got, want) {
+		t.Errorf("client.Changes.GetPatch:\ngot:  %q\nwant: %q", *got, want)
 	}
 }
