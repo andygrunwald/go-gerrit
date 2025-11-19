@@ -13,18 +13,27 @@ type ProjectsService struct {
 	client *Client
 }
 
+// LabelTypeInfo contains information about project labels
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#label-type-info
+type LabelTypeInfo struct {
+	Values       map[string]string `json:"values",omitempty`
+	DefaultValue int               `json:"default_value",omitempty`
+}
+
 // ProjectInfo entity contains information about a project.
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#project-info
 type ProjectInfo struct {
-	ID           string            `json:"id"`
-	Name         string            `json:"name"`
-	Parent       string            `json:"parent,omitempty"`
-	Description  string            `json:"description,omitempty"`
-	State        string            `json:"state,omitempty"`
-	Branches     map[string]string `json:"branches,omitempty"`
-	WebLinks     []WebLinkInfo     `json:"web_links,omitempty"`
-	MoreProjects bool              `json:"_more_projects,omitempty"`
+	ID           string                   `json:"id"`
+	Name         string                   `json:"name"`
+	Parent       string                   `json:"parent,omitempty"`
+	Description  string                   `json:"description,omitempty"`
+	State        string                   `json:"state,omitempty"`
+	Branches     map[string]string        `json:"branches,omitempty"`
+	Labels       map[string]LabelTypeInfo `json:"labels,omitempty"`
+	WebLinks     []WebLinkInfo            `json:"web_links,omitempty"`
+	MoreProjects bool                     `json:"_more_projects,omitempty"`
 }
 
 // ProjectInput entity contains information for the creation of a new project.
