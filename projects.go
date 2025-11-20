@@ -17,8 +17,8 @@ type ProjectsService struct {
 //
 // Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-projects.html#label-type-info
 type LabelTypeInfo struct {
-	Values       map[string]string `json:"values",omitempty`
-	DefaultValue int               `json:"default_value",omitempty`
+	Values       map[string]string `json:"values,omitempty"`
+	DefaultValue int               `json:"default_value,omitempty"`
 }
 
 // ProjectInfo entity contains information about a project.
