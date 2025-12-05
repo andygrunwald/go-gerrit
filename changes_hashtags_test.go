@@ -22,12 +22,15 @@ func TestChangesService_GetHashtags(t *testing.T) {
 		if r.URL.Path != path {
 			t.Errorf("Path %q != %q", r.URL.Path, path)
 		}
-		fmt.Fprintf(w, `)]}'
+		_, err := fmt.Fprintf(w, `)]}'
 [
   "hashtag1",
   "hashtag2"
 ]
 `)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -59,12 +62,15 @@ func TestChangesService_SetHashtags(t *testing.T) {
 		if r.URL.Path != path {
 			t.Errorf("Path %q != %q", r.URL.Path, path)
 		}
-		fmt.Fprintf(w, `)]}'
+		_, err := fmt.Fprintf(w, `)]}'
 [
   "hashtag1",
   "hashtag3"
 ]
 `)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

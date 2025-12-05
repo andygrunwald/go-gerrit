@@ -95,7 +95,10 @@ func ExampleChangesService_QueryChanges_withSymbols() {
 
 func ExampleChangesService_PublishChangeEdit() {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "ok")
+		_, err := fmt.Fprintf(w, "ok")
+		if err != nil {
+			panic(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -172,7 +175,10 @@ func TestChangesService_CreateChange(t *testing.T) {
 		if r.Method != "POST" {
 			t.Errorf("%s != POST", r.Method)
 		}
-		fmt.Fprintf(w, `{ "id": "abc1234", "project": "%s", "branch": "%s", "subject": "%s"}`, project, branch, subject)
+		_, err = fmt.Fprintf(w, `{ "id": "abc1234", "project": "%s", "branch": "%s", "subject": "%s"}`, project, branch, subject)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -225,7 +231,10 @@ func TestChangesService_SubmitChange(t *testing.T) {
 		if r.URL.Path != "/changes/123/submit" {
 			t.Errorf("%s != /changes/123/submit", r.URL.Path)
 		}
-		fmt.Fprint(w, `{"id": "123"}`)
+		_, err := fmt.Fprint(w, `{"id": "123"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -265,7 +274,10 @@ func TestChangesService_AbandonChange(t *testing.T) {
 		if r.URL.Path != "/changes/123/abandon" {
 			t.Errorf("%s != /changes/123/abandon", r.URL.Path)
 		}
-		fmt.Fprint(w, `{"id": "123"}`)
+		_, err := fmt.Fprint(w, `{"id": "123"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -305,7 +317,10 @@ func TestChangesService_RebaseChange(t *testing.T) {
 		if r.URL.Path != "/changes/123/rebase" {
 			t.Errorf("%s != /changes/123/rebase", r.URL.Path)
 		}
-		fmt.Fprint(w, `{"id": "123"}`)
+		_, err := fmt.Fprint(w, `{"id": "123"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -345,7 +360,10 @@ func TestChangesService_RestoreChange(t *testing.T) {
 		if r.URL.Path != "/changes/123/restore" {
 			t.Errorf("%s != /changes/123/restore", r.URL.Path)
 		}
-		fmt.Fprint(w, `{"id": "123"}`)
+		_, err := fmt.Fprint(w, `{"id": "123"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -385,7 +403,10 @@ func TestChangesService_RevertChange(t *testing.T) {
 		if r.URL.Path != "/changes/123/revert" {
 			t.Errorf("%s != /changes/123/revert", r.URL.Path)
 		}
-		fmt.Fprint(w, `{"id": "123"}`)
+		_, err := fmt.Fprint(w, `{"id": "123"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

@@ -63,6 +63,24 @@ jobs:
           install-go: false
           cache-key: ${{ matrix.go }}
 
+  golangci-lint:
+    name: golangci-lint (Go ${{ matrix.go }})
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        go: ["1.25", "1.24"]
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.7
+
   unittesting:
     name: unit testing (Go ${{ matrix.go }})
     runs-on: ubuntu-24.04
