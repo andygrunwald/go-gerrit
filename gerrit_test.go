@@ -121,7 +121,7 @@ func TestNewClient_NoGerritInstance(t *testing.T) {
 			t.Errorf("NewClient return is not nil. Expected no client. Go %+v", c)
 		}
 		if err == nil {
-			t.Error("No error occured by empty Gerrit Instance. Expected one.")
+			t.Error("No error occurred by empty Gerrit Instance. Expected one.")
 		}
 	}
 }
@@ -129,7 +129,7 @@ func TestNewClient_NoGerritInstance(t *testing.T) {
 func TestNewClient_Services(t *testing.T) {
 	c, err := gerrit.NewClient(context.Background(), "https://gerrit-review.googlesource.com/", nil)
 	if err != nil {
-		t.Errorf("An error occured. Expected nil. Got %+v.", err)
+		t.Errorf("An error occurred. Expected nil. Got %+v.", err)
 	}
 
 	if c.Authentication == nil {
@@ -396,7 +396,7 @@ func TestNewRequest(t *testing.T) {
 	ctx := context.Background()
 	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
-		t.Errorf("An error occured. Expected nil. Got %+v.", err)
+		t.Errorf("An error occurred. Expected nil. Got %+v.", err)
 	}
 
 	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
@@ -419,7 +419,7 @@ func TestNewRawPutRequest(t *testing.T) {
 	ctx := context.Background()
 	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
-		t.Errorf("An error occured. Expected nil. Got %+v.", err)
+		t.Errorf("An error occurred. Expected nil. Got %+v.", err)
 	}
 
 	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
@@ -450,7 +450,7 @@ func TestNewRequest_BadURL(t *testing.T) {
 	ctx := context.Background()
 	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
-		t.Errorf("An error occured. Expected nil. Got %+v.", err)
+		t.Errorf("An error occurred. Expected nil. Got %+v.", err)
 	}
 	_, err = c.NewRequest(ctx, "GET", ":", nil)
 	testURLParseError(t, err)
@@ -464,7 +464,7 @@ func TestNewRequest_EmptyBody(t *testing.T) {
 	ctx := context.Background()
 	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
 	if err != nil {
-		t.Errorf("An error occured. Expected nil. Got %+v.", err)
+		t.Errorf("An error occurred. Expected nil. Got %+v.", err)
 	}
 	req, err := c.NewRequest(ctx, "GET", "/", nil)
 	if err != nil {
