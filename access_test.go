@@ -20,7 +20,10 @@ func TestAccessService_ListAccessRights(t *testing.T) {
 			"project": "go",
 		})
 
-		fmt.Fprint(w, `)]}'`+"\n"+`{"go":{"revision":"08f45ba74baef9699b650f42022df6467389c1f0","inherits_from":{"id":"All-Projects","name":"All-Projects","description":"Access inherited by all other projects.","state":"ACTIVE"},"local":{},"owner_of":[],"config_visible":false}}`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`{"go":{"revision":"08f45ba74baef9699b650f42022df6467389c1f0","inherits_from":{"id":"All-Projects","name":"All-Projects","description":"Access inherited by all other projects.","state":"ACTIVE"},"local":{},"owner_of":[],"config_visible":false}}`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	opt := &gerrit.ListAccessRightsOptions{
@@ -58,7 +61,10 @@ func TestAccessService_ListAccessRights_WithoutOpts(t *testing.T) {
 	testMux.HandleFunc("/access/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 
-		fmt.Fprint(w, `)]}'`+"\n"+`{}`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`{}`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	access, _, err := testClient.Access.ListAccessRights(context.Background(), nil)

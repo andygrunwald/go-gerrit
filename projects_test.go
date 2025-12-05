@@ -22,7 +22,10 @@ func TestProjectsService_ListProjects(t *testing.T) {
 			"n": "2",
 		})
 
-		fmt.Fprint(w, `)]}'`+"\n"+`{"arch":{"id":"arch","state":"ACTIVE"},"benchmarks":{"id":"benchmarks","state":"ACTIVE"}}`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`{"arch":{"id":"arch","state":"ACTIVE"},"benchmarks":{"id":"benchmarks","state":"ACTIVE"}}`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	opt := &gerrit.ProjectOptions{
@@ -57,7 +60,10 @@ func TestProjectsService_GetProject(t *testing.T) {
 	testMux.HandleFunc("/projects/go/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 
-		fmt.Fprint(w, `)]}'`+"\n"+`{"id":"go","name":"go","parent":"All-Projects","description":"The Go Programming Language","state":"ACTIVE"}`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`{"id":"go","name":"go","parent":"All-Projects","description":"The Go Programming Language","state":"ACTIVE"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	project, _, err := testClient.Projects.GetProject(context.Background(), "go")
@@ -87,7 +93,10 @@ func TestProjectsService_GetProject_WithSlash(t *testing.T) {
 		testRequestURL(t, r, "/projects/plugins%2Fdelete-project")
 
 		c := `)]}'` + "\n" + `{"id":"plugins%2Fdelete-project","name":"plugins/delete-project","parent":"Public-Plugins","description":"A plugin which allows projects to be deleted from Gerrit via an SSH command","state":"ACTIVE"}`
-		fmt.Fprint(w, c)
+		_, err := fmt.Fprint(w, c)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 	project, _, err := testClient.Projects.GetProject(context.Background(), "plugins/delete-project")
 	if err != nil {
@@ -128,7 +137,10 @@ func TestProjectsService_CreateProject(t *testing.T) {
 			t.Errorf("Request body = %+v, want %+v", v, input)
 		}
 
-		fmt.Fprint(w, `)]}'`+"\n"+`{"id":"go","name":"go","parent":"All-Projects","description":"The Go Programming Language"}`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`{"id":"go","name":"go","parent":"All-Projects","description":"The Go Programming Language"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	project, _, err := testClient.Projects.CreateProject(context.Background(), "go", input)
@@ -156,7 +168,10 @@ func TestProjectsService_GetProjectDescription(t *testing.T) {
 	testMux.HandleFunc("/projects/go/description/", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 
-		fmt.Fprint(w, `)]}'`+"\n"+`"The Go Programming Language"`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`"The Go Programming Language"`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	description, _, err := testClient.Projects.GetProjectDescription(context.Background(), "go")
@@ -228,7 +243,10 @@ func TestProjectsService_GetBranch(t *testing.T) {
 			http.Error(w, branchName, http.StatusBadRequest)
 		}
 
-		fmt.Fprint(w, `)]}'`+"\n"+string(branchInfoRaw))
+		_, err = fmt.Fprint(w, `)]}'`+"\n"+string(branchInfoRaw))
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	var tests = []struct {

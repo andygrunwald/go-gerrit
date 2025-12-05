@@ -16,7 +16,7 @@ func TestChangesService_ListFiles(t *testing.T) {
 		if got, want := r.URL.String(), "/changes/123/revisions/456/files/?base=7"; got != want {
 			t.Errorf("request URL:\ngot:  %q\nwant: %q", got, want)
 		}
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 		  "/COMMIT_MSG": {
 		    "status": "A",
 		    "lines_inserted": 7,
@@ -30,6 +30,9 @@ func TestChangesService_ListFiles(t *testing.T) {
 		    "size": 23348
 		  }
 		}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -65,7 +68,10 @@ func TestChangesService_ListFilesReviewed(t *testing.T) {
 		if got, want := r.URL.String(), "/changes/123/revisions/456/files/?q=abc&reviewed=true"; got != want {
 			t.Errorf("request URL:\ngot:  %q\nwant: %q", got, want)
 		}
-		fmt.Fprint(w, `["/COMMIT_MSG","gerrit-server/RefControl.java"]`)
+		_, err := fmt.Fprint(w, `["/COMMIT_MSG","gerrit-server/RefControl.java"]`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

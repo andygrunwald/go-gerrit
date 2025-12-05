@@ -25,7 +25,10 @@ func TestChangesService_ListReviewers(t *testing.T) {
 			t.Errorf("%s != %s", r.URL.Path, expected)
 		}
 
-		fmt.Fprint(w, `[{"_account_id": 1}]`)
+		_, err := fmt.Fprint(w, `[{"_account_id": 1}]`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -52,7 +55,10 @@ func TestChangesService_SuggestReviewers(t *testing.T) {
 			t.Errorf("%s != %s", r.URL.Path, expected)
 		}
 
-		fmt.Fprint(w, `[{"account": {"_account_id": 1}}]`)
+		_, err := fmt.Fprint(w, `[{"account": {"_account_id": 1}}]`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -79,7 +85,10 @@ func TestChangesService_GetReviewer(t *testing.T) {
 			t.Errorf("%s != %s", r.URL.Path, expected)
 		}
 
-		fmt.Fprint(w, `{"_account_id": 1}`)
+		_, err := fmt.Fprint(w, `{"_account_id": 1}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -104,7 +113,10 @@ func TestChangesService_AddReviewer(t *testing.T) {
 			t.Error("Method != POST")
 		}
 
-		fmt.Fprint(w, `{"confirm": true}`)
+		_, err := fmt.Fprint(w, `{"confirm": true}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -146,7 +158,10 @@ func TestChangesService_ListVotes(t *testing.T) {
 		if r.URL.Path != expected {
 			t.Errorf("%s != %s", r.URL.Path, expected)
 		}
-		fmt.Fprint(w, `{"Code-Review": 2, "Verified": 1}`)
+		_, err := fmt.Fprint(w, `{"Code-Review": 2, "Verified": 1}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

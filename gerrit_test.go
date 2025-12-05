@@ -487,7 +487,10 @@ func TestDo(t *testing.T) {
 		if m := "GET"; m != r.Method {
 			t.Errorf("Request method = %v, want %v", r.Method, m)
 		}
-		fmt.Fprint(w, `)]}'`+"\n"+`{"A":"a"}`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`{"A":"a"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	req, err := testClient.NewRequest(context.Background(), "GET", "/", nil)
@@ -514,7 +517,10 @@ func TestDo_ioWriter(t *testing.T) {
 		if m := "GET"; m != r.Method {
 			t.Errorf("Request method = %v, want %v", r.Method, m)
 		}
-		fmt.Fprint(w, content)
+		_, err := fmt.Fprint(w, content)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	req, err := testClient.NewRequest(context.Background(), "GET", "/", nil)

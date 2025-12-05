@@ -34,7 +34,10 @@ func TestProjectsService_CreateTag(t *testing.T) {
 			t.Errorf("Request body = %+v, want %+v", v, input)
 		}
 
-		fmt.Fprint(w, `)]}'`+"\n"+`{"ref":"v1.0.0","revision":"master","message":"v1.0.0 release"}`)
+		_, err := fmt.Fprint(w, `)]}'`+"\n"+`{"ref":"v1.0.0","revision":"master","message":"v1.0.0 release"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	})
 
 	tag, _, err := testClient.Projects.CreateTag(context.Background(), "go", "v1.0.0", input)
