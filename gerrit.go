@@ -289,6 +289,34 @@ func (c *Client) NewRawPutRequest(ctx context.Context, urlStr string, body strin
 	return req, nil
 }
 
+// NewRawPostRequest creates a raw POST request and makes no attempt to encode
+// or marshal the body. Just passes it straight through.
+func (c *Client) NewRawPostRequest(ctx context.Context, urlStr string, body string) (*http.Request, error) {
+	// Build URL for request
+	u, err := c.buildURLForRequest(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	buf := bytes.NewBuffer([]byte(body))
+	req, err := http.NewRequestWithContext(ctx, "POST", u, buf)
+	if err != nil {
+		return nil, err
+	}
+
+	// Apply Authentication
+	if err := c.addAuthentication(ctx, req); err != nil {
+		return nil, err
+	}
+
+	// Request compact JSON
+	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "text/plain")
+
+	return req, nil
+}
+
 // Call is a combine function for Client.NewRequest and Client.Do.
 //
 // Most API methods are quite the same.
