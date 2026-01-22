@@ -255,9 +255,14 @@ type RuleInput struct {
 }
 
 // ReviewerInput entity contains information for adding a reviewer to a change.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#reviewer-input
 type ReviewerInput struct {
-	Reviewer  string `json:"reviewer"`
-	Confirmed bool   `json:"confirmed,omitempty"`
+	Reviewer      string                       `json:"reviewer"`
+	State         string                       `json:"state,omitempty"`
+	Confirmed     bool                         `json:"confirmed,omitempty"`
+	Notify        string                       `json:"notify,omitempty"`
+	NotifyDetails map[RecipientType]NotifyInfo `json:"notify_details,omitempty"`
 }
 
 // ReviewInput entity contains information for adding a review to a revision.
