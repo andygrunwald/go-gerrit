@@ -437,6 +437,38 @@ func TestNewRawPutRequest(t *testing.T) {
 	}
 }
 
+func TestNewRawPostRequest(t *testing.T) {
+	ctx := context.Background()
+	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
+	if err != nil {
+		t.Errorf("An error occured. Expected nil. Got %+v.", err)
+	}
+
+	inURL, outURL := "/foo", testGerritInstanceURL+"foo"
+	req, _ := c.NewRawPostRequest(ctx, inURL, "test raw POST contents")
+
+	// Test that relative URL was expanded
+	if got, want := req.URL.String(), outURL; got != want {
+		t.Errorf("NewRequest(%q) URL is %v, want %v", inURL, got, want)
+	}
+
+	// Test that HTTP method is POST
+	if got, want := req.Method, http.MethodPost; got != want {
+		t.Errorf("NewRawPostRequest method is %v, want %v", got, want)
+	}
+
+	// Test that request body is passed correctly
+	body, _ := io.ReadAll(req.Body)
+	if got, want := string(body), "test raw POST contents"; got != want {
+		t.Errorf("NewRequest Body is %v, want %v", got, want)
+	}
+
+	// Test that Content-Type is set correctly
+	if got, want := req.Header.Get("Content-Type"), "text/plain"; got != want {
+		t.Errorf("NewRawPostRequest Content-Type is %v, want %v", got, want)
+	}
+}
+
 func testURLParseError(t *testing.T, err error) {
 	if err == nil {
 		t.Errorf("Expected error to be returned")
