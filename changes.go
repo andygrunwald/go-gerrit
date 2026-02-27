@@ -474,6 +474,7 @@ type ChangeInfo struct {
 	ReviewerUpdates        []ReviewerUpdateInfo          `json:"reviewer_updates,omitempty"`
 	Messages               []ChangeMessageInfo           `json:"messages,omitempty"`
 	CurrentRevision        string                        `json:"current_revision,omitempty"`
+	CurrentRevisionNumber  int                           `json:"current_revision_number,omitempty"`
 	Revisions              map[string]RevisionInfo       `json:"revisions,omitempty"`
 	MoreChanges            bool                          `json:"_more_changes,omitempty"`
 	Problems               []ProblemInfo                 `json:"problems,omitempty"`
