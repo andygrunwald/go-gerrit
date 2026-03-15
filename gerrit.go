@@ -250,6 +250,10 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		req.Header.Add("Content-Type", "application/json")
 	}
 
+	if runAs := runAsFromContext(ctx); runAs != "" {
+		req.Header.Set("X-Gerrit-RunAs", runAs)
+	}
+
 	// TODO: Add gzip encoding
 	// Accept-Encoding request header is set to gzip
 	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
@@ -282,11 +286,33 @@ func (c *Client) NewRawPutRequest(ctx context.Context, urlStr string, body strin
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
+	if runAs := runAsFromContext(ctx); runAs != "" {
+		req.Header.Set("X-Gerrit-RunAs", runAs)
+	}
+
 	// TODO: Add gzip encoding
 	// Accept-Encoding request header is set to gzip
 	// See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
 
 	return req, nil
+}
+
+// runAsKey is the context key for the X-Gerrit-RunAs header value.
+type runAsKey struct{}
+
+// WithRunAs returns a context that will add the X-Gerrit-RunAs header to API
+// requests. The accountID is the account ID or username of the user to run the
+// request as. Requires the RunAs capability (typically granted to administrators).
+// Use for requests that need to run as a different user than the authenticated one.
+func WithRunAs(ctx context.Context, accountID string) context.Context {
+	return context.WithValue(ctx, runAsKey{}, accountID)
+}
+
+func runAsFromContext(ctx context.Context) string {
+	if v := ctx.Value(runAsKey{}); v != nil {
+		return v.(string)
+	}
+	return ""
 }
 
 // Call is a combine function for Client.NewRequest and Client.Do.
