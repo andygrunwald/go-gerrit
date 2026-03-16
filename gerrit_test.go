@@ -437,6 +437,49 @@ func TestNewRawPutRequest(t *testing.T) {
 	}
 }
 
+func TestNewRequest_XGerritRunAs(t *testing.T) {
+	ctx := context.Background()
+	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
+	if err != nil {
+		t.Fatalf("NewClient: %v", err)
+	}
+
+	// Without WithRunAs, header should not be set
+	req, err := c.NewRequest(ctx, "GET", "/foo", nil)
+	if err != nil {
+		t.Fatalf("NewRequest: %v", err)
+	}
+	if got := req.Header.Get("X-Gerrit-RunAs"); got != "" {
+		t.Errorf("X-Gerrit-RunAs should be empty when WithRunAs not used, got %q", got)
+	}
+
+	// With WithRunAs, header should be set
+	ctxWithRunAs := gerrit.WithRunAs(ctx, "admin")
+	req, err = c.NewRequest(ctxWithRunAs, "GET", "/foo", nil)
+	if err != nil {
+		t.Fatalf("NewRequest: %v", err)
+	}
+	if got, want := req.Header.Get("X-Gerrit-RunAs"), "admin"; got != want {
+		t.Errorf("X-Gerrit-RunAs = %q, want %q", got, want)
+	}
+}
+
+func TestNewRawPutRequest_XGerritRunAs(t *testing.T) {
+	ctx := gerrit.WithRunAs(context.Background(), "1000123")
+	c, err := gerrit.NewClient(ctx, testGerritInstanceURL, nil)
+	if err != nil {
+		t.Fatalf("NewClient: %v", err)
+	}
+
+	req, err := c.NewRawPutRequest(ctx, "/foo", "body")
+	if err != nil {
+		t.Fatalf("NewRawPutRequest: %v", err)
+	}
+	if got, want := req.Header.Get("X-Gerrit-RunAs"), "1000123"; got != want {
+		t.Errorf("X-Gerrit-RunAs = %q, want %q", got, want)
+	}
+}
+
 func testURLParseError(t *testing.T, err error) {
 	if err == nil {
 		t.Errorf("Expected error to be returned")
