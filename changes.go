@@ -518,6 +518,13 @@ type MergeInput struct {
 	AllowConflicts bool   `json:"allow_conflicts,omitempty"`
 }
 
+// The DeleteCommentInput entity contains the option for deleting a comment.
+//
+// Docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-comment-input
+type DeleteCommentInput struct {
+	Reason string `json:"reason"`
+}
+
 // The ParentInfo entity contains information about the parent commit of a patch-set.
 type ParentInfo struct {
 	BranchName             string `json:"branch_name,omitempty"`
