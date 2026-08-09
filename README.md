@@ -23,7 +23,7 @@ go-gerrit is a [Go](https://golang.org/) client library for the [Gerrit Code Rev
 ## Installation
 
 _go-gerrit_ follows the [Go Release Policy](https://golang.org/doc/devel/release.html#policy).
-This means we support the current + 2 previous Go versions.
+This means we support the current + the previous Go version.
 
 It is go gettable ...
 
