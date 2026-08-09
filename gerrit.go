@@ -396,7 +396,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	if v != nil {
 		defer resp.Body.Close() // nolint: errcheck
 		if w, ok := v.(io.Writer); ok {
-			if _, err := io.Copy(w, resp.Body); err != nil { // nolint: vetshadow
+			if _, err := io.Copy(w, resp.Body); err != nil {
 				return nil, err
 			}
 		} else {
