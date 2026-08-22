@@ -1,6 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:best-practices"
+  ],
+  "timezone": "Europe/Berlin",
+  "schedule": [
+    "* 0-4 * * 1"
+  ],
+  "semanticCommits": "disabled",
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "packageRules": [
+    {
+      "description": "Batch routine GitHub Actions updates into one weekly pull request, but keep major bumps separate because they usually need workflow changes",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin"],
+      "groupName": "GitHub Actions"
+    }
   ]
 }
