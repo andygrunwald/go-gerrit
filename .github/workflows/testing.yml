@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.26", "1.25"]
+        go: ["1.27", "1.26"]
 
     steps:
       - uses: actions/checkout@v7
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.26", "1.25"]
+        go: ["1.27", "1.26"]
 
     steps:
       - uses: actions/checkout@v7
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.26", "1.25"]
+        go: ["1.27", "1.26"]
 
     steps:
       - uses: actions/checkout@v7
@@ -59,7 +59,8 @@ jobs:
       - name: Run staticcheck
         uses: dominikh/staticcheck-action@v1.4.1
         with:
-          version: "2026.1"
+          # renovate: datasource=github-releases depName=dominikh/go-tools
+          version: "2026.2.1"
           install-go: false
           cache-key: ${{ matrix.go }}
 
@@ -68,7 +69,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.26", "1.25"]
+        go: ["1.27", "1.26"]
 
     steps:
       - uses: actions/checkout@v7
@@ -79,14 +80,14 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.12.2
+          version: v2.13.1
 
   unittesting:
     name: unit testing (Go ${{ matrix.go }})
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go: ["1.26", "1.25"]
+        go: ["1.27", "1.26"]
 
     steps:
       - uses: actions/checkout@v7
