@@ -7,6 +7,71 @@ first. For more complete details see
 
 ## Versions
 
+### 1.2.0 (2026-08-22)
+
+This version is the last version that supports Go v1.16.
+
+**Upgrade note**:
+
+`ReviewerInput` gained a `State` field between `Reviewer` and `Confirmed`.
+Keyed struct literals are unaffected.
+If you construct `ReviewerInput` with an *unkeyed* literal such as
+`gerrit.ReviewerInput{"user@example.com", true}`, switch to keyed fields:
+`gerrit.ReviewerInput{Reviewer: "user@example.com", Confirmed: true}`.
+
+#### Features
+
+1ec7df4 Add WithRunAs context for X-Gerrit-RunAs header support (#206)
+c4283a3 Add ChangeInfo.CurrentRevisionNumber field (#204)
+8a17aa8 Add fields `State`, `Notify` and `NotifyDetails` to ReviewerInput (#203)
+
+#### Chore and automation
+
+5b3d24e Support Go 1.27 and put staticcheck under Renovate management (#226)
+42c7af0 Update dependency golangci/golangci-lint to v2.12.2 (#212)
+df467be Fix golangci-lint 2.12 findings (#221)
+4baf32b Remove Dependabot in favor of Renovate (#220)
+bfeb61f Upgrade supported Go versions from 1.24, 1.25 to 1.25, 1.26 (#219)
+14503db Update actions/checkout action to v7 (#214)
+1de2e34 Update actions/setup-go action to v7 (#217)
+9d00b00 Bump actions/setup-go from 6 to 7 (#218)
+9ef9336 chore(deps): update dependency golangci/golangci-lint to v2.11.3 (#211)
+eb71b14 chore(deps): update dependency go to 1.26 (#209)
+0cf1dd8 chore(deps): update dominikh/staticcheck-action action to v1.4.1 (#208)
+c9b56a5 Add renovate.json (#207)
+fbf6460 Bump goreleaser/goreleaser-action from 6 to 7 (#205)
+dfb90fe Bump actions/setup-go from 5 to 6 (#201)
+fdd33d6 Bump github.com/google/go-querystring from 1.1.0 to 1.2.0 (#200)
+c628cf8 Bump actions/checkout from 5 to 6 (#202)
+
+### 1.1.1 (2025-12-05)
+
+#### Bugfixes
+
+a7b2c28 don't treat + as a special character for queries
+
+#### Chore and automation
+
+888066f Introduce golangci-lint as an additional linter (#199)
+db4c287 Bump actions/setup-go from 5 to 6 (#196)
+007e2f7 Bump actions/checkout from 5 to 6 (#198)
+ebba98a Upgrade Go to v1.25 (#195)
+6541e71 Bump actions/checkout from 4 to 5 (#194)
+
+### 1.1.0 (2025-07-12)
+
+#### Features
+
+a051e69 Add missing MoreProjects field in ProjectInfo (#190)
+8c6ff13 Add response_format_options to ChangeInput struct (#181)
+650ad12 Add missing Patch field to ChangeInfo (#188)
+
+#### Chore and automation
+
+4d22969 Update dependencies and fix CI build (#192)
+8ddf623 Bump dominikh/staticcheck-action from 1.3.1 to 1.4.0 (#191)
+31687dc testing: Remove console output while running unit tests (#176)
+
 ### 1.0.0 (2024-10-20)
 
 This is the first release in 7 years (since 2017-11-04).
