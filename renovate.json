@@ -11,6 +11,19 @@
   "postUpdateOptions": [
     "gomodTidy"
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update the staticcheck release passed to dominikh/staticcheck-action, which the github-actions manager does not read",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)\\s+version: \"(?<currentValue>[^\"]+)\""
+      ],
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?$"
+    }
+  ],
   "packageRules": [
     {
       "description": "Batch routine GitHub Actions updates into one weekly pull request, but keep major bumps separate because they usually need workflow changes",

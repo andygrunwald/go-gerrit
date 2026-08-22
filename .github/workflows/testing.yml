@@ -59,6 +59,7 @@ jobs:
       - name: Run staticcheck
         uses: dominikh/staticcheck-action@v1.4.1
         with:
+          # renovate: datasource=github-releases depName=dominikh/go-tools
           version: "2026.2.1"
           install-go: false
           cache-key: ${{ matrix.go }}
