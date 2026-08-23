@@ -7,6 +7,10 @@ first. For more complete details see
 
 ## Versions
 
+### Unreleased
+
+This version raises the minimum required Go version to Go 1.26.0.
+
 ### 1.2.0 (2026-08-22)
 
 This version is the last version that supports Go v1.16.

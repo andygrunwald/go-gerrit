@@ -88,7 +88,7 @@ func TestProjectsService_GetProject_WithSlash(t *testing.T) {
 	setup()
 	defer teardown()
 
-	testMux.HandleFunc("/projects/plugins/delete-project", func(w http.ResponseWriter, r *http.Request) {
+	testMux.HandleFunc("/projects/plugins%2Fdelete-project", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "GET")
 		testRequestURL(t, r, "/projects/plugins%2Fdelete-project")
 
