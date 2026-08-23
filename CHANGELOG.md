@@ -9,7 +9,7 @@ first. For more complete details see
 
 ### Unreleased
 
-This version raises the minimum required Go version to Go v1.26.
+This version raises the minimum required Go version to Go 1.26.0.
 
 ### 1.2.0 (2026-08-22)
 
