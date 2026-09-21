@@ -12,7 +12,7 @@ on:
 jobs:
   gofmt:
     name: go fmt (Go ${{ matrix.go }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         go: ["1.27", "1.26"]
@@ -29,7 +29,7 @@ jobs:
 
   govet:
     name: go vet (Go ${{ matrix.go }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         go: ["1.27", "1.26"]
@@ -45,7 +45,7 @@ jobs:
 
   staticcheck:
     name: staticcheck (Go ${{ matrix.go }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         go: ["1.27", "1.26"]
@@ -66,7 +66,7 @@ jobs:
 
   golangci-lint:
     name: golangci-lint (Go ${{ matrix.go }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         go: ["1.27", "1.26"]
@@ -84,7 +84,7 @@ jobs:
 
   unittesting:
     name: unit testing (Go ${{ matrix.go }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         go: ["1.27", "1.26"]
