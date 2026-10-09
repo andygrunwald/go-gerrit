@@ -644,6 +644,19 @@ func (s *ChangesService) CherryPickRevision(ctx context.Context, changeID, revis
 	return v, resp, err
 }
 
+// Deletes a published comment of a revision. Instead of deleting the whole comment, this endpoint just replaces the comment’s message with a new message,
+// which contains the name of the user who deletes the comment and the reason why it’s deleted.
+//
+// Gerrit API docs: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#delete-comment
+func (s *ChangesService) DeleteComment(ctx context.Context, changeID, revisionID, commentID string, input *DeleteCommentInput) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/revisions/%s/comments/%s/delete", changeID, revisionID, commentID)
+	req, err := s.client.NewRequest(ctx, "POST", u, input)
+	if err != nil {
+		return nil, err
+	}
+	return s.client.Do(req, nil)
+}
+
 /*
 TODO: Missing Revision Endpoints
 	Rebase Revision
