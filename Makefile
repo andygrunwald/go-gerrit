@@ -1,5 +1,6 @@
 .DEFAULT_GOAL := help
 
+# renovate: datasource=github-releases depName=dominikh/go-tools
 STATICCHECK_VERSION := 2026.2.1
 
 .PHONY: help
