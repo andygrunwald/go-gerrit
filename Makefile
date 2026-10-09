@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := help
 
+STATICCHECK_VERSION := 2026.2.1
+
 .PHONY: help
 help: ## Outputs the help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -14,5 +16,5 @@ vet: ## Runs go vet
 
 .PHONY: staticcheck
 staticcheck: ## Runs static code analyzer staticcheck
-	go get -u honnef.co/go/tools/cmd/staticcheck
+	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
 	staticcheck ./...
