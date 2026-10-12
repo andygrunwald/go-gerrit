@@ -111,7 +111,7 @@ func (s *AuthenticationService) digestAuthHeader(response *http.Response) (strin
 	// If the server does not inform us what the uri is supposed
 	// to be then use the last requests's uri instead.
 	if _, ok := authenticate["uri"]; !ok {
-		authenticate["uri"] = response.Request.URL.Path
+		authenticate["uri"] = response.Request.URL.RequestURI()
 	}
 
 	uriHeader := authenticate["uri"]
