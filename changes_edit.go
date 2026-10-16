@@ -2,7 +2,9 @@ package gerrit
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
+	"net/http"
 	"net/url"
 )
 
@@ -100,6 +102,28 @@ func (s *ChangesService) ChangeFileContentInChangeEdit(ctx context.Context, chan
 	u := fmt.Sprintf("changes/%s/edit/%s", changeID, url.QueryEscape(filePath))
 
 	req, err := s.client.NewRawPutRequest(ctx, u, content)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+func (s *ChangesService) ChangeFileContentInChangeEditNew(ctx context.Context, changeID, filePath string, content []byte, fileMode *int) (*Response, error) {
+	u := fmt.Sprintf("changes/%s/edit/%s", changeID, url.QueryEscape(filePath))
+
+	payload := struct {
+		Data     string `json:"binary_content"`
+		FileMode int    `json:"file_mode,omitempty"` // FileMode is optional
+	}{
+		Data: "data:text/plain;base64," + base64.StdEncoding.EncodeToString(content),
+	}
+
+	if fileMode != nil {
+		payload.FileMode = *fileMode
+	}
+
+	req, err := s.client.NewRequest(ctx, http.MethodPut, u, payload)
 	if err != nil {
 		return nil, err
 	}
