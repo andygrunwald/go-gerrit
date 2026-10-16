@@ -353,6 +353,101 @@ func TestNewClient_BasicAuth_PasswordWithSlashes(t *testing.T) {
 	}
 }
 
+func TestNewClient_CredentialsInURLAreUnescaped(t *testing.T) {
+	tests := []struct {
+		name     string
+		urlUser  string
+		urlPass  string
+		wantUser string
+		wantPass string
+	}{
+		{
+			name:     "escaped slash in password",
+			urlUser:  "admin",
+			urlPass:  "se%2Fcret",
+			wantUser: "admin",
+			wantPass: "se/cret",
+		},
+		{
+			name:     "escaped at sign in username",
+			urlUser:  "ad%40min",
+			urlPass:  "secret",
+			wantUser: "ad@min",
+			wantPass: "secret",
+		},
+		{
+			name:     "escaped plus in password",
+			urlUser:  "admin",
+			urlPass:  "pa%2Bss",
+			wantUser: "admin",
+			wantPass: "pa+ss",
+		},
+		{
+			name:     "invalid escape sequence is kept as is",
+			urlUser:  "admin",
+			urlPass:  "raw%pass",
+			wantUser: "admin",
+			wantPass: "raw%pass",
+		},
+		{
+			name:     "unescaped password is kept as is",
+			urlUser:  "admin",
+			urlPass:  "ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg",
+			wantUser: "admin",
+			wantPass: "ZOSOKjgV/kgEkN0bzPJp+oGeJLqpXykqWFJpon/Ckg",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setup()
+			defer teardown()
+
+			account := gerrit.AccountInfo{
+				AccountID: 100000,
+				Name:      "test",
+				Email:     "test@localhost",
+				Username:  "test"}
+			hits := 0
+
+			testMux.HandleFunc("/a/accounts/self", func(w http.ResponseWriter, r *http.Request) {
+				hits++
+				switch hits {
+				case 1:
+					// Digest auth is tried first. Failing it makes the client fall
+					// back to basic auth, where the credentials are readable.
+					writeresponse(t, w, nil, http.StatusUnauthorized)
+				case 2:
+					username, password, ok := r.BasicAuth()
+					if !ok {
+						t.Error("Expected basic auth credentials")
+					}
+					if username != tt.wantUser {
+						t.Errorf("username: %q != %q", tt.wantUser, username)
+					}
+					if password != tt.wantPass {
+						t.Errorf("password: %q != %q", tt.wantPass, password)
+					}
+					writeresponse(t, w, account, http.StatusOK)
+				case 3:
+					t.Error("Did not expect another request")
+				}
+			})
+
+			serverURL := fmt.Sprintf(
+				"http://%s:%s@%s", tt.urlUser, tt.urlPass,
+				testServer.Listener.Addr().String())
+			client, err := gerrit.NewClient(context.Background(), serverURL, nil)
+			if err != nil {
+				t.Error(err)
+			}
+			if !client.Authentication.HasAuth() {
+				t.Error("Expected HasAuth() == true")
+			}
+		})
+	}
+}
+
 func TestNewClient_CookieAuth(t *testing.T) {
 	setup()
 	defer teardown()

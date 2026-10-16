@@ -111,6 +111,19 @@ func NewClient(ctx context.Context, gerritURL string, httpClient *http.Client) (
 		submatch := submatches[0]
 		username = submatch[2]
 		password = submatch[3]
+
+		// The regular expression captures the raw substrings while the
+		// url.Parse() below returns percent decoded credentials. Decode here
+		// too so both code paths agree on the credentials. Values which are
+		// not valid escape sequences are kept as they are because this code
+		// path exists to accept raw credentials that url.Parse() rejects.
+		if decoded, err := url.PathUnescape(username); err == nil {
+			username = decoded
+		}
+		if decoded, err := url.PathUnescape(password); err == nil {
+			password = decoded
+		}
+
 		endpoint = fmt.Sprintf(
 			"%s://%s:%s%s", submatch[1], submatch[4], submatch[5], submatch[6])
 		hasAuth = true
