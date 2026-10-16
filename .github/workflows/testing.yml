@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-26.04
     strategy:
       matrix:
-        go: ["1.27", "1.26"]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-26.04
     strategy:
       matrix:
-        go: ["1.27", "1.26"]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-26.04
     strategy:
       matrix:
-        go: ["1.27", "1.26"]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-26.04
     strategy:
       matrix:
-        go: ["1.27", "1.26"]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-26.04
     strategy:
       matrix:
-        go: ["1.27", "1.26"]
+        go: [stable, oldstable]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
