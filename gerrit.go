@@ -437,19 +437,14 @@ func (c *Client) addAuthentication(ctx context.Context, req *http.Request) error
 	// incoming request.  We do not need to send a body along because
 	// the request itself should fail first.
 	if c.Authentication.HasDigestAuth() {
-		uri, err := c.buildURLForRequest(req.URL.RequestURI())
-		if err != nil {
-			return err
-		}
-
 		// WARNING: Don't use c.NewRequest here unless you like
 		// infinite recursion.
-		digestRequest, err := http.NewRequestWithContext(ctx, req.Method, uri, nil)
-		digestRequest.Header.Set("Accept", "*/*")
-		digestRequest.Header.Set("Content-Type", "application/json")
+		digestRequest, err := http.NewRequestWithContext(ctx, req.Method, req.URL.String(), nil)
 		if err != nil {
 			return err
 		}
+		digestRequest.Header.Set("Accept", "*/*")
+		digestRequest.Header.Set("Content-Type", "application/json")
 
 		response, err := c.client.Do(digestRequest)
 		if err != nil {
