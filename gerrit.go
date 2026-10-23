@@ -109,8 +109,19 @@ func NewClient(ctx context.Context, gerritURL string, httpClient *http.Client) (
 	submatches := ReParseURL.FindAllStringSubmatch(endpoint, -1)
 	if len(submatches) > 0 && len(submatches[0]) > 5 {
 		submatch := submatches[0]
-		username = submatch[2]
-		password = submatch[3]
+		// Percent-escapes in the credentials must be decoded here as well,
+		// otherwise this path and the url.Parse path below disagree. See
+		// https://github.com/andygrunwald/go-gerrit/issues/224
+		if decoded, err := url.PathUnescape(submatch[2]); err == nil {
+			username = decoded
+		} else {
+			username = submatch[2]
+		}
+		if decoded, err := url.PathUnescape(submatch[3]); err == nil {
+			password = decoded
+		} else {
+			password = submatch[3]
+		}
 		endpoint = fmt.Sprintf(
 			"%s://%s:%s%s", submatch[1], submatch[4], submatch[5], submatch[6])
 		hasAuth = true
